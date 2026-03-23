@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Activity Log | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Activity Log - Track all system activities{% endblock %}
+
+{% block content %}
+<!-- Search and Filter Section -->
+<div class="mb-6">
+  <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+    <!-- Search Bar -->
+    <div class="relative flex-1 w-full md:w-auto">
+      <input type="text" 
+             id="searchActivity" 
+             placeholder="Search activity..." 
+             class="w-full md:w-96 px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+      <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+    
+    <!-- Filter and Date Range -->
+    <div class="flex gap-3 w-full md:w-auto">
+      <input type="date" id="startDate" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+      <span class="text-gray-500 self-center">to</span>
+      <input type="date" id="endDate" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+      <button id="filterBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200">
+        Filter
+      </button>
+      <button id="resetBtn" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition duration-200">
+        Reset
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Log Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inventory</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
+        </tr>
+      </thead>
+      <tbody id="activityTableBody" class="bg-white divide-y divide-gray-200">
+        <!-- Activity Log Entry 1 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 09:30:15</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">John Doe</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Created new request</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#REQ-2024-001</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 2 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 10:15:22</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">User</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jane Smith</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Updated inventory</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Laptop (15 units)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 3 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 11:45:08</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Michael Chen</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Approved request</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#REQ-2024-002</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 4 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 13:20:45</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">User</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Sarah Johnson</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Generated invoice</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#INV-2024-045</td>
+        </tr>
+        
+        <!-- Activity Log Entry 5 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 14:55:33</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Robert Wilson</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Added new inventory</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Office Supplies (25 items)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 6 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-22 16:20:18</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">User</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Emily Brown</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Cancelled request</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#REQ-2024-003</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 7 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-22 15:10:42</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">David Martinez</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Updated user role</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 8 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-22 11:30:55</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">User</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lisa Taylor</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Modified inventory quantity</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Printer (5 units)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+        
+        <!-- Activity Log Entry 9 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-21 14:45:12</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Kevin Zhang</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Created new invoice</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#INV-2024-044</td>
+        </tr>
+        
+        <!-- Activity Log Entry 10 -->
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-21 09:15:30</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">User</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Amanda White</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Submitted request</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">#REQ-2024-004</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Pagination -->
+  <div class="bg-white px-6 py-4 border-t border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700">
+        Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">10</span> of <span class="font-medium" id="totalCount">10</span> results
+      </div>
+      <div class="flex gap-2">
+        <button id="prevPage" class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Previous
+        </button>
+        <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sample data (in real application, this would come from Django backend)
+  const activityData = [
+    { date: "2024-03-23 09:30:15", account: "Admin", user: "John Doe", change: "Created new request", request: "#REQ-2024-001", inventory: "-", invoice: "-" },
+    { date: "2024-03-23 10:15:22", account: "User", user: "Jane Smith", change: "Updated inventory", request: "-", inventory: "Laptop (15 units)", invoice: "-" },
+    { date: "2024-03-23 11:45:08", account: "Admin", user: "Michael Chen", change: "Approved request", request: "#REQ-2024-002", inventory: "-", invoice: "-" },
+    { date: "2024-03-23 13:20:45", account: "User", user: "Sarah Johnson", change: "Generated invoice", request: "-", inventory: "-", invoice: "#INV-2024-045" },
+    { date: "2024-03-23 14:55:33", account: "Admin", user: "Robert Wilson", change: "Added new inventory", request: "-", inventory: "Office Supplies (25 items)", invoice: "-" },
+    { date: "2024-03-22 16:20:18", account: "User", user: "Emily Brown", change: "Cancelled request", request: "#REQ-2024-003", inventory: "-", invoice: "-" },
+    { date: "2024-03-22 15:10:42", account: "Admin", user: "David Martinez", change: "Updated user role", request: "-", inventory: "-", invoice: "-" },
+    { date: "2024-03-22 11:30:55", account: "User", user: "Lisa Taylor", change: "Modified inventory quantity", request: "-", inventory: "Printer (5 units)", invoice: "-" },
+    { date: "2024-03-21 14:45:12", account: "Admin", user: "Kevin Zhang", change: "Created new invoice", request: "-", inventory: "-", invoice: "#INV-2024-044" },
+    { date: "2024-03-21 09:15:30", account: "User", user: "Amanda White", change: "Submitted request", request: "#REQ-2024-004", inventory: "-", invoice: "-" }
+  ];
+  
+  // Search and filter functionality
+  const searchInput = document.getElementById('searchActivity');
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  const filterBtn = document.getElementById('filterBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const tableBody = document.getElementById('activityTableBody');
+  const showingStart = document.getElementById('showingStart');
+  const showingEnd = document.getElementById('showingEnd');
+  const totalCount = document.getElementById('totalCount');
+  const prevPageBtn = document.getElementById('prevPage');
+  const nextPageBtn = document.getElementById('nextPage');
+  
+  let currentData = [...activityData];
+  let currentPage = 1;
+  const itemsPerPage = 10;
+  
+  function renderTable() {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageData = currentData.slice(start, end);
+    
+    tableBody.innerHTML = '';
+    
+    if (pageData.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+            No activity logs found
+          </td>
+        </tr>
+      `;
+    } else {
+      pageData.forEach(item => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 transition';
+        
+        const accountClass = item.account === 'Admin' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+        
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.date}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full ${accountClass}">${item.account}</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.user}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.change}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm ${item.request !== '-' ? 'text-gray-600' : 'text-gray-400'}">${item.request}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm ${item.inventory !== '-' ? 'text-gray-600' : 'text-gray-400'}">${item.inventory}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm ${item.invoice !== '-' ? 'text-gray-600' : 'text-gray-400'}">${item.invoice}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Update pagination info
+    const totalItems = currentData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    showingStart.textContent = totalItems > 0 ? start + 1 : 0;
+    showingEnd.textContent = Math.min(end, totalItems);
+    totalCount.textContent = totalItems;
+    
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+  }
+  
+  function filterData() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    
+    currentData = activityData.filter(item => {
+      // Search filter
+      const matchesSearch = searchTerm === '' || 
+        item.user.toLowerCase().includes(searchTerm) ||
+        item.change.toLowerCase().includes(searchTerm) ||
+        item.request.toLowerCase().includes(searchTerm) ||
+        item.inventory.toLowerCase().includes(searchTerm) ||
+        item.invoice.toLowerCase().includes(searchTerm) ||
+        item.account.toLowerCase().includes(searchTerm);
+      
+      // Date filter
+      let matchesDate = true;
+      if (startDate || endDate) {
+        const itemDate = item.date.split(' ')[0];
+        if (startDate && itemDate < startDate) matchesDate = false;
+        if (endDate && itemDate > endDate) matchesDate = false;
+      }
+      
+      return matchesSearch && matchesDate;
+    });
+    
+    currentPage = 1;
+    renderTable();
+  }
+  
+  function resetFilters() {
+    searchInput.value = '';
+    startDateInput.value = '';
+    endDateInput.value = '';
+    currentData = [...activityData];
+    currentPage = 1;
+    renderTable();
+  }
+  
+  // Event listeners
+  searchInput.addEventListener('input', filterData);
+  filterBtn.addEventListener('click', filterData);
+  resetBtn.addEventListener('click', resetFilters);
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+    }
+  });
+  nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(currentData.length / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+    }
+  });
+  
+  // Initial render
+  renderTable();
+</script>
+{% endblock %}

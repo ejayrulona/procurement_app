@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Procurement Office | Dashboard{% endblock %}
+
+{% block header_subtitle %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<!-- Welcome Section with Add Inventory Button -->
+<div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8 border border-red-100">
+  <div class="flex justify-between items-start flex-wrap gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">Hello, <span id="userNameDisplay">{{ user.get_full_name|default:"John Doe" }}</span></h2>
+      <p class="text-gray-600 mt-1">Welcome back, Sir <span id="adminNameDisplay">Reymart</span>!</p>
+    </div>
+    <button class="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-md transition duration-200">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      + Add Inventory
+    </button>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <!-- Pending Request Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold text-gray-700">Pending Request/s</h3>
+      <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <p class="text-4xl font-bold text-gray-800 mb-4">4</p>
+    <div class="flex gap-3">
+      <a href="#" class="text-sm text-red-600 hover:text-red-700 font-medium">See all →</a>
+      <a href="#" class="text-sm text-gray-500 hover:text-gray-600 font-medium">fdsgdsgs →</a>
+    </div>
+  </div>
+  
+  <!-- Ongoing Request Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold text-gray-700">On going Request/s</h3>
+      <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </div>
+    </div>
+    <p class="text-4xl font-bold text-gray-800 mb-4">1</p>
+    <div class="flex gap-3">
+      <a href="#" class="text-sm text-red-600 hover:text-red-700 font-medium">See all →</a>
+      <a href="#" class="text-sm text-gray-500 hover:text-gray-600 font-medium">fdsgdsgs →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Log Section -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+  <div class="border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center gap-2">
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <h3 class="text-lg font-semibold text-gray-800">Activity Log</h3>
+    </div>
+    <p class="text-sm text-gray-500 mt-1">History activity</p>
+  </div>
+  
+  <div class="p-6">
+    <!-- Activity List -->
+    <div class="space-y-4 max-h-96 overflow-y-auto activity-scroll">
+      <!-- Activity Item 1 -->
+      <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-gray-800">New request submitted by John Doe</p>
+          <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
+        </div>
+      </div>
+      
+      <!-- Activity Item 2 -->
+      <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-gray-800">Inventory updated: Laptop (15 units added)</p>
+          <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
+        </div>
+      </div>
+      
+      <!-- Activity Item 3 -->
+      <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-gray-800">Request #PR-2024-001 is pending approval</p>
+          <p class="text-xs text-gray-500 mt-1">3 hours ago</p>
+        </div>
+      </div>
+      
+      <!-- Activity Item 4 -->
+      <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-gray-800">Invoice #INV-2024-045 generated</p>
+          <p class="text-xs text-gray-500 mt-1">Yesterday at 2:30 PM</p>
+        </div>
+      </div>
+      
+      <!-- Activity Item 5 -->
+      <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium text-gray-800">New delivery received: Office Supplies (25 items)</p>
+          <p class="text-xs text-gray-500 mt-1">Yesterday at 9:15 AM</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- View All Activity Link -->
+    <div class="mt-4 pt-3 border-t border-gray-200 text-center">
+      <a href="#" class="text-sm text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1">
+        View all activity
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // You can dynamically set the admin name from Django
+  document.addEventListener('DOMContentLoaded', function() {
+    // This can be replaced with actual Django variable
+    const adminName = "Reymart";  // Replace with {{ admin_name }} or similar
+    const adminNameSpan = document.getElementById('adminNameDisplay');
+    if (adminNameSpan) adminNameSpan.textContent = adminName;
+  });
+</script>
+{% endblock %}
