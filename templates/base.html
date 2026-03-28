@@ -84,20 +84,20 @@
 <body class="bg-gray-50 min-h-screen">
 
 	<!-- TOP HEADER BAR - Sticky -->
-	<header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+	<header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-30">
 		<div class="px-6 py-4">
 			<div class="flex items-center justify-between">
 				<!-- Left side - Logo and Title -->
 				<div class="flex items-center gap-3">
-					<!-- Logo Image -->
+					<!-- Logo Image - Full Circle -->
 					<div
-						class="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-white shadow-md">
+						class="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-md">
 						<img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo"
 							class="w-full h-full object-cover">
 					</div>
 					<div>
-						<h1 class="text-xl font-bold text-gray-800">PROCUREMENT OFFICE</h1>
-						<p class="text-xs text-gray-500">{% block header_subtitle %}Dashboard{% endblock %}</p>
+						<h1 class="text-xl font-bold text-white">PROCUREMENT OFFICE</h1>
+						<p class="text-xs text-red-100">{% block header_subtitle %}Dashboard{% endblock %}</p>
 					</div>
 				</div>
 
@@ -105,19 +105,19 @@
 				<div class="relative">
 					<button id="user-menu-button" class="flex items-center gap-2 focus:outline-none group">
 						<div
-							class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition">
+							class="w-8 h-8 bg-white rounded-full flex items-center justify-center group-hover:bg-gray-100 transition">
 							<span class="text-red-600 font-semibold text-sm">
 								{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:"U" }}
 							</span>
 						</div>
-						<span class="text-sm font-medium text-gray-700 hidden md:inline">
+						<span class="text-sm font-medium text-white hidden md:inline">
 							{% if user.is_authenticated %}
 							{{ user.get_full_name|default:user.username }}
 							{% else %}
 							Guest User
 							{% endif %}
 						</span>
-						<svg class="w-4 h-4 text-gray-500 transition-transform duration-200" fill="none"
+						<svg class="w-4 h-4 text-white transition-transform duration-200" fill="none"
 							stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
 							</path>
@@ -191,7 +191,7 @@
 										d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
 									</path>
 								</svg>
-								<span class="text-sm">Login</span>
+								<span class="text-sm">Logout</span>
 							</a>
 							{% endif %}
 						</div>

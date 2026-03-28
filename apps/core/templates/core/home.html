@@ -30,15 +30,17 @@
 	<div class="fixed inset-0 -z-10">
 		<img src="{% static 'images/wmsu.jpg' %}" alt="Procurement background"
 			class="w-full h-full object-cover opacity-30">
-		<div class="absolute inset-0 bg-white/80"></div>
+		<!-- Transparent red overlay -->
+		<div class="absolute inset-0 bg-red-500/30"></div>
 	</div>
 
 	<!-- Header with Logo -->
 	<header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-20">
 		<div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between flex-wrap gap-3">
 			<div class="flex items-center gap-3">
+				<!-- Logo Image - Full Circle -->
 				<div
-					class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md border border-gray-200">
+					class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-md border border-gray-200">
 					<img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-10 h-10 object-contain">
 				</div>
 				<div>
@@ -65,10 +67,10 @@
 			<form id="login-form" class="space-y-5" method="post" action="">
 				{% csrf_token %}
 				<div>
-					<label class="block text-gray-700 font-medium text-sm mb-2">Enter your Email</label>
-					<input type="email" name="email" required
+					<label class="block text-gray-700 font-medium text-sm mb-2">Enter your Username</label>
+					<input type="text" name="username" required
 						class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-						placeholder="your.email@example.com">
+						placeholder="your_username">
 				</div>
 
 				<div>
@@ -83,25 +85,49 @@
 					Log In
 				</button>
 
-				<a href="{% url 'users:register_user' %}"
+				<!-- Register button that triggers modal -->
+				<button type="button" id="register-btn"
 					class="block w-full text-center py-3.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl border border-gray-300 transition duration-200 cursor-pointer shadow-sm">
 					Register as User
-				</a>
+				</button>
 			</form>
 		</div>
 	</main>
 
-	<script>
-		const loginForm = document.getElementById('login-form');
+	<!-- Registration Choice Modal -->
+	<div id="register-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
+		<div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all scale-95 opacity-0" id="modal-content">
+			<div class="text-center mb-6">
+				<h3 class="text-2xl font-bold text-gray-800">Select Account Type</h3>
+				<p class="text-gray-500 text-sm mt-1">What type of account are you registering?</p>
+			</div>
+			<div class="space-y-3">
+				<button id="college-option" class="w-full py-3 px-4 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-xl border border-red-200 transition-all duration-200 flex items-center justify-between">
+					<span>College / Office Account</span>
+					<span class="text-red-500">→</span>
+				</button>
+				<button id="admin-option" class="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold rounded-xl border border-gray-200 transition-all duration-200 flex items-center justify-between">
+					<span>Admin Account</span>
+					<span class="text-gray-400">→</span>
+				</button>
+			</div>
+			<div class="mt-6 text-center">
+				<button id="close-modal" class="text-sm text-gray-500 hover:text-gray-700 underline">Cancel</button>
+			</div>
+		</div>
+	</div>
 
+	<script>
+		// Login form handling
+		const loginForm = document.getElementById('login-form');
 		if (loginForm) {
 			loginForm.addEventListener('submit', (e) => {
 				e.preventDefault();
-				const email = loginForm.querySelector('input[name="email"]').value.trim();
+				const username = loginForm.querySelector('input[name="username"]').value.trim();
 				const password = loginForm.querySelector('input[name="password"]').value;
 
-				if (!email) {
-					alert("Please enter your email.");
+				if (!username) {
+					alert("Please enter your username.");
 					return;
 				}
 				if (!password) {
@@ -109,10 +135,56 @@
 					return;
 				}
 
-				alert(`🔐 Login attempt (demo).\nWelcome ${email}\nRedirecting to dashboard.`);
+				alert(`🔐 Login attempt (demo).\nWelcome ${username}\nRedirecting to dashboard.`);
 				window.location.href = "#";
 			});
 		}
+
+		// Modal handling
+		const modal = document.getElementById('register-modal');
+		const modalContent = document.getElementById('modal-content');
+		const registerBtn = document.getElementById('register-btn');
+		const closeModalBtn = document.getElementById('close-modal');
+		const collegeOption = document.getElementById('college-option');
+		const adminOption = document.getElementById('admin-option');
+
+		// Show modal with animation
+		function openModal() {
+			modal.classList.remove('hidden');
+			setTimeout(() => {
+				modalContent.classList.remove('scale-95', 'opacity-0');
+				modalContent.classList.add('scale-100', 'opacity-100');
+			}, 10);
+		}
+
+		function closeModal() {
+			modalContent.classList.remove('scale-100', 'opacity-100');
+			modalContent.classList.add('scale-95', 'opacity-0');
+			setTimeout(() => {
+				modal.classList.add('hidden');
+			}, 200);
+		}
+
+		registerBtn.addEventListener('click', openModal);
+		closeModalBtn.addEventListener('click', closeModal);
+
+		// Close modal when clicking outside
+		modal.addEventListener('click', (e) => {
+			if (e.target === modal) {
+				closeModal();
+			}
+		});
+
+		// College/Office option: redirect to register_user URL
+		collegeOption.addEventListener('click', () => {
+			window.location.href = "{% url 'users:register_user' %}";
+		});
+
+		// Admin option: show "coming soon" message
+		adminOption.addEventListener('click', () => {
+			alert("This functionality will be implemented soon.");
+			closeModal(); // optional: close modal after alert
+		});
 	</script>
 </body>
 
