@@ -182,8 +182,7 @@
 
 		// Admin option: show "coming soon" message
 		adminOption.addEventListener('click', () => {
-			alert("This functionality will be implemented soon.");
-			closeModal(); // optional: close modal after alert
+			window.location.href = "{% url 'users:admin_registration' %}";
 		});
 	</script>
 </body>

@@ -23,6 +23,11 @@
 			ring: 2px;
 			ring-offset: 2px;
 		}
+		
+		/* Preview image styling */
+		.image-preview {
+			transition: all 0.3s ease;
+		}
 	</style>
 </head>
 
@@ -156,11 +161,28 @@
 						</div>
 					</div>
 
-					<div>
-						<label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
-						<input type="text" name="address"
-							class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-							placeholder="Building, Room Number, etc.">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
+							<input type="text" name="address"
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
+								placeholder="Building, Room Number, etc.">
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">College/Office Profile Photo</label>
+							<div class="flex items-center gap-3">
+								<div id="imagePreview" class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
+									<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+									</svg>
+								</div>
+								<div class="flex-1">
+									<input type="file" id="college_photo" name="college_photo" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+									<p class="text-xs text-gray-500 mt-1">JPEG, PNG, JPG (Max 5MB) - College/Office logo or building photo</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -268,6 +290,28 @@
 	</main>
 
 	<script>
+		// Image preview functionality
+		const photoInput = document.getElementById('college_photo');
+		const imagePreview = document.getElementById('imagePreview');
+		
+		if (photoInput && imagePreview) {
+			photoInput.addEventListener('change', function(e) {
+				const file = e.target.files[0];
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = function(event) {
+						imagePreview.innerHTML = `<img src="${event.target.result}" class="w-full h-full object-cover">`;
+					};
+					reader.readAsDataURL(file);
+				} else {
+					imagePreview.innerHTML = `<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+					</svg>`;
+				}
+			});
+		}
+
 		// Auto-generate college/office code based on name
 		const collegeNameInput = document.getElementById('college_name');
 		const collegeCodeInput = document.getElementById('college_code');

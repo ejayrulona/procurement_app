@@ -5,3 +5,6 @@ def register_user(request):
 
 def profile(request):
     return render(request, "users/profile.html")
+
+def admin_registration(request):
+    return render(request, "users/admin_registration.html")
