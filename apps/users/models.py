@@ -111,6 +111,12 @@ class CollegeProfile(models.Model):
         DEPT_HEAD = "department_head", "Department Head"
         DIRECTOR = "director", "Director"
         ASSOCIATE_DIRECTOR = "associate_director", "Associate Director"
+        COORDINATOR = "coordinator", "Coordinator"
+        CHAIRPERSON = "chairperson", "Chairperson"
+        OFFICER_IN_CHARGE = "officer_in_charge", "OIC - Officer in Charge"
+        PROGRAM_HEAD = "program_head", "Program Head"
+        UNIT_HEAD = "unit_head", "Unit Head"
+        DIVISION_CHIEF = "division_chief", "Division Head"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="college_profile")
     college_office = models.OneToOneField(CollegeOffice, on_delete=models.PROTECT, related_name="users")
