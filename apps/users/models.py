@@ -20,6 +20,7 @@ class CollegeOffice(models.Model):
     organization_type = models.CharField(max_length=10, choices=OrganizationType.choices)
     campus = models.CharField(max_length=10, choices=Campus.choices)
     address = models.TextField()
+    college_photo = models.ImageField(upload_to="college_photos/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -65,7 +66,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=80)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20)
-    profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -94,6 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class AdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admin_profile")
     employee_id_number = models.CharField(max_length=50, unique=True)
+    profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Admin Profile"
