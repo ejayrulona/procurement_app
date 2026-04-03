@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 
+# Might be moved to its own app since this is not a user model
 class CollegeOffice(models.Model):
     class OrganizationType(models.TextChoices):
         COLLEGE = "college", "College"
@@ -67,7 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20)
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
@@ -120,7 +121,7 @@ class CollegeProfile(models.Model):
         DIVISION_CHIEF = "division_chief", "Division Head"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="college_profile")
-    college_office = models.OneToOneField(CollegeOffice, on_delete=models.PROTECT, related_name="users")
+    college_office = models.OneToOneField(CollegeOffice, on_delete=models.PROTECT, related_name="college_office")
     position_title = models.CharField(max_length=30, choices=PositionTitle.choices)
 
     class Meta:
@@ -129,4 +130,27 @@ class CollegeProfile(models.Model):
 
 
     def __str__(self):
-        return f"{self.college_office.name} - {self.user.full_name}"    
+        return f"{self.college_office.name} - {self.user.full_name}"  
+
+
+class RegistrationRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        DECLINED = "declined", "Declined"
+
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_request")
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    remarks = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_request")
+
+    class Meta: 
+        verbose_name = "Registration Request"
+        verbose_name_plural = "Registration Requests"
+
+    
+    def __str__(self):
+        return f"{self.user.full_name} - {self.status}"
