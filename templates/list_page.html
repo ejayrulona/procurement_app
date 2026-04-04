@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PPMP List | Procurement Office{% endblock %}
+
+{% block header_subtitle %}View and manage PPMP submissions{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="mb-6">
+        <a href="/draft/" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">← Back to Offices</a>
+    </div>
+    <div id="officeHeader" class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Loading...</h2>
+        <p class="text-gray-500"></p>
+    </div>
+    <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+        <div class="flex gap-3">
+            <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="all">All Status</option>
+                <option value="draft">Draft</option>
+                <option value="submitted">Submitted</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <input type="text" id="searchPPMP" placeholder="Search PPMP..." class="px-4 py-2 border border-gray-300 rounded-lg w-64">
+        </div>
+    </div>
+    <div id="ppmpGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+    <div id="emptyState" class="hidden text-center py-12"><p class="text-gray-500">No PPMPs found.</p></div>
+</div>
+
+<script>
+    let officeData = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    const officeId = urlParams.get('office_id');
+    if (officeId) {
+        const stored = localStorage.getItem('selectedOffice');
+        if (stored) officeData = JSON.parse(stored);
+    }
+    // Fallback sample
+    if (!officeData) {
+        officeData = {
+            id: 1, name: "Registrar's Office", department: "Academic Affairs", head: "Dr. Maria Santos",
+            ppmpList: [
+                { id: "PPMP-2026-001", title: "Supply and Delivery of ICT Equipment", description: "20 desktops, 10 laptops", dateSubmitted: "2026-03-15", status: "submitted", priority: "High", estimatedBudget: "1,250,000.00" },
+                { id: "PPMP-2026-015", title: "Office Furniture Procurement", description: "Ergonomic chairs", dateSubmitted: "2026-03-10", status: "draft", priority: "Medium", estimatedBudget: "450,000.00" },
+                { id: "PPMP-2026-023", title: "Office Supplies", description: "Bond paper, pens", dateSubmitted: "2026-03-05", status: "rejected", priority: "Low", estimatedBudget: "75,000.00" }
+            ]
+        };
+    }
+
+    document.getElementById('officeHeader').innerHTML = `<h2 class="text-2xl font-bold text-gray-800">${officeData.name}</h2><p class="text-gray-500">${officeData.department} • Head: ${officeData.head}</p>`;
+
+    function getStatusBadge(status) {
+        const badges = { draft: 'bg-gray-100 text-gray-800', submitted: 'bg-yellow-100 text-yellow-800', accepted: 'bg-green-100 text-green-800', rejected: 'bg-red-100 text-red-800' };
+        const labels = { draft: 'Draft', submitted: 'Submitted', accepted: 'Accepted', rejected: 'Rejected' };
+        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badges[status]}">${labels[status]}</span>`;
+    }
+    function getPriorityBadge(p) { const c = { Critical:'bg-red-100 text-red-800', High:'bg-orange-100 text-orange-800', Medium:'bg-blue-100 text-blue-800', Low:'bg-gray-100 text-gray-800' }; return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${c[p]}">${p}</span>`; }
+
+    function renderPPMPs() {
+        const filterStatus = document.getElementById('statusFilter').value;
+        const search = document.getElementById('searchPPMP').value.toLowerCase();
+        let filtered = officeData.ppmpList.filter(p => (filterStatus === 'all' || p.status === filterStatus) && (p.id.toLowerCase().includes(search) || p.title.toLowerCase().includes(search)));
+        const grid = document.getElementById('ppmpGrid');
+        if (filtered.length === 0) { grid.classList.add('hidden'); document.getElementById('emptyState').classList.remove('hidden'); return; }
+        grid.classList.remove('hidden'); document.getElementById('emptyState').classList.add('hidden');
+        grid.innerHTML = filtered.map(p => `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+                <div class="flex justify-between items-start mb-3"><div><div class="flex gap-2 mb-2"><span class="text-sm font-mono text-gray-500">${p.id}</span>${getStatusBadge(p.status)}${getPriorityBadge(p.priority)}</div><h3 class="text-lg font-semibold">${p.title}</h3></div></div>
+                <p class="text-gray-600 text-sm mb-4">${p.description}</p>
+                <div class="grid grid-cols-2 gap-4 mb-4"><div><p class="text-xs text-gray-500">Date Submitted</p><p class="text-sm">${p.dateSubmitted}</p></div><div><p class="text-xs text-gray-500">Budget</p><p class="text-sm font-bold text-blue-600">₱ ${parseFloat(p.estimatedBudget).toLocaleString()}</p></div></div>
+                <div class="flex gap-2 mt-3 pt-3 border-t"><button onclick="viewDetails('${p.id}')" class="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg">View Details</button>${p.status === 'submitted' ? `<button onclick="acceptPPMP('${p.id}')" class="flex-1 px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg">Accept</button><button onclick="rejectPPMP('${p.id}')" class="flex-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">Reject</button>` : ''}</div>
+            </div>
+        `).join('');
+    }
+
+    function viewDetails(ppmpId) {
+        const ppmp = officeData.ppmpList.find(p => p.id === ppmpId);
+        localStorage.setItem('selectedPPMP', JSON.stringify(ppmp));
+        localStorage.setItem('selectedOffice', JSON.stringify(officeData));
+        window.location.href = `/detailed_view/?ppmp_id=${ppmpId}`;
+    }
+    function acceptPPMP(id) { alert(`PPMP ${id} accepted (demo)`); const p = officeData.ppmpList.find(p => p.id === id); if(p) p.status = 'accepted'; renderPPMPs(); }
+    function rejectPPMP(id) { const reason = prompt("Rejection reason:"); if(reason) { alert(`PPMP ${id} rejected: ${reason}`); const p = officeData.ppmpList.find(p => p.id === id); if(p) p.status = 'rejected'; renderPPMPs(); } }
+
+    document.getElementById('statusFilter').addEventListener('change', renderPPMPs);
+    document.getElementById('searchPPMP').addEventListener('input', renderPPMPs);
+    renderPPMPs();
+</script>
+{% endblock %}
