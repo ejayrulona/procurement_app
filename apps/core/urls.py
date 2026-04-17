@@ -16,4 +16,15 @@ urlpatterns = (
     # path("request_detail/", views.request_detail, name="request_detail"),
     # path("ppmp/", views.ppmp, name="ppmp"),
     # path("drafts/", views.drafts, name="drafts"),
+    
+
+    # path("draft/", views.draft, name="draft"),
+    # path("list_page/", views.list_page, name="list_page"),
+    # path("detailed_view/", views.detailed_view, name="detailed_view"),
+    # path("college_dashboard/", views.college_dashboard, name="college_dashboard"),
+    # path("ppmp_form/", views.ppmp_form, name="ppmp_form"),
+    # path("request/", views.request, name="request"),
+    # path("request_detail/", views.request_detail, name="request_detail"),
+    # path("ppmp/", views.ppmp, name="ppmp"),
+    # path("drafts/", views.drafts, name="drafts"),
 )
