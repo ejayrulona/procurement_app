@@ -72,3 +72,9 @@ def dashboard(request):
 
 # def request_detail(request):
 #     return render(request, "core/request_detail.html")
+
+# def admin_registration(request):
+#     return render(request, "core/admin_registration.html")
+
+# def settings(request):
+#     return render(request, "core/settings.html")

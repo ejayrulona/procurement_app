@@ -123,11 +123,6 @@
 			}
 		}
 
-		/* Dropdown animation */
-		.dropdown-enter {
-			transition: all 0.2s ease;
-		}
-
 		/* Responsive text sizes */
 		@media (max-width: 640px) {
 			.brand-title {
@@ -138,6 +133,105 @@
 			}
 			.user-name {
 				display: none;
+			}
+		}
+
+		/* ========== FIXED NESTED DROPDOWN - SUBMENU ON LEFT SIDE ========== */
+		.dropdown-menu {
+			position: absolute;
+			right: 0;
+			top: 100%;
+			margin-top: 0.5rem;
+			width: 260px;
+			background: white;
+			border-radius: 0.75rem;
+			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+			border: 1px solid #e5e7eb;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.15s ease, visibility 0.15s ease;
+			z-index: 1000;
+		}
+
+		.dropdown-menu.show {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Settings menu item - relative positioning for submenu */
+		.settings-menu-item {
+			position: relative;
+		}
+
+		/* Nested submenu - NOW APPEARS ON THE LEFT SIDE */
+		.nested-submenu {
+			position: absolute;
+			right: 100%;
+			top: 0;
+			width: 240px;
+			background: white;
+			border-radius: 0.75rem;
+			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+			border: 1px solid #e5e7eb;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.2s ease, visibility 0.2s ease;
+			z-index: 1001;
+			margin-right: 8px;
+		}
+
+		/* Show submenu when hovering over settings item */
+		.settings-menu-item:hover .nested-submenu {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Keep submenu visible when hovering over it */
+		.nested-submenu:hover {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Mobile submenu adjustments - now expands downward */
+		@media (max-width: 768px) {
+			.nested-submenu {
+				position: static;
+				right: auto;
+				width: 100%;
+				box-shadow: none;
+				border: none;
+				border-left: 2px solid #e5e7eb;
+				border-radius: 0;
+				margin-left: 1.5rem;
+				margin-right: 0;
+				margin-top: 0.5rem;
+				opacity: 1;
+				visibility: visible;
+				display: none;
+				background: #fafafa;
+			}
+			
+			.settings-menu-item.active .nested-submenu {
+				display: block;
+			}
+			
+			.settings-menu-item .chevron-icon {
+				transition: transform 0.2s ease;
+			}
+			
+			.settings-menu-item.active .chevron-icon {
+				transform: rotate(90deg);
+			}
+			
+			.settings-menu-item > div {
+				cursor: pointer;
+			}
+		}
+
+		/* For very large screens, ensure submenu doesn't go off-screen left */
+		@media (min-width: 769px) and (max-width: 1024px) {
+			.nested-submenu {
+				width: 220px;
 			}
 		}
 	</style>
@@ -178,18 +272,14 @@
 					<button id="user-menu-button" class="flex items-center gap-2 focus:outline-none group">
 						<div class="w-8 h-8 bg-white rounded-full flex items-center justify-center group-hover:bg-gray-100 transition shadow-sm">
 							<span class="text-red-600 font-semibold text-sm">
-								{% if user.is_authenticated %}
-									{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:user.username|slice:":1" }}
-								{% else %}
-									G
-								{% endif %}
+								{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:"U" }}
 							</span>
 						</div>
 						<span class="user-name text-sm font-medium text-white hidden md:inline">
 							{% if user.is_authenticated %}
-								{{ user.get_full_name|default:user.username }}
+							{{ user.get_full_name|default:user.username }}
 							{% else %}
-								Guest User
+							Guest User
 							{% endif %}
 						</span>
 						<svg class="w-4 h-4 text-white transition-transform duration-200 hidden sm:block" fill="none"
@@ -198,59 +288,82 @@
 						</svg>
 					</button>
 
-					<!-- Dropdown Menu -->
-					<div id="user-dropdown"
-						class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
+					<!-- Main Dropdown Menu -->
+					<div id="user-dropdown" class="dropdown-menu">
 						<div class="py-2">
+							<!-- User Info Section -->
 							<div class="px-4 py-3 border-b border-gray-100">
 								<p class="text-sm font-semibold text-gray-800">
 									{% if user.is_authenticated %}
-										{{ user.get_full_name|default:user.username }}
+									{{ user.get_full_name|default:user.username }}
 									{% else %}
-										Guest User
+									Guest User
 									{% endif %}
 								</p>
 								<p class="text-xs text-gray-500 mt-1">
 									{% if user.is_authenticated %}
-										{{ user.email }}
+									{{ user.email }}
 									{% else %}
-										Not signed in
+									Not signed in
 									{% endif %}
 								</p>
 							</div>
 
-							{% if user.is_authenticated %}
-							<a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
+							<!-- Profile Link -->
+							<a href="{% url 'users:profile' %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
 								</svg>
 								<span class="text-sm">My Profile</span>
 							</a>
 
-							<a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-								</svg>
-								<span class="text-sm">Settings</span>
-							</a>
+							<!-- Settings with Nested Dropdown -->
+							<div class="settings-menu-item">
+								<div class="flex items-center justify-between px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
+									<div class="flex items-center gap-3">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+										</svg>
+										<span class="text-sm">Settings</span>
+									</div>
+									<svg class="chevron-icon w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+									</svg>
+								</div>
+								
+								<!-- Nested Submenu -->
+								<div class="nested-submenu">
+									<div class="py-2">
+										<div class="px-4 py-2 border-b border-gray-100">
+											<p class="text-xs font-semibold text-gray-400 uppercase">Administration</p>
+										</div>
+										<a href="{% url 'users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+											</svg>
+											<span class="text-sm">General Settings</span>
+										</a>
+										<!-- Create Admin Account Link - Visible to everyone now -->
+										<a href="{% url 'users:admin_registration' %}" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+											</svg>
+											<span class="text-sm font-medium">Create Admin Account</span>
+										</a>
+									</div>
+								</div>
+							</div>
 
 							<div class="border-t border-gray-100 my-1"></div>
 
-							<a href="#" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
+							<a href="" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
 								</svg>
 								<span class="text-sm">Logout</span>
 							</a>
-							{% else %}
-							<a href="#" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-								</svg>
-								<span class="text-sm">Login</span>
-							</a>
-							{% endif %}
 						</div>
 					</div>
 				</div>
@@ -267,89 +380,40 @@
 				<div class="sidebar-wrapper">
 					<div class="p-6">
 						<nav class="space-y-2">
-							
-							{% if user.is_authenticated %}
-							<!-- ========== AUTHENTICATED USER NAVIGATION ========== -->
-							<!-- Dashboard -->
-							<a href="{% url 'core:dashboard' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'dashboard' %}nav-active{% endif %}">
+							<a href="{% url 'core:dashboard' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'dashboard' %}nav-active{% endif %}">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
 								</svg>
 								<span class="font-medium">Dashboard</span>
 							</a>
 
-							<!-- Create PPMP -->
-							<a href="{% url 'core:ppmp' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-								</svg>
-								<span>Create PPMP</span>
-							</a>
-
-							<!-- PPMP List / Drafts -->
-							<a href="{% url 'core:draft' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-								</svg>
-								<span>PPMP List</span>
-							</a>
-
-							<!-- Activity Log -->
-							<a href="{% url 'activity_logs:list_activities' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 								</svg>
 								<span>Activity Log</span>
 							</a>
 
-							<!-- Inventory -->
-							<a href="{% url 'inventory:list_inventory' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-								</svg>
-								<span>Inventory</span>
-							</a>
-
-							<!-- Request (for admin-like access) -->
-							<a href="#"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="{% url 'core:request' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 								</svg>
 								<span>Request</span>
 							</a>
 
-							<!-- Invoice -->
-							<a href="#"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="{% url 'core:draft' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+								</svg>
+								<span>Inventory</span>
+							</a>
+
+							<a href="" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 								</svg>
 								<span>Invoice</span>
 							</a>
-							
-							{% else %}
-							<!-- ========== GUEST USER NAVIGATION (Limited) ========== -->
-							<a href="{% url 'core:dashboard' %}"
-								class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-								</svg>
-								<span>Dashboard</span>
-							</a>
-							<a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-								</svg>
-								<span>Login</span>
-							</a>
-							{% endif %}
-							
 						</nav>
 					</div>
 				</div>
@@ -367,32 +431,20 @@
 
 	<!-- JavaScript for Dropdown and Mobile Sidebar -->
 	<script>
-		// User dropdown functionality
+		// User dropdown functionality - simple toggle
 		const userMenuButton = document.getElementById('user-menu-button');
 		const userDropdown = document.getElementById('user-dropdown');
 
 		if (userMenuButton && userDropdown) {
 			userMenuButton.addEventListener('click', (e) => {
 				e.stopPropagation();
-				userDropdown.classList.toggle('hidden');
-
-				const arrowIcon = userMenuButton.querySelector('svg:last-child');
-				if (arrowIcon) {
-					if (userDropdown.classList.contains('hidden')) {
-						arrowIcon.style.transform = 'rotate(0deg)';
-					} else {
-						arrowIcon.style.transform = 'rotate(180deg)';
-					}
-				}
+				userDropdown.classList.toggle('show');
 			});
 
+			// Close dropdown when clicking outside
 			document.addEventListener('click', (e) => {
 				if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-					userDropdown.classList.add('hidden');
-					const arrowIcon = userMenuButton.querySelector('svg:last-child');
-					if (arrowIcon) {
-						arrowIcon.style.transform = 'rotate(0deg)';
-					}
+					userDropdown.classList.remove('show');
 				}
 			});
 		}
@@ -424,6 +476,26 @@
 				closeSidebar();
 			}
 		});
+		
+		// Mobile submenu toggle (for Settings nested menu)
+		function handleMobileSubmenu() {
+			const settingsMenuItem = document.querySelector('.settings-menu-item');
+			if (settingsMenuItem && window.innerWidth <= 768) {
+				const settingsTrigger = settingsMenuItem.querySelector('div.flex.items-center.justify-between');
+				if (settingsTrigger && !settingsTrigger.hasListener) {
+					settingsTrigger.addEventListener('click', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						settingsMenuItem.classList.toggle('active');
+					});
+					settingsTrigger.hasListener = true;
+				}
+			}
+		}
+		
+		// Run on load and resize
+		handleMobileSubmenu();
+		window.addEventListener('resize', handleMobileSubmenu);
 	</script>
 
 	{% block extra_js %}{% endblock %}
