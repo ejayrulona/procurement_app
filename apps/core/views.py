@@ -73,6 +73,9 @@ def dashboard(request):
 # def request_detail(request):
 #     return render(request, "core/request_detail.html")
 
+# def pending_accounts(request):
+#     return render(request, "core/pending_accounts.html")
+
 # def admin_registration(request):
 #     return render(request, "core/admin_registration.html")
 
