@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from users.models import User, AdminProfile
+from apps.users.models import User, AdminProfile
 
 class Command(BaseCommand):
     help = "Creates admin account for the procurement system"
@@ -9,7 +9,7 @@ class Command(BaseCommand):
             self.stdout.write("A admin account already exists.")
             return
         
-        user = User.objects.create(
+        user = User.objects.create_user(
             username = "admin",
             role = User.Role.ADMIN,
             first_name = "Procurement",
@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         AdminProfile.objects.create(
             user = user,
-            employee_id_number = "" # Add the id number before running the command.
+            employee_id_number = "2022-00779" # Student id number used as a temporary value for now, to be updated to use employee id number
         )
 
         self.stdout.write(
