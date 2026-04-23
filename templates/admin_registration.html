@@ -1,44 +1,56 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Admin Registration | Procurement Office</title>
-  <!-- TailwindCSS v3 + Google Fonts -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      ring: 2px;
-      ring-offset: 2px;
-    }
-  </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<title>Admin Registration | Procurement Office</title>
+	<link rel="icon" type="image/png" href="{% static 'images/wmsu_favicon.png' %}">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+		rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		* {
+			font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		}
+
+		input:focus,
+		textarea:focus,
+		select:focus {
+			outline: none;
+			ring: 2px;
+			ring-offset: 2px;
+		}
+	</style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
-  <!-- BACKGROUND IMAGE PLACEHOLDER -->
-  <div class="fixed inset-0 -z-10">
-    <img src="{% static 'images/wmsu.jpg' %}" alt="Procurement background" class="w-full h-full object-cover opacity-30">
-    <div class="absolute inset-0 bg-white/80"></div>
-  </div>
+	<!-- Background Image -->
+	<div class="fixed inset-0 -z-10">
+		<img src="{% static 'images/wmsu.jpg' %}" alt="Procurement background"
+			class="w-full h-full object-cover opacity-30">
+		<div class="absolute inset-0 bg-white/80"></div>
+	</div>
 
-  <!-- HEADER with Logo -->
-  <header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-20">
-    <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between flex-wrap gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md border border-gray-200">
-          <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-10 h-10 object-contain">
-        </div>
-        <div>
-          <h1 class="text-white font-bold text-xl tracking-tight">PROCUREMENT<span class="font-light">OFFICE</span></h1>
-          <p class="text-red-100 text-xs">Centralized e‑procurement hub</p>
-        </div>
-      </div>
-    </div>
-  </header>
+	<!-- Header with Logo -->
+	<header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-20">
+		<div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between flex-wrap gap-3">
+			<div class="flex items-center gap-3">
+				<div
+					class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md border border-gray-200">
+					<img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-10 h-10 object-contain">
+				</div>
+				<div>
+					<h1 class="text-white font-bold text-xl tracking-tight">PROCUREMENT<span
+							class="font-light">OFFICE</span></h1>
+					<p class="text-red-100 text-xs">Centralized e‑procurement hub</p>
+				</div>
+			</div>
+		</div>
+	</header>
 
   <!-- MAIN CONTENT: Admin Registration Form -->
   <main class="flex-grow flex items-center justify-center p-5">
@@ -54,156 +66,182 @@
         </a>
       </div>
 
-      <!-- Decorative red line -->
-      <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mb-5 rounded-full"></div>
-      
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-800">Admin Registration</h2>
-        <p class="text-gray-500 text-sm mt-1">Register a new administrator for the Procurement Office</p>
-        <p class="text-xs text-red-600 mt-2">⚠️ This registration is restricted to authorized personnel only</p>
-      </div>
+			<!-- Back Button -->
+			<div class="mb-6">
+				<a href="{% url 'core:home' %}"
+					class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+						</path>
+					</svg>
+					<span class="font-medium">Back to Login</span>
+				</a>
+			</div>
 
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <!-- Admin Information Section -->
-        <div class="mb-8">
-          <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Administrator Information</h3>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">First Name</label>
-              <input type="text" name="first_name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Enter first name">
-            </div>
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Middle Initial</label>
-              <input type="text" name="middle_initial" maxlength="1" class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="M.I.">
-            </div>
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Last Name</label>
-              <input type="text" name="last_name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Enter last name">
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Email Address</label>
-              <input type="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="admin@procurement.gov.ph">
-            </div>
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Phone Number</label>
-              <input type="tel" name="phone" class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="(123) 456-7890">
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Employee/ID Number</label>
-              <input type="text" name="employee_id" class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Employee ID Number">
-            </div>
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Upload Profile Photo</label>
-              <div class="flex items-center gap-3">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300">
-                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <input type="file" name="profile_photo" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
-                  <p class="text-xs text-gray-500 mt-1">JPEG, PNG, JPG (Max 5MB)</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Account Credentials Section -->
-        <div class="mb-8">
-          <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Account Credentials</h3>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Username</label>
-              <input type="text" name="username" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Choose a username">
-            </div>
-            <div>
-              <label class="block text-gray-700 font-medium text-sm mb-2">Password</label>
-              <input type="password" name="password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Create a strong password">
-            </div>
-          </div>
-          
-          <div class="mt-4">
-            <label class="block text-gray-700 font-medium text-sm mb-2">Confirm Password</label>
-            <input type="password" name="confirm_password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200" placeholder="Confirm your password">
-          </div>
-        </div>
-        
-        <!-- Info Note -->
-        <div class="mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
-          <div class="flex gap-3">
-            <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-sm text-blue-800">
-              This account will be assigned to the <strong>Procurement Division</strong> with the role of <strong>Procurement Officer</strong>.
-            </p>
-          </div>
-        </div>
-        
-        <!-- Registration Buttons -->
-        <div class="flex gap-4 justify-end">
-          <button type="button" id="cancelBtn" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition duration-200">
-            Cancel
-          </button>
-          <button type="submit" class="px-8 py-3 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition duration-200">
-            Register Administrator →
-          </button>
-        </div>
-      </form>
-    </div>
-  </main>
+			<!-- Decorative red line -->
+			<div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mb-5 rounded-full"></div>
 
-  <script>
-    const form = document.querySelector('form');
-    const cancelBtn = document.getElementById('cancelBtn');
-    
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
-        window.location.href = "{% url 'core:home' %}";
-      });
-    }
-    
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const password = form.querySelector('input[name="password"]').value;
-        const confirmPassword = form.querySelector('input[name="confirm_password"]').value;
-        
-        if (password !== confirmPassword) {
-          alert("Passwords do not match. Please try again.");
-          return;
-        }
-        
-        if (password.length < 8) {
-          alert("Password must be at least 8 characters long.");
-          return;
-        }
-        
-        const email = form.querySelector('input[name="email"]').value;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          alert("Please enter a valid email address.");
-          return;
-        }
-        
-        alert('✓ Administrator registration submitted successfully!\n\nThe new admin account will be activated after verification.');
-        // In production, this would submit to the backend
-        window.location.href = "{% url 'core:home' %}";
-      });
-    }
-  </script>
+			<div class="text-center mb-8">
+				<h2 class="text-3xl font-bold text-gray-800">Admin Registration</h2>
+				<p class="text-gray-500 text-sm mt-1">Register a new administrator for the Procurement Office</p>
+				<p class="text-xs text-red-600 mt-2">
+					<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 128 128"
+						class="inline-block">
+						<rect width="128" height="128" fill="none" />
+						<path fill="#fcc21b" d="M9.6 114.26L64 20.03l54.41 94.23z" />
+						<g fill="#2f2f2f">
+							<path
+								d="M127.07 115.93L66.89 11.7c-.6-1.03-1.7-1.67-2.89-1.67s-2.29.64-2.88 1.67L.93 115.93c-.6 1.03-.6 2.3 0 3.34c.6 1.03 1.7 1.66 2.89 1.66h120.36c1.19 0 2.29-.63 2.89-1.66c.59-1.04.59-2.31 0-3.34M9.6 114.26L64 20.03l54.41 94.23z" />
+							<path
+								d="M59.12 83.21h9.76c.36 0 .65-.23.67-.53l2.66-38.27q.015-.24-.18-.42a.74.74 0 0 0-.49-.18H56.46c-.19 0-.37.07-.49.18a.54.54 0 0 0-.18.42l2.67 38.27c.01.29.3.53.66.53m-3.01 20.11c0-1.41.2-2.6.61-3.57q.6-1.47 1.68-2.37c.72-.6 1.56-1.04 2.54-1.31c.97-.27 2.01-.41 3.13-.41c1.05 0 2.05.14 3 .41s1.78.71 2.49 1.31c.72.6 1.29 1.38 1.71 2.37q.63 1.455.63 3.57c0 1.35-.21 2.51-.63 3.46c-.42.96-.99 1.76-1.71 2.39c-.71.63-1.54 1.09-2.49 1.37s-1.95.43-3 .43c-1.11 0-2.15-.14-3.13-.43s-1.82-.74-2.54-1.37a6.2 6.2 0 0 1-1.68-2.39c-.41-.96-.61-2.11-.61-3.46" />
+						</g>
+					</svg>
+					This registration is restricted to authorized personnel only
+				</p>
+			</div>
+
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+
+				<!-- Admin Information Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Administrator
+						Information</h3>
+
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.first_name.id_for_label}}">First Name</label>
+							{{ user_form.first_name }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.middle_name.id_for_label}}">Middle Initial</label>
+							{{ user_form.middle_name }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+							{{ user_form.last_name }}
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.email.id_for_label }}">Email Address</label>
+							{{ user_form.email }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.phone_number.id_for_label }}">Phone Number</label>
+							{{ user_form.phone_number }}
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ admin_profile_form.employee_id_number.id_for_label }}">Employee/ID
+								Number</label>
+							{{ admin_profile_form.employee_id_number }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ admin_profile_form.profile_photo.id_for_label }}">Upload Profile Photo</label>
+							<div class="flex items-center gap-3">
+								<div
+									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300">
+									<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+										</path>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+									</svg>
+								</div>
+								<div class="flex-1">
+									{{ admin_profile_form.profile_photo }}
+									<p class="text-xs text-gray-500 mt-1">JPEG, PNG, JPG (Max 5MB)</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Account Credentials Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Account
+						Credentials</h3>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.username.id_for_label }}">Username</label>
+							{{ user_form.username }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.password1.id_for_label }}">Password</label>
+							<div class="relative">
+								{{ user_form.password1 }}
+								<button type="button"
+									class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+									data-target="{{ user_form.password1.id_for_label }}">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+										<path fill="currentColor"
+											d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
+									</svg>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-4">
+						<label class="block text-gray-700 font-medium text-sm mb-2"
+							for="{{ user_form.password2.id_for_label }}">Confirm Password</label>
+						<div class="relative">
+							{{ user_form.password2 }}
+							<button type="button"
+								class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+								data-target="{{ user_form.password2.id_for_label }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+									<path fill="currentColor"
+										d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
+								</svg>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Info Note -->
+				<div class="mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
+					<div class="flex gap-3">
+						<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor"
+							viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						<p class="text-sm text-blue-800">
+							This account will be assigned to the <strong>Procurement Division</strong> with the role of
+							<strong>Procurement Officer</strong>.
+						</p>
+					</div>
+				</div>
+
+				<!-- Registration Buttons -->
+				<div class="flex gap-4 justify-end">
+					<button type="submit"
+						class="px-8 py-3 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition duration-200">
+						Register Administrator →
+					</button>
+				</div>
+			</form>
+		</div>
+	</main>
+
+	<script type="module" src="{% static 'javascript/register.js' %}"></script>
 </body>
+
 </html>

@@ -42,7 +42,7 @@ class UserManager(BaseUserManager):
         
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("is_admin", False)
+        extra_fields.setdefault("role", User.Role.COLLEGE)
         
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
@@ -59,9 +59,13 @@ class UserManager(BaseUserManager):
     
 
 class User(AbstractBaseUser, PermissionsMixin):
+    class Role(models.TextChoices):
+        ADMIN = "admin", "Admin"
+        ADMIN_AID = "admin_aid", "Admin Aid"
+        COLLEGE = "college", "College"
 
     username = models.CharField(max_length=50, unique=True)
-    is_admin = models.BooleanField(default=False)
+    role = models.CharField(max_length=15, choices=Role.choices, default=Role.COLLEGE)
     first_name = models.CharField(max_length=80)
     middle_name = models.CharField(max_length=80, null=True, blank=True)
     last_name = models.CharField(max_length=80)
@@ -81,6 +85,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "User"
         verbose_name_plural = "Users"
         
+    
+    @property
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
+    
+    @property
+    def is_adminaid(self):
+        return self.role == self.Role.ADMIN_AID
+    
+    @property
+    def is_college(self):
+        return self.role == self.Role.COLLEGE
+    
+    @property
+    def is_any_admin(self):
+        return self.role in [self.Role.ADMIN, self.Role.ADMIN_AID]
 
     @property
     def full_name(self):
