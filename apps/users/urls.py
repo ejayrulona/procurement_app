@@ -9,4 +9,5 @@ urlpatterns = (
     path("resend-setup-email/<int:id>/", views.resend_setup_email, name="resend-setup-email"),
     path("register-college/", views.register_college, name="register-college"),
     path("profile/", views.profile, name="profile"),
+    path("settings/", views.settings, name="settings"),
 )
