@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Aid Accounts Status | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Manage pending administrator registrations{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Admin Aid Accounts</h1>
+        <p class="text-gray-500 mt-1">View and manage pending administrator account registrations</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Total Applications</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">12</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Pending Approval</p>
+                    <p class="text-3xl font-bold text-yellow-600 mt-1">8</p>
+                </div>
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Approved</p>
+                    <p class="text-3xl font-bold text-green-600 mt-1">3</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Rejected</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1">1</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="flex flex-wrap gap-4 justify-between items-center">
+            <div class="flex gap-3">
+                <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="Search by name or email..." 
+                       class="px-4 py-2 border border-gray-300 rounded-lg w-64 focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            </div>
+            <button id="refreshBtn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Accounts Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600">Admin Name</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600">Email Address</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600">Date Applied</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsTableBody">
+                    <!-- Pending Account 1 -->
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-600 font-semibold">JD</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">John Dela Cruz</p>
+                                    <p class="text-xs text-gray-500">Admin ID: ADM-001</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">john.delacruz@procurement.gov.ph</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">2024-01-15</p>
+                            <p class="text-xs text-gray-400">10:30 AM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="resendEmail('John Dela Cruz', 'john.delacruz@procurement.gov.ph')" 
+                                    class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Resend Email
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Pending Account 2 -->
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-600 font-semibold">MR</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Maria Reyes</p>
+                                    <p class="text-xs text-gray-500">Admin ID: ADM-002</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">maria.reyes@procurement.gov.ph</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">2024-01-14</p>
+                            <p class="text-xs text-gray-400">02:15 PM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="resendEmail('Maria Reyes', 'maria.reyes@procurement.gov.ph')" 
+                                    class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Resend Email
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Pending Account 3 -->
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-600 font-semibold">CS</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Carlos Santiago</p>
+                                    <p class="text-xs text-gray-500">Admin ID: ADM-003</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">carlos.santiago@procurement.gov.ph</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">2024-01-13</p>
+                            <p class="text-xs text-gray-400">09:45 AM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="resendEmail('Carlos Santiago', 'carlos.santiago@procurement.gov.ph')" 
+                                    class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Resend Email
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Approved Account Example -->
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-600 font-semibold">AT</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Anna Torres</p>
+                                    <p class="text-xs text-gray-500">Admin ID: ADM-004</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">anna.torres@procurement.gov.ph</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">2024-01-10</p>
+                            <p class="text-xs text-gray-400">11:20 AM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Approved
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-gray-400 text-sm">-</span>
+                        </td>
+                    </tr>
+
+                    <!-- Rejected Account Example -->
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-600 font-semibold">ML</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Mark Lopez</p>
+                                    <p class="text-xs text-gray-500">Admin ID: ADM-005</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">mark.lopez@procurement.gov.ph</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-600">2024-01-09</p>
+                            <p class="text-xs text-gray-400">03:00 PM</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Rejected
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-gray-400 text-sm">-</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-500">No accounts found.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-600">Showing <span id="showingStart">1</span> to <span id="showingEnd">5</span> of <span id="totalCount">5</span> results</p>
+                <div class="flex gap-2">
+                    <button id="prevPage" disabled class="px-3 py-1 border border-gray-300 rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed">Previous</button>
+                    <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resend Email Modal -->
+<div id="resendModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all scale-95 opacity-0" id="resendModalContent">
+        <div class="text-center">
+            <!-- Email Icon -->
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Resend Email</h3>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
+                <p class="text-sm text-yellow-800">
+                    Are you sure you want to resend the verification email to <strong id="resendEmailName"></strong>?
+                </p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="cancelResendBtn" 
+                        class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition">
+                    Cancel
+                </button>
+                <button id="confirmResendBtn" 
+                        class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
+                    Send Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast Notification -->
+<div id="successToast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden transition-all duration-300 z-50">
+    <div class="flex items-center gap-3">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Email resent successfully!</span>
+    </div>
+</div>
+
+<script>
+    // Filter and search functionality
+    const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('accountsTableBody');
+    const emptyState = document.getElementById('emptyState');
+    const showingStart = document.getElementById('showingStart');
+    const showingEnd = document.getElementById('showingEnd');
+    const totalCount = document.getElementById('totalCount');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    let currentPage = 1;
+    const rowsPerPage = 5;
+    let filteredRows = [];
+
+    // Get all table rows
+    function getAllRows() {
+        return Array.from(document.querySelectorAll('#accountsTableBody tr'));
+    }
+
+    // Filter rows based on status and search
+    function filterRows() {
+        const status = statusFilter.value;
+        const search = searchInput.value.toLowerCase();
+        const rows = getAllRows();
+        
+        filteredRows = rows.filter(row => {
+            const statusText = row.querySelector('td:nth-child(4) span').textContent.toLowerCase();
+            const nameText = row.querySelector('td:nth-child(1) p')?.textContent.toLowerCase() || '';
+            const emailText = row.querySelector('td:nth-child(2) p')?.textContent.toLowerCase() || '';
+            
+            const statusMatch = status === 'all' || statusText === status;
+            const searchMatch = nameText.includes(search) || emailText.includes(search);
+            
+            return statusMatch && searchMatch;
+        });
+        
+        currentPage = 1;
+        displayRows();
+    }
+
+    // Display current page rows
+    function displayRows() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+        
+        // Hide all rows first
+        getAllRows().forEach(row => row.classList.add('hidden'));
+        
+        // Show only filtered and paginated rows
+        pageRows.forEach(row => row.classList.remove('hidden'));
+        
+        // Update pagination info
+        const totalFiltered = filteredRows.length;
+        totalCount.textContent = totalFiltered;
+        showingStart.textContent = totalFiltered > 0 ? start + 1 : 0;
+        showingEnd.textContent = Math.min(end, totalFiltered);
+        
+        // Update pagination buttons
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = end >= totalFiltered;
+        
+        // Show/hide empty state
+        if (totalFiltered === 0) {
+            emptyState.classList.remove('hidden');
+            document.querySelector('.overflow-x-auto table').classList.add('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+            document.querySelector('.overflow-x-auto table').classList.remove('hidden');
+        }
+    }
+
+    // Pagination event listeners
+    prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayRows();
+        }
+    });
+    
+    nextPageBtn.addEventListener('click', () => {
+        const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            displayRows();
+        }
+    });
+    
+    // Filter event listeners
+    statusFilter.addEventListener('change', filterRows);
+    searchInput.addEventListener('input', filterRows);
+    refreshBtn.addEventListener('click', () => {
+        statusFilter.value = 'all';
+        searchInput.value = '';
+        filterRows();
+    });
+
+    // Resend Email Modal
+    const resendModal = document.getElementById('resendModal');
+    const resendModalContent = document.getElementById('resendModalContent');
+    const resendEmailName = document.getElementById('resendEmailName');
+    const cancelResendBtn = document.getElementById('cancelResendBtn');
+    const confirmResendBtn = document.getElementById('confirmResendBtn');
+    const successToast = document.getElementById('successToast');
+    
+    let currentResendName = '';
+    let currentResendEmail = '';
+    
+    function openResendModal(name, email) {
+        currentResendName = name;
+        currentResendEmail = email;
+        resendEmailName.textContent = name;
+        resendModal.classList.remove('hidden');
+        setTimeout(() => {
+            resendModalContent.classList.remove('scale-95', 'opacity-0');
+            resendModalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+    
+    function closeResendModal() {
+        resendModalContent.classList.remove('scale-100', 'opacity-100');
+        resendModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            resendModal.classList.add('hidden');
+        }, 200);
+    }
+    
+    function showToast() {
+        successToast.classList.remove('hidden');
+        setTimeout(() => {
+            successToast.classList.add('hidden');
+        }, 3000);
+    }
+    
+    // Resend email function
+    window.resendEmail = function(name, email) {
+        openResendModal(name, email);
+    };
+    
+    cancelResendBtn.addEventListener('click', closeResendModal);
+    
+    confirmResendBtn.addEventListener('click', () => {
+        // Here you would make an AJAX call to resend the email
+        console.log(`Resending email to: ${currentResendName} (${currentResendEmail})`);
+        
+        // Close modal and show success message
+        closeResendModal();
+        showToast();
+        
+        // In production, you would send an AJAX request here
+        // fetch('/api/resend-email/', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ email: currentResendEmail, name: currentResendName })
+        // });
+    });
+    
+    // Close modal when clicking outside
+    resendModal.addEventListener('click', (e) => {
+        if (e.target === resendModal) {
+            closeResendModal();
+        }
+    });
+    
+    // Initialize
+    filterRows();
+</script>
+{% endblock %}
