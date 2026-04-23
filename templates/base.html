@@ -345,7 +345,6 @@
 											</svg>
 											<span class="text-sm">General Settings</span>
 										</a>
-										<!-- Create Admin Account Link - Visible to everyone now -->
 										<a href="{% url 'users:admin_registration' %}" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
@@ -385,6 +384,15 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
 								</svg>
 								<span class="font-medium">Dashboard</span>
+							</a>
+
+							<!-- Pending Account Link -->
+							<a href="{% url 'core:pending_accounts' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'pending_accounts' %}nav-active{% endif %}">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span>Pending Account</span>
+								<span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
 							</a>
 
 							<a href="" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
