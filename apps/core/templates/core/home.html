@@ -179,14 +179,14 @@
 			}
 		});
 
-		// College/Office option: redirect to register_college URL
+		// College/Office option: redirect to register-college URL
 		collegeOption.addEventListener('click', () => {
 			window.location.href = "{% url 'users:register_college' %}";
 		});
 
 		// Admin option: show "coming soon" message
 		adminOption.addEventListener('click', () => {
-			window.location.href = "{% url 'users:register_admin' %}";
+			window.location.href = "{% url 'users:create-admin-aid' %}";
 		});
 	</script>
 </body>

@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<title>College Registration | Procurement Office</title>
+	<link rel="icon" type="image/png" href="{% static 'images/wmsu_favicon.png' %}">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+		rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		* {
+			font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		}
+
+		input:focus,
+		textarea:focus,
+		select:focus {
+			outline: none;
+			ring: 2px;
+			ring-offset: 2px;
+		}
+
+		.image-preview {
+			transition: all 0.3s ease;
+		}
+	</style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+	<!-- Background Image -->
+	<div class="fixed inset-0 -z-10">
+		<img src="{% static 'images/wmsu.jpg' %}" alt="Procurement background"
+			class="w-full h-full object-cover opacity-30">
+		<div class="absolute inset-0 bg-white/80"></div>
+	</div>
+
+	<!-- Header with Logo -->
+	<header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-20">
+		<div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between flex-wrap gap-3">
+			<div class="flex items-center gap-3">
+				<div
+					class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200">
+					<img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-10 h-10 object-contain">
+				</div>
+				<div>
+					<h1 class="text-white font-bold text-xl tracking-tight">PROCUREMENT<span
+							class="font-light">OFFICE</span></h1>
+					<p class="text-red-100 text-xs">Centralized e‑procurement hub</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="flex-grow flex items-center justify-center p-5">
+		<div
+			class="w-full max-w-4xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200 p-8 md:p-10 transition-all duration-300">
+
+			<!-- Back Button -->
+			<div class="mb-6">
+				<a href="{% url 'core:home' %}"
+					class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+						</path>
+					</svg>
+					<span class="font-medium">Back to Login</span>
+				</a>
+			</div>
+
+			<!-- Decorative red line -->
+			<div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mb-5 rounded-full"></div>
+
+			<div class="text-center mb-8">
+				<h2 class="text-3xl font-bold text-gray-800">College / Office Registration</h2>
+				<p class="text-gray-500 text-sm mt-1">Register your college or office for procurement access</p>
+			</div>
+
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+
+				<!-- College/Office Information Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">College / Office
+						Information</h3>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ college_profile_form.college_office.id_for_label }}">College/Office Name</label>
+							{{ college_profile_form.college_office }}
+							<datalist id="college-office-list">
+								{% for college_office in colleges_offices %}
+								<option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
+									data-code="{{ college_office.code}}"
+									data-type="{{ college_office.get_organization_type_display }}"
+									data-campus="{{ college_office.get_campus_display }}"
+									data-address="{{ college_office.address }}"
+									data-photo="{% if college_office.college_photo %} {{college_office.college_photo.url}} {% endif %}">
+								</option>
+								{% endfor %}
+							</datalist>
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">College/Office Code</label>
+							<input type="text" id="college-code" required readonly
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+								placeholder="Auto-generated">
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">Type</label>
+							<input type="text" id="college-type" required readonly
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+								placeholder="Auto-generated">
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">Campus</label>
+							<input type="text" id="college-campus" required readonly
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+								placeholder="Auto-generated">
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
+							<input type="text" id="college-address" required readonly
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+								placeholder="Auto-generated">
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2">College/Office Profile
+								Photo</label>
+							<div class="flex items-center gap-3">
+								<div
+									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
+									<svg id="photo-placeholder" class="w-8 h-8 text-gray-400" fill="none"
+										stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+										</path>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+									</svg>
+									<img src="#" alt="College / Office Photo" class="w-full h-full object-cover hidden"
+										id="college-photo-preview">
+								</div>
+								<div class="flex-1">
+									<p class="text-xs text-gray-500" id="photo-hint">Photo will be auto-generated from
+										the selected college/office record.</p>
+									<p class="text-xs text-red-400 hidden" id="no-photo-hint">No photo found for this
+										college/office. The admin can update it from the admin panel</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Head/Dean Information Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Head / Dean
+						Information</h3>
+					<p class="text-sm text-gray-500 mb-4">The person who will manage this account</p>
+
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.first_name.id_for_label }}">First Name</label>
+							{{ user_form.first_name }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.middle_name.id_for_label }}">Middle Initial</label>
+							{{ user_form.middle_name }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+							{{ user_form.last_name }}
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ college_profile_form.position_title.id_for_label }}">Position Title</label>
+							{{ college_profile_form.position_title }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.email.id_for_label }}">Email Address</label>
+							{{ user_form.email }}
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.phone_number.id_for_label }}">Phone Number</label>
+							{{ user_form.phone_number }}
+						</div>
+					</div>
+				</div>
+
+				<!-- Account Credentials Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Account
+						Credentials</h3>
+					<p class="text-sm text-gray-500 mb-4">This will be used to access the procurement system</p>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.username.id_for_label }}">Username</label>
+							{{ user_form.username }}
+						</div>
+						<div>
+							<label class="block text-gray-700 font-medium text-sm mb-2"
+								for="{{ user_form.password1.id_for_label }}">Password</label>
+							<div class="relative">
+								{{ user_form.password1 }}
+								<button type="button"
+									class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+									data-target="{{ user_form.password1.id_for_label }}">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+										<path fill="currentColor"
+											d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
+									</svg>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-4">
+						<label class="block text-gray-700 font-medium text-sm mb-2"
+							for="{{ user_form.password2.id_for_label }}">Confirm Password</label>
+						<div class="relative">
+							{{ user_form.password2 }}
+							<button type="button"
+								class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+								data-target="{{ user_form.password2.id_for_label }}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+									<path fill="currentColor"
+										d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
+								</svg>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Register Button -->
+				<div class="flex justify-end">
+					<button type="submit"
+						class="px-8 py-3 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition duration-200">
+						Register College →
+					</button>
+				</div>
+			</form>
+		</div>
+	</main>
+
+	<script type="module" src="{% static 'javascript/register.js' %}"></script>
+</body>
+
+</html>

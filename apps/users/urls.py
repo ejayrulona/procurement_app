@@ -4,12 +4,9 @@ from . import views
 app_name = "users"
 
 urlpatterns = (
-    path("register_admin", views.register_admin, name="register_admin"),
-    path("register_college/", views.register_college, name="register_college"),
+    path("create-admin-aid/", views.create_admin_aid, name="create-admin-aid"),
+    path("account-setup/<str:token>/", views.account_setup, name="account-setup"),
+    path("resend-setup-email/<int:id>/", views.resend_setup_email, name="resend-setup-email"),
+    path("register-college/", views.register_college, name="register-college"),
     path("profile/", views.profile, name="profile"),
-<<<<<<< HEAD
-=======
-    path("admin_registration", views.admin_registration, name="admin_registration"),
-    path("settings/", views.settings, name="settings"),
->>>>>>> 57f5781a1af2ec60483e79846dad01ad89a14f38
 )

@@ -116,6 +116,7 @@ class AdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admin_profile")
     employee_id_number = models.CharField(max_length=50, unique=True)
     profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
+    is_setup_complete = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Admin Profile"
