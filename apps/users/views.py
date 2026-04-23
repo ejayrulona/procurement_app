@@ -131,7 +131,7 @@ def register_college(request):
         "colleges_offices": CollegeOffice.objects.all()
     }
 
-    return render(request, "users/college_registration.html", context)
+    return render(request, "users/register.html", context)
 
 def profile(request):
     return render(request, "users/profile.html")
