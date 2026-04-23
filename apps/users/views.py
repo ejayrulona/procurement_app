@@ -39,7 +39,7 @@ def create_admin_aid(request):
     context = {
         "form": form
     }
-    return render(request, "users/admin_registration.html", context)
+    return render(request, "users/create_admin_aid.html", context)
 
 def account_setup(request, token):
     # Validate the token
@@ -87,7 +87,7 @@ def account_setup(request, token):
         "user": user,
     }
 
-    return render(request, "users/account_setup.html", context)
+    return render(request, "users/aid_account_confirmation.html", context)
 
 def resend_setup_email(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
@@ -131,7 +131,7 @@ def register_college(request):
         "colleges_offices": CollegeOffice.objects.all()
     }
 
-    return render(request, "users/register.html", context)
+    return render(request, "users/college_registration.html", context)
 
 def profile(request):
     return render(request, "users/profile.html")

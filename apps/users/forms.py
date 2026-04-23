@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
-from . models import User, AdminProfile, CollegeProfile
+from .models import User, AdminProfile, CollegeProfile
 
 class UserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
