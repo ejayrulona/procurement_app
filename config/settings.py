@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "apps.inventory",
     "apps.users",
     "apps.activity_logs",
+    "apps.ppmp",
 ]
 
 MIDDLEWARE = [
