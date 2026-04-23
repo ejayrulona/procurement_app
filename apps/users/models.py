@@ -52,8 +52,10 @@ class UserManager(BaseUserManager):
     
 
     def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", User.Role.ADMIN)
 
         return self.create_user(username, password, **extra_fields)
     
@@ -65,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         COLLEGE = "college", "College"
 
     username = models.CharField(max_length=50, unique=True)
-    role = models.CharField(max_length=15, choices=Role.choices, default=Role.COLLEGE)
+    role = models.CharField(max_length=15, choices=Role.choices)
     first_name = models.CharField(max_length=80)
     middle_name = models.CharField(max_length=80, null=True, blank=True)
     last_name = models.CharField(max_length=80)
