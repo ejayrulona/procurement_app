@@ -76,7 +76,13 @@
 			<div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mb-5 rounded-full"></div>
 
 			<div class="text-center mb-8">
-				<h2 class="text-3xl font-bold text-gray-800">College / Office Registration</h2>
+				<h2 class="text-3xl font-bold text-gray-800">
+					{% if is_reapply %}
+						Update and Reapply
+					{% else %}
+						College / Office Registration
+					{% endif %}
+				</h2>
 				<p class="text-gray-500 text-sm mt-1">Register your college or office for procurement access</p>
 			</div>
 
@@ -255,11 +261,18 @@
 					</div>
 				</div>
 
+				{{ user_form.errors }}
+				{{ college_profile_form.errors }}
+
 				<!-- Register Button -->
 				<div class="flex justify-end">
 					<button type="submit"
 						class="px-8 py-3 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition duration-200">
-						Register College →
+						{% if is_reapply %}
+							Submit Reapplication
+						{% else %}
+							Submit Registration
+						{% endif %}
 					</button>
 				</div>
 			</form>

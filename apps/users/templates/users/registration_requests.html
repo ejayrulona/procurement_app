@@ -124,7 +124,7 @@
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-200">
-					<!-- Pending Account 1 -->
+					{% for account_request in account_requests %}
 					<tr class="hover:bg-gray-50 transition">
 						<td class="px-6 py-4">
 							<input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
@@ -137,20 +137,20 @@
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium text-gray-800">College of Engineering</p>
-									<p class="text-xs text-gray-500">Code: COE</p>
+									<p class="font-medium text-gray-800">{{ account_request.user.college_profile.college_office.name }}</p>
+									<p class="text-xs text-gray-500">{{ account_request.user.college_profile.college_office.code }}</p>
 								</div>
 							</div>
 						</td>
 						<td class="px-6 py-4">
-							<p class="font-medium text-gray-800">Dr. Juan Dela Cruz</p>
-							<p class="text-xs text-gray-500">Dean</p>
+							<p class="font-medium text-gray-800">{{ account_request.user.full_name }}</p>
+							<p class="text-xs text-gray-500">{{ account_request.user.college_profile.position_title }}</p>
 						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">dean.engineering@wmsu.edu.ph</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">College</span></td>
-						<td class="px-6 py-4 text-sm text-gray-600">Campus A</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Mar 15, 2024</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Review</span></td>
+						<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.user.email }}</td>
+						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">{{ account_request.user.college_profile.college_office.organization_type }}</span></td>
+						<td class="px-6 py-4 text-sm text-gray-600">Campus {{ account_request.user.college_profile.college_office.campus }}</td>
+						<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.created_at|date:"F d, Y"}}</td>
+						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ account_request.status }}</span></td>
 						<td class="px-6 py-4">
 							<div class="flex gap-2">
 								<button class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition">Approve</button>
@@ -158,79 +158,7 @@
 							</div>
 						</td>
 					</tr>
-
-					<!-- Pending Account 2 -->
-					<tr class="hover:bg-gray-50 transition">
-						<td class="px-6 py-4">
-							<input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
-						</td>
-						<td class="px-6 py-4">
-							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-									<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-									</svg>
-								</div>
-								<div>
-									<p class="font-medium text-gray-800">Procurement Office</p>
-									<p class="text-xs text-gray-500">Code: PO</p>
-								</div>
-							</div>
-						</td>
-						<td class="px-6 py-4">
-							<p class="font-medium text-gray-800">Ms. Maria Santos</p>
-							<p class="text-xs text-gray-500">Head Procurement Officer</p>
-						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">maria.santos@wmsu.edu.ph</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Office</span></td>
-						<td class="px-6 py-4 text-sm text-gray-600">Main Campus</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Mar 14, 2024</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Review</span></td>
-						<td class="px-6 py-4">
-							<div class="flex gap-2">
-								<button class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition">Approve</button>
-								<button class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition">Reject</button>
-							</div>
-						</td>
-					</tr>
-
-					<!-- Pending Account 3 -->
-					<tr class="hover:bg-gray-50 transition">
-						<td class="px-6 py-4">
-							<input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
-						</td>
-						<td class="px-6 py-4">
-							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-									<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-									</svg>
-								</div>
-								<div>
-									<p class="font-medium text-gray-800">College of Computing</p>
-									<p class="text-xs text-gray-500">Code: COC</p>
-								</div>
-							</div>
-						</td>
-						<td class="px-6 py-4">
-							<p class="font-medium text-gray-800">Dr. Michael Tan</p>
-							<p class="text-xs text-gray-500">Dean</p>
-						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">michael.tan@wmsu.edu.ph</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">College</span></td>
-						<td class="px-6 py-4 text-sm text-gray-600">Campus B</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Mar 13, 2024</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Review</span></td>
-						<td class="px-6 py-4">
-							<div class="flex gap-2">
-								<button class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition">Approve</button>
-								<button class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition">Reject</button>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+					{% endfor %}
 
 		<!-- Bulk Actions & Pagination -->
 		<div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">

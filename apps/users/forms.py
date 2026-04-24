@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
-from .models import User, AdminProfile, CollegeProfile
+from .models import CollegeOffice, User, AdminProfile, CollegeProfile
 
 class UserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -184,7 +184,60 @@ class AdminAidSetupProfileForm(forms.ModelForm):
                 }
             )
         }
-        
+
+
+class CollegeReapplyUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = (
+            "username", "first_name", "middle_name", "last_name", "email", "phone_number",
+        )
+        widgets = {
+            "username": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "juan123", 
+                }
+            ),
+            "first_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Juan"
+                }
+            ),
+            "middle_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Santos"
+                }
+            ),
+            "last_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Dela Cruz"
+                }
+            ),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "juandelacruz@wmsu.edu.ph"
+                }
+            ),
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "123 456 7890"
+                }
+            ),
+        }
+
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+        self.fields["username"].widget.attrs.pop("autofocus", None)
+
 
 class CollegeProfileForm(forms.ModelForm):
     college_office = forms.CharField(
@@ -208,3 +261,12 @@ class CollegeProfileForm(forms.ModelForm):
                 }
             ),
         }
+
+    def clean_college_office(self):
+        college_office_name = self.cleaned_data["college_office"]
+        college_office = CollegeOffice.objects.filter(name=college_office_name).first()
+
+        if not college_office:
+            raise forms.ValidationError("Invalide college/office selected. Please choose from the given options")
+        
+        return college_office

@@ -163,7 +163,8 @@ class RegistrationRequest(models.Model):
         DECLINED = "declined", "Declined"
 
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_request")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="registration_request")
+    is_latest = models.BooleanField(default=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     remarks = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -173,6 +174,7 @@ class RegistrationRequest(models.Model):
     class Meta: 
         verbose_name = "Registration Request"
         verbose_name_plural = "Registration Requests"
+        ordering = ["-created_at"]
 
     
     def __str__(self):
