@@ -379,6 +379,7 @@
 				<div class="sidebar-wrapper">
 					<div class="p-6">
 						<nav class="space-y-2">
+							<!-- Admin Side -->
 							<a href="{% url 'core:dashboard' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'dashboard' %}nav-active{% endif %}">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -386,7 +387,15 @@
 								<span class="font-medium">Dashboard</span>
 							</a>
 
-							<a href="{% url 'core:draft' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<!-- Status Link -->
+							<a href="{% url 'users:status' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'status' %}nav-active{% endif %}">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+								</svg>
+								<span>Admin Aid Status</span>
+							</a>
+
+							<a href="{% url 'ppmp:draft' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
 								</svg>
@@ -401,7 +410,7 @@
 								<span>Inventory</span>
 							</a>
 
-							<a href="{% url 'core:request' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="{% url 'ppmp:request' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 								</svg>
@@ -409,7 +418,7 @@
 							</a>
 
 							<!-- Pending Account Link -->
-							<a href="{% url 'core:pending_accounts' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'pending_accounts' %}nav-active{% endif %}">
+							<a href="{% url 'users:registration_request' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'pending_accounts' %}nav-active{% endif %}">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 								</svg>
@@ -417,7 +426,7 @@
 								<span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
 							</a>
 
-							<a href="" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="{% url 'activity_logs:activity_log' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 								</svg>
@@ -425,15 +434,15 @@
 							</a>
 
 							<!-- College/Office Side -->
-							<hr>
-							<h1">College/Office Side</h1>
+							<hr class="my-4">
+							<h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">College/Office Side</h3>
 
 							<!-- College Dashboard Link -->
-							<a href="{% url 'core:ppmp' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'college_dashboard' %}nav-active{% endif %}">
+							<a href="{% url 'ppmp:ppmp' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'college_dashboard' %}nav-active{% endif %}">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
 								</svg>
-								<span>Create PPMP</span>
+								<span>Procurement Plan</span>
 							</a>
 
 							<a href="{% url 'core:college_dashboard' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'college_dashboard' %}nav-active{% endif %}">
@@ -443,22 +452,7 @@
 								<span>College Dashboard</span>
 							</a>
 
-							<a href="{% url 'core:draft' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-								</svg>
-								<span>PPMP Drafts</span>
-							</a>
-
-							<!-- College Drafts Link -->
-							<a href="{% url 'core:college_drafts' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'college_drafts' %}nav-active{% endif %}">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-								</svg>
-								<span>College Drafts</span>
-							</a>
-
-							<a href="" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+							<a href="{% url 'activity_logs:activity_log' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 								</svg>

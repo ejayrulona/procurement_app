@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container mx-auto px-4 py-8 max-w-6xl">
     <div class="mb-6">
-        <a href="/draft/" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">← Back to Offices</a>
+        <a href="{% url 'ppmp:draft' %}" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">← Back to Offices</a>
     </div>
     <div id="officeHeader" class="mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Loading...</h2>
@@ -43,9 +43,9 @@
         officeData = {
             id: 1, name: "Registrar's Office", department: "Academic Affairs", head: "Dr. Maria Santos",
             ppmpList: [
-                { id: "PPMP-2026-001", title: "Supply and Delivery of ICT Equipment", description: "20 desktops, 10 laptops", dateSubmitted: "2026-03-15", status: "submitted", priority: "High", estimatedBudget: "1,250,000.00" },
-                { id: "PPMP-2026-015", title: "Office Furniture Procurement", description: "Ergonomic chairs", dateSubmitted: "2026-03-10", status: "draft", priority: "Medium", estimatedBudget: "450,000.00" },
-                { id: "PPMP-2026-023", title: "Office Supplies", description: "Bond paper, pens", dateSubmitted: "2026-03-05", status: "rejected", priority: "Low", estimatedBudget: "75,000.00" }
+                { id: "PPMP-2026-001", title: "Supply and Delivery of ICT Equipment", description: "20 desktops, 10 laptops", dateSubmitted: "2026-03-15", status: "submitted", priority: "High", estimatedBudget: "1250000" },
+                { id: "PPMP-2026-015", title: "Office Furniture Procurement", description: "Ergonomic chairs", dateSubmitted: "2026-03-10", status: "draft", priority: "Medium", estimatedBudget: "450000" },
+                { id: "PPMP-2026-023", title: "Office Supplies", description: "Bond paper, pens", dateSubmitted: "2026-03-05", status: "rejected", priority: "Low", estimatedBudget: "75000" }
             ]
         };
     }
@@ -80,10 +80,26 @@
         const ppmp = officeData.ppmpList.find(p => p.id === ppmpId);
         localStorage.setItem('selectedPPMP', JSON.stringify(ppmp));
         localStorage.setItem('selectedOffice', JSON.stringify(officeData));
-        window.location.href = `/detailed_view/?ppmp_id=${ppmpId}`;
+        // Redirect to ppmp:detailed_view URL
+        window.location.href = "{% url 'ppmp:detailed_view' %}?ppmp_id=" + ppmpId;
     }
-    function acceptPPMP(id) { alert(`PPMP ${id} accepted (demo)`); const p = officeData.ppmpList.find(p => p.id === id); if(p) p.status = 'accepted'; renderPPMPs(); }
-    function rejectPPMP(id) { const reason = prompt("Rejection reason:"); if(reason) { alert(`PPMP ${id} rejected: ${reason}`); const p = officeData.ppmpList.find(p => p.id === id); if(p) p.status = 'rejected'; renderPPMPs(); } }
+    
+    function acceptPPMP(id) { 
+        alert(`PPMP ${id} accepted (demo)`); 
+        const p = officeData.ppmpList.find(p => p.id === id); 
+        if(p) p.status = 'accepted'; 
+        renderPPMPs(); 
+    }
+    
+    function rejectPPMP(id) { 
+        const reason = prompt("Rejection reason:"); 
+        if(reason) { 
+            alert(`PPMP ${id} rejected: ${reason}`); 
+            const p = officeData.ppmpList.find(p => p.id === id); 
+            if(p) p.status = 'rejected'; 
+            renderPPMPs(); 
+        } 
+    }
 
     document.getElementById('statusFilter').addEventListener('change', renderPPMPs);
     document.getElementById('searchPPMP').addEventListener('input', renderPPMPs);

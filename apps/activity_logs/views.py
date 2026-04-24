@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def list_activities(request):
-    return render(request, "activity_logs/index.html")
+def activity_log(request):
+    return render(request, "activity_logs/activity_log.html")

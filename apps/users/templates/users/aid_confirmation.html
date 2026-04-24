@@ -95,7 +95,7 @@
         <!-- Submit Button -->
         <button type="submit" 
                 class="w-full mt-8 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200">
-          Complete Registration →
+          Send Email →
         </button>
       </form>
     </div>
@@ -112,7 +112,7 @@
           </svg>
         </div>
         
-        <h3 class="text-2xl font-bold text-gray-800 mb-3">Account Created Successfully!</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-3">Email Sent Successfully!</h3>
         
         <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
           <div class="flex gap-3">
@@ -134,7 +134,7 @@
         
         <button id="modal-ok-btn" 
                 class="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200">
-          Go to Login
+          Go to Login Page
         </button>
       </div>
     </div>
@@ -157,7 +157,7 @@
       }, 10);
     }
     
-    function closeModalAndRedirect() {
+    function closeModalAndRedirectToLogin() {
       modalContent.classList.remove('scale-100', 'opacity-100');
       modalContent.classList.add('scale-95', 'opacity-0');
       setTimeout(() => {
@@ -168,14 +168,18 @@
     }
     
     // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeModalAndRedirect();
-      }
-    });
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModalAndRedirectToLogin();
+        }
+      });
+    }
     
-    // Close modal when clicking OK button
-    modalOkBtn.addEventListener('click', closeModalAndRedirect);
+    // Close modal when clicking OK button - redirect to login
+    if (modalOkBtn) {
+      modalOkBtn.addEventListener('click', closeModalAndRedirectToLogin);
+    }
     
     if (form) {
       form.addEventListener('submit', (e) => {
@@ -203,7 +207,7 @@
           return;
         }
         
-        // Show modal with username instead of alert
+        // Show modal with username
         openModal(username);
       });
     }
