@@ -37,8 +37,8 @@
 		<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 			<div class="flex items-center justify-between">
 				<div>
-					<p class="text-sm text-gray-500">Total Pending</p>
-					<p class="text-3xl font-bold text-gray-800">8</p>
+					<p class="text-sm text-gray-500">Pending</p>
+					<p class="text-3xl font-bold text-yellow-600">{{ pending_count }}</p>
 				</div>
 				<div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
 					<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,12 +50,15 @@
 		<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 			<div class="flex items-center justify-between">
 				<div>
-					<p class="text-sm text-gray-500">Awaiting Review</p>
-					<p class="text-3xl font-bold text-orange-600">5</p>
+					<p class="text-sm text-gray-500">Declined</p>
+					<p class="text-3xl font-bold text-orange-600">{{ declined_count }}</p>
 				</div>
 				<div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-					<svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-600" width="24" height="24" viewBox="0 0 24 24">
+						<rect width="24" height="24" fill="none"/>
+						<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/><path d="m9.5 9.5l5 5m0-5l-5 5"/>
+						</g>
 					</svg>
 				</div>
 			</div>
@@ -63,8 +66,8 @@
 		<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 			<div class="flex items-center justify-between">
 				<div>
-					<p class="text-sm text-gray-500">Pending Confirmation</p>
-					<p class="text-3xl font-bold text-green-600">3</p>
+					<p class="text-sm text-gray-500">Approved</p>
+					<p class="text-3xl font-bold text-green-600">{{ approved_count }}</p>
 				</div>
 				<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
 					<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,37 +128,44 @@
 				</thead>
 				<tbody class="divide-y divide-gray-200">
 					{% for account_request in account_requests %}
-					<tr class="hover:bg-gray-50 transition">
-						<td class="px-6 py-4">
-							<input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
-							</td>
-						<td class="px-6 py-4">
-							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-									<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-									</svg>
+						<tr class="hover:bg-gray-50 transition">
+							<td class="px-6 py-4">
+								<input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+								</td>
+							<td class="px-6 py-4">
+								<div class="flex items-center gap-3">
+									<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+										<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+										</svg>
+									</div>
+									<div>
+										<p class="font-medium text-gray-800">{{ account_request.user.college_profile.college_office.name }}</p>
+										<p class="text-xs text-gray-500">{{ account_request.user.college_profile.college_office.code }}</p>
+									</div>
 								</div>
-								<div>
-									<p class="font-medium text-gray-800">{{ account_request.user.college_profile.college_office.name }}</p>
-									<p class="text-xs text-gray-500">{{ account_request.user.college_profile.college_office.code }}</p>
+								</td>
+							<td class="px-6 py-4">
+								<p class="font-medium text-gray-800">{{ account_request.user.full_name }}</p>
+								<p class="text-xs text-gray-500">{{ account_request.user.college_profile.position_title }}</p>
+								</td>
+							<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.user.email }}</td>
+							<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">{{ account_request.user.college_profile.college_office.organization_type }}</span></td>
+							<td class="px-6 py-4 text-sm text-gray-600">Campus {{ account_request.user.college_profile.college_office.campus }}</td>
+							<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.created_at|date:"F d, Y"}}</td>
+							<td class="px-6 py-4">
+								<span class="px-2 py-1 text-xs font-semibold rounded-full {% if account_request.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif account_request.status == 'approved'%}bg-green-100 text-green-800{% else %}bg-orange-100 text-orange-800{% endif %}">
+									{{ account_request.status }}
+								</span>
+							</td>
+							<td class="px-6 py-4">
+								<div class="flex gap-2">
+									<form action="{% url 'users:approve_registration_request' account_request.user.id %}" method="post">
+										{% csrf_token %}
+										<button class="approve-btn px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition">Approve</button>
+									</form>
+									<button class="decline-btn px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition" data-user-id="{{ account_request.user.id }}" data-college-name="{{ account_request.user.college_profile.college_office.name }}">Decline</button>
 								</div>
-							</div>
-							</td>
-						<td class="px-6 py-4">
-							<p class="font-medium text-gray-800">{{ account_request.user.full_name }}</p>
-							<p class="text-xs text-gray-500">{{ account_request.user.college_profile.position_title }}</p>
-							</td>
-						<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.user.email }}</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">{{ account_request.user.college_profile.college_office.organization_type }}</span></td>
-						<td class="px-6 py-4 text-sm text-gray-600">Campus {{ account_request.user.college_profile.college_office.campus }}</td>
-						<td class="px-6 py-4 text-sm text-gray-600">{{ account_request.created_at|date:"F d, Y"}}</td>
-						<td class="px-6 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ account_request.status }}</span></td>
-						<td class="px-6 py-4">
-							<div class="flex gap-2">
-								<button class="approve-btn px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition" data-id="{{ account_request.id }}" data-name="{{ account_request.user.college_profile.college_office.name }}">Approve</button>
-								<button class="reject-btn px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition" data-id="{{ account_request.id }}" data-name="{{ account_request.user.college_profile.college_office.name }}">Reject</button>
-							</div>
 							</td>
 						</tr>
 					{% endfor %}
@@ -177,200 +187,52 @@
 		</div>
 	</div>
 
-	<!-- Review Modal (Hidden by default) -->
-	<div id="reviewModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+	<!-- Decline Remark Modal -->
+	<div id="reject-remark-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
 		<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
 			<div class="p-6">
 				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-600 pl-4">Review Application</h2>
-					<button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
+					<h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-600 pl-4">Decline Application</h2>
+					<button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 transition">
 						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="space-y-4">
-					<div class="bg-gray-50 p-4 rounded-xl">
-						<p class="text-sm text-gray-600 mb-2"><strong class="text-gray-800">College/Office:</strong> <span id="modalCollegeName"></span></p>
-						<p class="text-sm text-gray-600 mb-2"><strong class="text-gray-800">Head/Dean:</strong> <span id="modalHeadName"></span></p>
-						<p class="text-sm text-gray-600 mb-2"><strong class="text-gray-800">Email:</strong> <span id="modalEmail"></span></p>
-						<p class="text-sm text-gray-600"><strong class="text-gray-800">Date Registered:</strong> <span id="modalDate"></span></p>
-					</div>
-					<div>
-						<label class="block text-gray-700 font-medium text-sm mb-2">Add Remarks (Optional)</label>
-						<textarea id="modalRemarks" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Enter any remarks or notes..."></textarea>
-					</div>
-				</div>
-				<div class="flex gap-3 mt-6">
-					<button id="modalApproveBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition">Approve</button>
-					<button id="modalRejectBtn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition">Reject</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<!-- ========== REJECT REMARK MODAL ========== -->
-	<div id="rejectRemarkModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-		<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-			<div class="p-6">
-				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-600 pl-4">Reject Application</h2>
-					<button onclick="closeRejectRemarkModal()" class="text-gray-400 hover:text-gray-600 transition">
-						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-						</svg>
-					</button>
-				</div>
-				<div>
-					<label class="block text-gray-700 font-medium text-sm mb-2">
-						Reason for Rejection <span class="text-red-500">*</span>
-					</label>
-					<textarea id="rejectReason" rows="4" required
-						class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-						placeholder="Please provide a detailed reason for rejecting this application. This will be sent to the applicant."></textarea>
-					<p class="text-xs text-gray-400 mt-1">This remark will be sent to the applicant via email.</p>
-				</div>
-				<div class="flex gap-3 mt-6">
-					<button onclick="closeRejectRemarkModal()"
-						class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl transition">
-						Cancel
-					</button>
-					<button id="confirmRejectBtn"
-						class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition">
-						Confirm Rejection
-					</button>
-				</div>
+				<p class="text-sm text-gray-500 mb-4">
+					Declining application for: <span id="modal-college-name" class="font-semibold text-gray-800"></span>
+				</p>
+
+				<form id="decline-form" action="" method="post">
+					{% csrf_token %}
+					<div>
+						<label class="block text-gray-700 font-medium text-sm mb-2 tex">
+							Reason for Declining <span class="text-gray-500">(Optional)</span>
+						</label>
+						<textarea id="id_remarks" name="remarks" rows="4"
+							class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+							placeholder="Please provide a detailed reason for rejecting this application. This will be sent to the applicant."></textarea>
+						<p class="text-xs text-gray-400 mt-1">This remark will be sent to the applicant via email.</p>
+					</div>
+					<div class="flex gap-3 mt-6">
+						<button 
+							id="cancel-modal-btn"
+							type="button"
+							class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl transition">
+							Cancel
+						</button>
+						<button 
+							type="submit"
+							class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition">
+							Confirm Decline
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
 </div>
 
-<script>
-	// Store current request data
-	let currentRequestId = null;
-	let currentRequestData = null;
-	
-	// Get all approve and reject buttons
-	const approveBtns = document.querySelectorAll('.approve-btn');
-	const rejectBtns = document.querySelectorAll('.reject-btn');
-	const modal = document.getElementById('reviewModal');
-	const modalApproveBtn = document.getElementById('modalApproveBtn');
-	const modalRejectBtn = document.getElementById('modalRejectBtn');
-	const confirmRejectBtn = document.getElementById('confirmRejectBtn');
-	const rejectRemarkModal = document.getElementById('rejectRemarkModal');
-	const rejectReason = document.getElementById('rejectReason');
-	
-	function openModal(requestId) {
-		// Find the row data
-		const row = document.querySelector(`tr:has(button[data-id="${requestId}"])`);
-		if (row) {
-			const collegeName = row.querySelector('td:nth-child(2) p:first-child')?.innerText || '';
-			const headName = row.querySelector('td:nth-child(3) p:first-child')?.innerText || '';
-			const email = row.querySelector('td:nth-child(4)')?.innerText || '';
-			const date = row.querySelector('td:nth-child(7)')?.innerText || '';
-			
-			document.getElementById('modalCollegeName').innerText = collegeName;
-			document.getElementById('modalHeadName').innerText = headName;
-			document.getElementById('modalEmail').innerText = email;
-			document.getElementById('modalDate').innerText = date;
-		}
-		currentRequestId = requestId;
-		modal.classList.remove('hidden');
-	}
-	
-	function closeModal() {
-		modal.classList.add('hidden');
-		currentRequestId = null;
-		document.getElementById('modalRemarks').value = '';
-	}
-	
-	function openRejectRemarkModal(requestId, collegeName) {
-		currentRequestId = requestId;
-		currentCollegeName = collegeName;
-		rejectReason.value = '';
-		rejectRemarkModal.classList.remove('hidden');
-	}
-	
-	function closeRejectRemarkModal() {
-		rejectRemarkModal.classList.add('hidden');
-		currentRequestId = null;
-		currentCollegeName = null;
-		rejectReason.value = '';
-	}
-	
-	// Handle Approve button clicks
-	approveBtns.forEach(btn => {
-		btn.addEventListener('click', function() {
-			const requestId = this.getAttribute('data-id');
-			const collegeName = this.getAttribute('data-name');
-			const remarks = document.getElementById('modalRemarks')?.value || '';
-			
-			if (confirm(`Are you sure you want to APPROVE ${collegeName}?\n\nRemarks: ${remarks || 'No remarks'}`)) {
-				alert(`✓ ${collegeName} has been approved.\n\nRemarks: ${remarks || 'No remarks'}`);
-				closeModal();
-			}
-		});
-	});
-	
-	// Handle Reject button clicks - opens the remark modal
-	rejectBtns.forEach(btn => {
-		btn.addEventListener('click', function() {
-			const requestId = this.getAttribute('data-id');
-			const collegeName = this.getAttribute('data-name');
-			openRejectRemarkModal(requestId, collegeName);
-		});
-	});
-	
-	// Confirm rejection with reason
-	if (confirmRejectBtn) {
-		confirmRejectBtn.addEventListener('click', function() {
-			const reason = rejectReason.value.trim();
-			if (!reason) {
-				alert('Please provide a reason for rejection.');
-				return;
-			}
-			
-			if (confirm(`Are you sure you want to REJECT this application?\n\nReason: ${reason}\n\nThis action cannot be undone.`)) {
-				alert(`✓ Application has been rejected.\n\nReason: ${reason}\n\nThe applicant will be notified via email.`);
-				closeRejectRemarkModal();
-			}
-		});
-	}
-	
-	// Modal buttons
-	if (modalApproveBtn) {
-		modalApproveBtn.addEventListener('click', function() {
-			const remarks = document.getElementById('modalRemarks').value;
-			if (confirm(`Approve this application?\n\nRemarks: ${remarks || 'No remarks'}`)) {
-				alert('Application approved!');
-				closeModal();
-			}
-		});
-	}
-	
-	if (modalRejectBtn) {
-		modalRejectBtn.addEventListener('click', function() {
-			const remarks = document.getElementById('modalRemarks').value;
-			openRejectRemarkModal(currentRequestId, document.getElementById('modalCollegeName').innerText);
-			closeModal();
-		});
-	}
-	
-	function openModal() {
-		document.getElementById('reviewModal').classList.remove('hidden');
-	}
-	
-	function closeModal() {
-		document.getElementById('reviewModal').classList.add('hidden');
-	}
-	
-	// Close modals when clicking outside
-	document.getElementById('rejectRemarkModal')?.addEventListener('click', function(e) {
-		if (e.target === this) closeRejectRemarkModal();
-	});
-	
-	document.getElementById('reviewModal')?.addEventListener('click', function(e) {
-		if (e.target === this) closeModal();
-	});
-</script>
+<script type="module" src="{% static 'javascript/registrationRequest.js' %}"></script>
 {% endblock %}

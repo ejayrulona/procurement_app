@@ -10,12 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noPhotoHint = document.getElementById('no-photo-hint');
     const photoHint = document.getElementById('photo-hint');
 
-    collegeOfficeInputElement.addEventListener('input', () => {
-        const options = datalist.querySelectorAll('option');
-        const match = Array.from(options).find(
-            option => option.value.toLowerCase() === collegeOfficeInputElement.value.toLowerCase()
-        );
-
+    function populateCollegeFields(match) {
         if (match) {
             document.getElementById('college-code').value = match.dataset.code;
             document.getElementById('college-type').value = match.dataset.type;
@@ -49,5 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
             noPhotoHint.classList.add('hidden');
             photoHint.classList.remove('hidden');
         }
+    }
+
+    function findMatch(value) {
+        const options = datalist.querySelectorAll('option');
+        return Array.from(options).find(
+            option => option.value.toLowerCase() === value.toLowerCase()
+        ) || null;
+    }
+
+    collegeOfficeInputElement.addEventListener('input', () => {
+        populateCollegeFields(findMatch(collegeOfficeInputElement.value));        
     });
+
+    if(collegeOfficeInputElement.value){
+        populateCollegeFields(findMatch(collegeOfficeInputElement.value));
+    }
 });

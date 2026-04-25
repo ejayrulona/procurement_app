@@ -77,7 +77,7 @@ Hi {user.full_name},
 Unfortunately your registration request for the University Procurement System
 has been declined.
 
-{"Reason: " + remarks if remarks else "No reason,"}
+{"Reason: " + remarks if remarks else "No reason was provided."}
 
 If you believe this a mistake, please contact the procurement office directly.
         """,

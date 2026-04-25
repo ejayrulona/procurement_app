@@ -190,15 +190,9 @@ class CollegeReapplyUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            "username", "first_name", "middle_name", "last_name", "email", "phone_number",
+            "first_name", "middle_name", "last_name", "email", "phone_number",
         )
         widgets = {
-            "username": forms.TextInput(
-                attrs={
-                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
-                    "placeholder": "juan123", 
-                }
-            ),
             "first_name": forms.TextInput(
                 attrs={
                     "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
@@ -232,13 +226,6 @@ class CollegeReapplyUserForm(forms.ModelForm):
         }
 
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-        self.fields["username"].widget.attrs.pop("autofocus", None)
-
-
 class CollegeProfileForm(forms.ModelForm):
     college_office = forms.CharField(
         widget=forms.TextInput(
@@ -261,6 +248,15 @@ class CollegeProfileForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance and self.instance.pk:
+            try:
+                self.initial["college_office"] = self.instance.college_office.name
+            except:
+                pass
 
     def clean_college_office(self):
         college_office_name = self.cleaned_data["college_office"]

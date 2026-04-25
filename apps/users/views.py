@@ -165,9 +165,16 @@ def list_registration_requests(request):
         "user__college_profile__college_office",
         "reviewed_by",
     ).order_by("-created_at")
+    
+    pending_count = account_requests.filter(status=RegistrationRequest.Status.PENDING).count()
+    declined_count = account_requests.filter(status=RegistrationRequest.Status.DECLINED).count()
+    approved_count = account_requests.filter(status=RegistrationRequest.Status.APPROVED).count()
 
     context = {
         "account_requests": account_requests,
+        "pending_count": pending_count,
+        "declined_count": declined_count,
+        "approved_count": approved_count,
     }
     
     return render(request, "users/registration_requests.html", context)
@@ -213,10 +220,10 @@ def decline_registration_request(request, id):
         messages.error(request, "This request has already been reviewed.")
         return redirect("users:list_registration_requests")
     
-    remarks = request.POST.get("remakrs", "").strip()
+    remarks = request.POST.get("remarks", "").strip()
     
     with transaction.atomic():
-        registration_request.status = RegistrationRequest.Status.APPROVED
+        registration_request.status = RegistrationRequest.Status.DECLINED
         registration_request.reviewed_by = request.user
         registration_request.reviewed_at = timezone.now()
         registration_request.remarks = remarks

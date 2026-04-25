@@ -150,7 +150,7 @@
                             <div class="bg-gray-50 rounded-lg p-3">
                                 <p class="text-xs text-gray-500">College Code</p>
                                 <p class="text-sm font-semibold text-gray-800">
-                                    {{user.college_profile.college_office.code }}
+                                    {{ user.college_profile.college_office.code }}
                                 </p>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-3">
@@ -232,7 +232,7 @@
                                 Proceed to Login
                             </a>
                         {% else %}
-                            <a onclick="window.location.href=''"
+                            <a href="{% url 'users:reapply_registration' user.username %}"
                                 class="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition">
                                 Reapply
                             </a>
