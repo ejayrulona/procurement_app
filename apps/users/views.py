@@ -48,6 +48,9 @@ def create_admin_aid(request):
     }
     return render(request, "users/create_admin_aid.html", context)
 
+def list_admin_aid_accounts(request):
+    return render(request, "users/admin_aid_accounts.html")
+
 def setup_account(request, token):
     # Validate the token
     try:

@@ -252,6 +252,7 @@ class CollegeProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Pre-fills college office with name instead of id when editing an existing instance
         if self.instance and self.instance.pk:
             try:
                 self.initial["college_office"] = self.instance.college_office.name

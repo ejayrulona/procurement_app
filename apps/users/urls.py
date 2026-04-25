@@ -12,6 +12,7 @@ urlpatterns = (
     path("register/college", views.register_college, name="register_college"),
     path("register/college/status/<str:username>/", views.college_account_status, name="college_account_status"),
     path("register/college/reapply/<str:username>/", views.reapply_registration, name="reapply_registration"),
+    path("admin/admin-aid-accounts/", views.list_admin_aid_accounts, name="list_admin_aid_accounts"),
     path("admin/registration-requests/", views.list_registration_requests, name="list_registration_requests"),
     path("admin/registration-requests/<int:id>/approve", views.approve_registration_request, name="approve_registration_request"),
     path("admin/registration-requests/<int:id>/decline", views.decline_registration_request, name="decline_registration_request"),
