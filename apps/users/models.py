@@ -126,7 +126,7 @@ class AdminProfile(models.Model):
 
 
     def __str__(self):
-        return f"Admin - {self.user.full_name}"
+        return f"{self.user.role} - {self.user.full_name}"
 
 
 class CollegeProfile(models.Model):
