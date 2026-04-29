@@ -1,4 +1,4 @@
-import { initializeTogglePassword } from "./utils/togglePassword.js";
+import { initializeTogglePassword } from "../utils/togglePassword.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeTogglePassword();

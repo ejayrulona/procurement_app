@@ -10,6 +10,9 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
 		rel="stylesheet">
+	<!-- <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
+	<script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script> -->
 	<script src="https://cdn.tailwindcss.com"></script>
 	<style>
 		* {
@@ -272,15 +275,19 @@
 					<button id="user-menu-button" class="flex items-center gap-2 focus:outline-none group">
 						<div class="w-8 h-8 bg-white rounded-full flex items-center justify-center group-hover:bg-gray-100 transition shadow-sm">
 							<span class="text-red-600 font-semibold text-sm">
-								{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:"U" }}
+								{% if user.first_name and user.last_name %}
+									{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+								{% elif user.first_name %}
+									{{ user.first_name|slice:":1" }}
+								{% elif user.last_name %}
+									{{ user.last_name|slice:":1" }}
+								{% else %}
+									U
+								{% endif %}
 							</span>
 						</div>
 						<span class="user-name text-sm font-medium text-white hidden md:inline">
-							{% if user.is_authenticated %}
 							{{ user.get_full_name|default:user.username }}
-							{% else %}
-							Guest User
-							{% endif %}
 						</span>
 						<svg class="w-4 h-4 text-white transition-transform duration-200 hidden sm:block" fill="none"
 							stroke="currentColor" viewBox="0 0 24 24">
@@ -344,12 +351,6 @@
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
 											</svg>
 											<span class="text-sm">General Settings</span>
-										</a>
-										<a href="{% url 'users:create_admin_aid' %}" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-											</svg>
-											<span class="text-sm font-medium">Create Admin Aid Account</span>
 										</a>
 									</div>
 								</div>
