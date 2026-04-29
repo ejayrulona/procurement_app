@@ -6,7 +6,7 @@ from django.urls import reverse
 def send_account_setup_email(user, request):
     token = signing.dumps(user.pk, salt="account-setup")
     setup_url = request.build_absolute_uri(
-        reverse("users:account_setup", kwargs={"token": token})
+        reverse("users:setup_account", kwargs={"token": token})
     )
     send_mail(
         subject="Your Procurement System Account",
@@ -25,6 +25,42 @@ If you did not expect this email, please ignore it.
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
         fail_silently=False,
+    )
+
+def send_account_activated_email(user, request):
+    login_url = request.build_absolute_uri(reverse("core:home"))
+    send_mail(
+        subject="",
+        message=f"""
+Hi {user.full_name},
+
+Your account in the WSMU Procurement Office has been activated.
+You may now log in to the system using the link below:
+
+{login_url}
+
+If you did not expect this change or believe this was an error,
+please contact the procurement office immediately.
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        fail_silently=False
+    )
+
+def send_account_deactivated_email(user):
+    send_mail(
+        subject="",
+        message=f"""
+Hi {user.full_name},
+
+Your account in the WSMU Procurement Office has been deactivated.
+You will not be able to log in until your account is reactivated.
+
+If you believe this was done in error, please contact the procurement office immediately.
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        fail_silently=False
     )
 
 def send_registration_confirmation_email(user, request):

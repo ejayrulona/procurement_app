@@ -8,6 +8,7 @@ urlpatterns = (
     path("logout/", auth_views.LogoutView.as_view(next_page="core:home"), name="logout"),
     path("admin-aid/create", views.create_admin_aid, name="create_admin_aid"),
     path("admin-aid/resend-email/<int:id>/", views.resend_setup_email, name="resend_setup_email"),
+    path("admin-aid/<int:id>/toggle-status/", views.toggle_user_status, name="toggle_user_status"),
     path("account/setup/<str:token>", views.setup_account, name="setup_account"),
     path("register/college", views.register_college, name="register_college"),
     path("register/college/status/<str:username>/", views.college_account_status, name="college_account_status"),

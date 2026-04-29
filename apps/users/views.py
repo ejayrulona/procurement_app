@@ -4,7 +4,8 @@ from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .email import (
-    send_account_setup_email, send_registration_confirmation_email, 
+    send_account_setup_email, send_account_activated_email,
+    send_account_deactivated_email, send_registration_confirmation_email, 
     send_registration_approved_email, send_registration_declined_email
 )
 from .forms import (
@@ -20,7 +21,7 @@ def create_admin_aid(request):
         if form.is_valid():
             with transaction.atomic():
                 user = User.objects.create_user(
-                    username=f"pending_{form.cleaned_data['email'].split('@'[0])}",
+                    username=f"pending_{form.cleaned_data['email'].split('@')[0]}",
                     password=None,
                     first_name=form.cleaned_data["first_name"],
                     middle_name=form.cleaned_data.get("middle_name", ""),
@@ -39,9 +40,9 @@ def create_admin_aid(request):
 
                 send_account_setup_email(user, request)
                 messages.success(request, f"Account created and setup email sent to {user.email}.")
-                return redirect("core:home")    # Change to admin_aid_list
+                return redirect("users:list_admin_aid_accounts")
     else:
-        form = AdminAidCreationForm(prefix="admin_profile")
+        form = AdminAidCreationForm()
 
     context = {
         "form": form
@@ -49,7 +50,26 @@ def create_admin_aid(request):
     return render(request, "users/create_admin_aid.html", context)
 
 def list_admin_aid_accounts(request):
-    return render(request, "users/admin_aid_accounts.html")
+    aid_accounts = User.objects.filter(
+        role=User.Role.ADMIN_AID
+    ).select_related(
+        "admin_profile"
+    ).order_by("-date_joined")
+
+    total_count = aid_accounts.count()
+    active_count = aid_accounts.filter(is_active=True).count()
+    inactive_count = aid_accounts.filter(is_active=False, admin_profile__is_setup_complete=True).count()
+    pending_setup_count = aid_accounts.filter(admin_profile__is_setup_complete=False).count()
+
+    context = {
+        "aid_accounts": aid_accounts,
+        "total_count": total_count,
+        "active_count": active_count,
+        "inactive_count": inactive_count,
+        "pending_setup_count": pending_setup_count
+    }
+
+    return render(request, "users/admin_aid_accounts.html", context)
 
 def setup_account(request, token):
     # Validate the token
@@ -78,7 +98,7 @@ def setup_account(request, token):
             with transaction.atomic():
                 user = setup_form.save(commit=False)
                 user.set_password(setup_form.cleaned_data["password1"])
-                user.is_active = False
+                user.is_active = True
                 user.save()
 
                 profile = admin_aid_profile_form.save(commit=False)
@@ -101,16 +121,36 @@ def setup_account(request, token):
 
 def resend_setup_email(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
-    admin_profile = get_object_or_404(AdminProfile, user=user)
 
-    if admin_profile.is_setup_complete:
+    if user.admin_profile.is_setup_complete:
         messages.info(request, "This account has already been set up.")
-        return redirect("users:admin_aid_list")
+        return redirect("users:list_admin_aid_accounts")
     
     send_account_setup_email(user, request)
     messages.success(request, f"Setup email resent to {user.email}.")
 
-    return redirect("users:admin_aid_list")
+    return redirect("users:list_admin_aid_accounts")
+
+def toggle_user_status(request, id):
+    user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
+
+    if not user.admin_profile.is_setup_complete:
+        messages.error(request, "Cannot change status of an account that has not completed setup.")
+        return redirect("users:list_admin_aid_accounts")
+    
+    if request.method == "POST":
+        user.is_active = not user.is_active
+        user.save()
+
+        if user.is_active:
+            send_account_activated_email(user, request)
+        else:
+            send_account_deactivated_email(user)
+        
+        status_label = "activated" if user.is_active else "deactivated"
+        messages.success(request, f"{user.full_name} has been {status_label}")
+
+    return redirect("users:list_admin_aid_accounts")
 
 def register_college(request):
     if request.method == "POST":

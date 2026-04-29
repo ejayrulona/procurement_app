@@ -13,7 +13,7 @@
             <h1 class="text-3xl font-bold text-gray-800">Admin Aid Accounts</h1>
             <p class="text-gray-500 mt-1">View and manage administrator account status</p>
         </div>
-        <button id="createAdminAidBtn" 
+        <button id="create-admin-aid-btn" 
                 class="px-5 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition duration-200 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
@@ -28,7 +28,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Accounts</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">12</p>
+                    <p class="text-3xl font-bold text-blue-600 mt-1">{{ total_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,7 +42,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Active</p>
-                    <p class="text-3xl font-bold text-green-600 mt-1">7</p>
+                    <p class="text-3xl font-bold text-green-600 mt-1">{{ active_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Inactive</p>
-                    <p class="text-3xl font-bold text-red-600 mt-1">3</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1">{{ inactive_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,8 +69,8 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Pending Approval</p>
-                    <p class="text-3xl font-bold text-yellow-600 mt-1">2</p>
+                    <p class="text-sm text-gray-500 font-medium">Pending Setup</p>
+                    <p class="text-3xl font-bold text-yellow-600 mt-1">{{ pending_setup_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,168 +104,98 @@
     </div>
 
     <!-- Accounts Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[25%]">Admin Name</th>
-                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[25%]">Email Address</th>
-                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[20%]">Date Applied</th>
-                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[15%]">Status</th>
-                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[15%]">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="accountsTableBody">
-                    <!-- Pending Account 1 -->
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition" data-status="pending">
-                        <td class="px-6 py-4 align-middle">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-gray-600 font-semibold">JD</span>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">John Dela Cruz</p>
-                                    <p class="text-xs text-gray-500">Admin ID: ADM-001</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">john.delacruz@procurement.gov.ph</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">2024-01-15</p>
-                            <p class="text-xs text-gray-400">10:30 AM</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                Pending
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <button onclick="resendEmail('John Dela Cruz', 'john.delacruz@procurement.gov.ph')" 
-                                    class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                                Resend Email
-                            </button>
-                        </td>
-                    </tr>
 
-                    <!-- Pending Account 2 -->
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition" data-status="pending">
-                        <td class="px-6 py-4 align-middle">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-gray-600 font-semibold">MR</span>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Maria Reyes</p>
-                                    <p class="text-xs text-gray-500">Admin ID: ADM-002</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">maria.reyes@procurement.gov.ph</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">2024-01-14</p>
-                            <p class="text-xs text-gray-400">02:15 PM</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                Pending
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <button onclick="resendEmail('Maria Reyes', 'maria.reyes@procurement.gov.ph')" 
-                                    class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                                Resend Email
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Active Account with Checkbox -->
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition" data-status="active">
-                        <td class="px-6 py-4 align-middle">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-gray-600 font-semibold">AT</span>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Anna Torres</p>
-                                    <p class="text-xs text-gray-500">Admin ID: ADM-004</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">anna.torres@procurement.gov.ph</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">2024-01-10</p>
-                            <p class="text-xs text-gray-400">11:20 AM</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Active
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="status-toggle sr-only peer" data-user-id="ADM-004" data-user-name="Anna Torres" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                            </label>
-                        </td>
-                    </tr>
-
-                    <!-- Inactive Account with Checkbox (unchecked) -->
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition" data-status="inactive">
-                        <td class="px-6 py-4 align-middle">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-gray-600 font-semibold">ML</span>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Mark Lopez</p>
-                                    <p class="text-xs text-gray-500">Admin ID: ADM-005</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">mark.lopez@procurement.gov.ph</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <p class="text-sm text-gray-600">2024-01-09</p>
-                            <p class="text-xs text-gray-400">03:00 PM</p>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Inactive
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 align-middle">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="status-toggle sr-only peer" data-user-id="ADM-005" data-user-name="Mark Lopez">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                            </label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Empty State -->
+    <!-- Empty State -->
+    {% if not aid_accounts %}
         <div id="emptyState" class="hidden text-center py-12">
             <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <p class="text-gray-500">No accounts found.</p>
         </div>
+    {% endif %}
 
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table id="aid-accounts-table" class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[25%]">Admin Name</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[25%]">Email Address</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[15%]">Date Applied</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[15%]">Last Updated</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[10%]">Status</th>
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-gray-600 w-[10%]">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsTableBody">
+                    {% for aid_account in aid_accounts %}
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <span class="text-gray-600 font-semibold">
+                                            {% if aid_account.first_name and aid_account.last_name %}
+                                                {{ aid_account.first_name|slice:":1" }}{{ aid_account.last_name|slice:":1" }}
+                                            {% elif aid_account.first_name %}
+                                                {{ aid_account.first_name|slice:":1" }}
+                                            {% elif aid_account.last_name %}
+                                                {{ aid_account.last_name|slice:":1" }}
+                                            {% else %}
+                                                U
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">{{ aid_account.full_name }}</p>
+                                        <p class="text-xs text-gray-500">Employee ID: {{ aid_account.admin_profile.employee_id_number }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-600">{{ aid_account.email }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-600">{{ aid_account.date_joined|date:"m/d/Y"}}</p>
+                                <p class="text-xs text-gray-400">{{ aid_account.date_joined|date:"g:i A"}}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-600">{{ aid_account.updated_at|date:"m/d/Y"}}</p>
+                                <p class="text-xs text-gray-400">{{ aid_account.updated_at|date:"g:i A"}}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {% if not aid_account.admin_profile.is_setup_complete %} bg-gray-200 text-gray-600 {% elif aid_account.is_active %}bg-green-100 text-green-800{% else %}bg-orange-100 text-orange-800{% endif %}">
+                                    {% if not aid_account.admin_profile.is_setup_complete %}
+                                        Pending Setup
+                                    {% elif aid_account.is_active %}
+                                        Active
+                                    {% else %}
+                                        Inactive
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if not aid_account.admin_profile.is_setup_complete %}
+                                    <button data-user-id="{{ aid_account.id }}" data-name="{{ aid_account.full_name }}"
+                                            class="resend-email-btn px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Resend Email
+                                    </button>
+                                {% else %}
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="status-toggle sr-only peer" data-user-id="{{ aid_account.id }}" data-name="{{ aid_account.full_name }}" {% if aid_account.is_active %}checked{% endif %}>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                    </label>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
         <!-- Pagination -->
         <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
             <div class="flex items-center justify-between">
@@ -280,8 +210,8 @@
 </div>
 
 <!-- Create Admin Aid Confirmation Modal -->
-<div id="createAdminAidModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all scale-95 opacity-0" id="createAdminAidModalContent">
+<div id="create-admin-aid-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all" id="create-admin-aid-modal-content">
         <div class="text-center">
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
                 <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -298,54 +228,56 @@
             </div>
             
             <div class="flex gap-3">
-                <button id="cancelCreateBtn" 
+                <button id="cancel-create-btn" 
                         class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition">
                     Cancel
                 </button>
-                <button id="confirmCreateBtn" 
+                <a href="{% url 'users:create_admin_aid' %}" 
                         class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
                     Proceed to Registration
-                </button>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Status Change Confirmation Modal -->
-<div id="statusModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
+<div id="status-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all">
         <div class="text-center">
-            <div id="statusModalIcon" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4">
-                <svg id="statusModalSvg" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="status-modal-icon" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4">
+                <svg id="status-modal-svg" class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
             
-            <h3 id="statusModalTitle" class="text-2xl font-bold text-gray-800 mb-3">Confirm Status Change</h3>
+            <h3 id="status-modal-title" class="text-2xl font-bold text-gray-800 mb-3">Confirm Status Change</h3>
             
             <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
-                <p id="statusModalMessage" class="text-sm text-yellow-800">
-                    Are you sure you want to <strong id="actionText"></strong> <strong id="userNameText"></strong>?
+                <p id="status-modal-message" class="text-sm text-yellow-800">
+                    Are you sure you want to <strong id="action-text"></strong> <strong id="user-name-text"></strong>?
                 </p>
             </div>
             
             <div class="flex gap-3">
-                <button id="cancelStatusBtn" 
+                <button id="cancel-status-btn" 
                         class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition">
                     Cancel
                 </button>
-                <button id="confirmStatusBtn" 
-                        class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
-                    Confirm
-                </button>
+                <form id="status-toggle-form" action="" method="post">
+                    {% csrf_token %}
+                    <button id="confirm-status-button" type="submit" class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
+                        Confirm
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Resend Email Modal -->
-<div id="resendModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all scale-95 opacity-0" id="resendModalContent">
+<div id="resend-email-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6" id="resend-modal-content">
         <div class="text-center">
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
                 <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -357,25 +289,28 @@
             
             <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
                 <p class="text-sm text-yellow-800">
-                    Are you sure you want to resend the verification email to <strong id="resendEmailName"></strong>?
+                    Are you sure you want to resend the verification email to <strong id="resend-email-name"></strong>?
                 </p>
             </div>
             
             <div class="flex gap-3">
-                <button id="cancelResendBtn" 
+                <button id="cancel-resend-btn" 
                         class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition">
                     Cancel
                 </button>
-                <button id="confirmResendBtn" 
-                        class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
-                    Send Email
-                </button>
+                <form id="resend-email-form" action="" method="post">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
+                        Send Email
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Success Toast Notification -->
+<!-- Success Toast Notification (Might be changed to modal to maintain cohesiveness) -->
 <div id="successToast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden transition-all duration-300 z-50">
     <div class="flex items-center gap-3">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -385,318 +320,5 @@
     </div>
 </div>
 
-<script>
-    // Create Admin Aid Modal
-    const createAdminAidBtn = document.getElementById('createAdminAidBtn');
-    const createAdminAidModal = document.getElementById('createAdminAidModal');
-    const createAdminAidModalContent = document.getElementById('createAdminAidModalContent');
-    const cancelCreateBtn = document.getElementById('cancelCreateBtn');
-    const confirmCreateBtn = document.getElementById('confirmCreateBtn');
-    
-    function openCreateModal() {
-        createAdminAidModal.classList.remove('hidden');
-        setTimeout(() => {
-            createAdminAidModalContent.classList.remove('scale-95', 'opacity-0');
-            createAdminAidModalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
-    
-    function closeCreateModal() {
-        createAdminAidModalContent.classList.remove('scale-100', 'opacity-100');
-        createAdminAidModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            createAdminAidModal.classList.add('hidden');
-        }, 200);
-    }
-    
-    createAdminAidBtn.addEventListener('click', openCreateModal);
-    
-    cancelCreateBtn.addEventListener('click', closeCreateModal);
-    
-    confirmCreateBtn.addEventListener('click', () => {
-        window.location.href = "{% url 'users:create_admin_aid' %}";
-    });
-    
-    createAdminAidModal.addEventListener('click', (e) => {
-        if (e.target === createAdminAidModal) {
-            closeCreateModal();
-        }
-    });
-    
-    // Status Toggle Variables
-    let pendingUserId = null;
-    let pendingUserName = null;
-    let pendingNewStatus = null;
-    let pendingCheckbox = null;
-    
-    const statusToggles = document.querySelectorAll('.status-toggle');
-    const statusModal = document.getElementById('statusModal');
-    const statusModalIcon = document.getElementById('statusModalIcon');
-    const statusModalSvg = document.getElementById('statusModalSvg');
-    const statusModalTitle = document.getElementById('statusModalTitle');
-    const actionText = document.getElementById('actionText');
-    const userNameText = document.getElementById('userNameText');
-    const cancelStatusBtn = document.getElementById('cancelStatusBtn');
-    const confirmStatusBtn = document.getElementById('confirmStatusBtn');
-    
-    statusToggles.forEach(toggle => {
-        toggle.addEventListener('change', function(e) {
-            e.preventDefault();
-            
-            const userId = this.getAttribute('data-user-id');
-            const userName = this.getAttribute('data-user-name');
-            const isCurrentlyChecked = this.checked;
-            const newStatus = isCurrentlyChecked ? 'activate' : 'deactivate';
-            
-            pendingUserId = userId;
-            pendingUserName = userName;
-            pendingNewStatus = newStatus;
-            pendingCheckbox = this;
-            
-            this.checked = !isCurrentlyChecked;
-            
-            if (newStatus === 'activate') {
-                statusModalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4";
-                statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
-                statusModalTitle.textContent = 'Activate Account';
-                statusModalTitle.className = 'text-2xl font-bold text-green-800 mb-3';
-                actionText.textContent = 'activate';
-                userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white font-semibold rounded-xl shadow-md transition";
-            } else {
-                statusModalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4";
-                statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-                statusModalTitle.textContent = 'Deactivate Account';
-                statusModalTitle.className = 'text-2xl font-bold text-red-800 mb-3';
-                actionText.textContent = 'deactivate';
-                userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition";
-            }
-            
-            statusModal.classList.remove('hidden');
-        });
-    });
-    
-    cancelStatusBtn.addEventListener('click', () => {
-        statusModal.classList.add('hidden');
-        pendingUserId = null;
-        pendingUserName = null;
-        pendingNewStatus = null;
-        pendingCheckbox = null;
-    });
-    
-    confirmStatusBtn.addEventListener('click', () => {
-        if (pendingCheckbox) {
-            pendingCheckbox.checked = (pendingNewStatus === 'activate');
-            
-            const row = pendingCheckbox.closest('tr');
-            const statusBadge = row.querySelector('td:nth-child(4) span');
-            
-            if (pendingNewStatus === 'activate') {
-                statusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800";
-                statusBadge.textContent = "Active";
-                row.setAttribute('data-status', 'active');
-            } else {
-                statusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800";
-                statusBadge.textContent = "Inactive";
-                row.setAttribute('data-status', 'inactive');
-            }
-            
-            showCustomToast(`${pendingUserName} has been ${pendingNewStatus === 'activate' ? 'activated' : 'deactivated'} successfully!`);
-            updateStats();
-        }
-        
-        statusModal.classList.add('hidden');
-        pendingUserId = null;
-        pendingUserName = null;
-        pendingNewStatus = null;
-        pendingCheckbox = null;
-    });
-    
-    function updateStats() {
-        const rows = document.querySelectorAll('#accountsTableBody tr');
-        let activeCount = 0;
-        let inactiveCount = 0;
-        let pendingCount = 0;
-        
-        rows.forEach(row => {
-            const statusSpan = row.querySelector('td:nth-child(4) span');
-            if (statusSpan) {
-                const status = statusSpan.textContent.toLowerCase();
-                if (status === 'active') activeCount++;
-                else if (status === 'inactive') inactiveCount++;
-                else if (status === 'pending') pendingCount++;
-            }
-        });
-        
-        const statNumbers = document.querySelectorAll('.stats-grid .text-3xl');
-        if (statNumbers.length >= 4) {
-            statNumbers[0].textContent = activeCount + inactiveCount + pendingCount;
-            statNumbers[1].textContent = activeCount;
-            statNumbers[2].textContent = inactiveCount;
-            statNumbers[3].textContent = pendingCount;
-        }
-    }
-    
-    function showCustomToast(message) {
-        const toast = document.getElementById('successToast');
-        const toastMessage = document.getElementById('toastMessage');
-        toastMessage.textContent = message;
-        toast.classList.remove('hidden');
-        setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 3000);
-    }
-    
-    // Filter and search functionality
-    const statusFilter = document.getElementById('statusFilter');
-    const searchInput = document.getElementById('searchInput');
-    const emptyState = document.getElementById('emptyState');
-    const showingStart = document.getElementById('showingStart');
-    const showingEnd = document.getElementById('showingEnd');
-    const totalCount = document.getElementById('totalCount');
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    let currentPage = 1;
-    const rowsPerPage = 5;
-    let filteredRows = [];
-
-    function getAllRows() {
-        return Array.from(document.querySelectorAll('#accountsTableBody tr'));
-    }
-
-    function filterRows() {
-        const status = statusFilter.value;
-        const search = searchInput.value.toLowerCase();
-        const rows = getAllRows();
-        
-        filteredRows = rows.filter(row => {
-            const statusText = row.querySelector('td:nth-child(4) span')?.textContent.toLowerCase() || '';
-            const nameText = row.querySelector('td:nth-child(1) p:first-child')?.textContent.toLowerCase() || '';
-            const emailText = row.querySelector('td:nth-child(2) p')?.textContent.toLowerCase() || '';
-            
-            const statusMatch = status === 'all' || statusText === status;
-            const searchMatch = nameText.includes(search) || emailText.includes(search);
-            
-            return statusMatch && searchMatch;
-        });
-        
-        currentPage = 1;
-        displayRows();
-    }
-
-    function displayRows() {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageRows = filteredRows.slice(start, end);
-        
-        getAllRows().forEach(row => row.classList.add('hidden'));
-        pageRows.forEach(row => row.classList.remove('hidden'));
-        
-        const totalFiltered = filteredRows.length;
-        totalCount.textContent = totalFiltered;
-        showingStart.textContent = totalFiltered > 0 ? start + 1 : 0;
-        showingEnd.textContent = Math.min(end, totalFiltered);
-        
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = end >= totalFiltered;
-        
-        if (totalFiltered === 0) {
-            emptyState.classList.remove('hidden');
-            document.querySelector('.overflow-x-auto table').classList.add('hidden');
-        } else {
-            emptyState.classList.add('hidden');
-            document.querySelector('.overflow-x-auto table').classList.remove('hidden');
-        }
-    }
-
-    prevPageBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayRows();
-        }
-    });
-    
-    nextPageBtn.addEventListener('click', () => {
-        const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            displayRows();
-        }
-    });
-    
-    statusFilter.addEventListener('change', filterRows);
-    searchInput.addEventListener('input', filterRows);
-    refreshBtn.addEventListener('click', () => {
-        statusFilter.value = 'all';
-        searchInput.value = '';
-        filterRows();
-    });
-
-    // Resend Email Modal
-    const resendModal = document.getElementById('resendModal');
-    const resendModalContent = document.getElementById('resendModalContent');
-    const resendEmailName = document.getElementById('resendEmailName');
-    const cancelResendBtn = document.getElementById('cancelResendBtn');
-    const confirmResendBtn = document.getElementById('confirmResendBtn');
-    let currentResendName = '';
-    let currentResendEmail = '';
-    
-    function openResendModal(name, email) {
-        currentResendName = name;
-        currentResendEmail = email;
-        resendEmailName.textContent = name;
-        resendModal.classList.remove('hidden');
-        setTimeout(() => {
-            resendModalContent.classList.remove('scale-95', 'opacity-0');
-            resendModalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
-    
-    function closeResendModal() {
-        resendModalContent.classList.remove('scale-100', 'opacity-100');
-        resendModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            resendModal.classList.add('hidden');
-        }, 200);
-    }
-    
-    function showToast() {
-        successToast.classList.remove('hidden');
-        setTimeout(() => {
-            successToast.classList.add('hidden');
-        }, 3000);
-    }
-    
-    window.resendEmail = function(name, email) {
-        openResendModal(name, email);
-    };
-    
-    cancelResendBtn.addEventListener('click', closeResendModal);
-    
-    confirmResendBtn.addEventListener('click', () => {
-        closeResendModal();
-        showToast();
-    });
-    
-    resendModal.addEventListener('click', (e) => {
-        if (e.target === resendModal) {
-            closeResendModal();
-        }
-    });
-    
-    statusModal.addEventListener('click', (e) => {
-        if (e.target === statusModal) {
-            statusModal.classList.add('hidden');
-            pendingUserId = null;
-            pendingUserName = null;
-            pendingNewStatus = null;
-            pendingCheckbox = null;
-        }
-    });
-    
-    filterRows();
-</script>
+<script type="module" src="{% static 'javascript/users/adminAidAccounts.js' %}"></script>
 {% endblock %}
