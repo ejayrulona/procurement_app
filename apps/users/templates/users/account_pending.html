@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Account Registration Status | Procurement Office</title>
+    <link rel="icon" type="image/jpg" href="{% static 'images/wmsu_favicon.png' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Custom animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .animate-pulse-custom {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+    <!-- BACKGROUND -->
+    <div class="fixed inset-0 -z-10">
+        <img src="{% static 'images/wmsu.jpg' %}" alt="Procurement background" class="w-full h-full object-cover opacity-30">
+        <div class="absolute inset-0 bg-white/80"></div>
+    </div>
+
+    <!-- HEADER with Logo -->
+    <header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md border border-gray-200">
+                    <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-10 h-10 object-contain">
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl tracking-tight">PROCUREMENT<span class="font-light">OFFICE</span></h1>
+                    <p class="text-red-100 text-xs">Centralized e‑procurement hub</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+        <div class="container mx-auto px-4 py-8 max-w-4xl">
+            <!-- Status Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                <!-- Header with gradient based on status -->
+                <div class="bg-gradient-to-r from-red-700 to-red-800 px-8 py-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Registration Status</h1>
+                            <p class="text-red-100 text-sm">College/Office Account Application</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <!-- Status Badge - Dynamic based on status -->
+                    <div class="text-center mb-8">
+                        <!-- Pending Status -->
+                        <div id="pendingStatus" class="inline-flex flex-col items-center">
+                            <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mb-4 animate-pulse-custom">
+                                <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">PENDING REVIEW</span>
+                            <p class="text-gray-600 mt-3">Your application is currently being reviewed by the procurement office.</p>
+                        </div>
+
+                        <!-- Approved Status (Hidden by default) -->
+                        <div id="approvedStatus" class="inline-flex flex-col items-center hidden">
+                            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">APPROVED</span>
+                            <p class="text-gray-600 mt-3">Congratulations! Your application has been approved.</p>
+                        </div>
+
+                        <!-- Declined Status (Hidden by default) -->
+                        <div id="declinedStatus" class="inline-flex flex-col items-center hidden">
+                            <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold">DECLINED</span>
+                            <p class="text-gray-600 mt-3">We regret to inform you that your application has been declined.</p>
+                        </div>
+                    </div>
+
+                    <!-- Application Details -->
+                    <div class="border-t border-gray-200 pt-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Application Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">College/Office Name</p>
+                                <p class="text-sm font-semibold text-gray-800">College of Engineering</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">College Code</p>
+                                <p class="text-sm font-semibold text-gray-800">COE-001</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Date Submitted</p>
+                                <p class="text-sm font-semibold text-gray-800">January 15, 2024</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Last Updated</p>
+                                <p class="text-sm font-semibold text-gray-800">January 20, 2024</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Head/Dean Information -->
+                    <div class="border-t border-gray-200 pt-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Head/Dean Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Full Name</p>
+                                <p class="text-sm font-semibold text-gray-800">Dr. Juan Dela Cruz</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Position</p>
+                                <p class="text-sm font-semibold text-gray-800">Dean</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Email Address</p>
+                                <p class="text-sm font-semibold text-gray-800">dean.engineering@wmsu.edu.ph</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500">Phone Number</p>
+                                <p class="text-sm font-semibold text-gray-800">(062) 123-4567</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remarks/Reason (Only shown for declined status) -->
+                    <div id="remarksSection" class="border-t border-gray-200 pt-6 mb-6 hidden">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Remarks</h3>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <p class="text-sm text-red-800" id="remarksText">Incomplete requirements. Please submit the missing documents and reapply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="border-t border-gray-200 pt-6 flex gap-4 justify-end">
+                        <button onclick="window.location.href='{% url 'core:home' %}'" 
+                                class="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition">
+                            Back to Login
+                        </button>
+                        
+                        <!-- Show different buttons based on status -->
+                        <div id="pendingActions">
+                            <button disabled 
+                                    class="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
+                                Waiting for Approval...
+                            </button>
+                        </div>
+                        
+                        <div id="approvedActions" class="hidden">
+                            <button onclick="window.location.href='{% url 'core:home' %}'" 
+                                    class="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition">
+                                Proceed to Login
+                            </button>
+                        </div>
+                        
+                        <div id="declinedActions" class="hidden">
+                            <button onclick="window.location.href=''" 
+                                    class="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition">
+                                Reapply
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Help Text -->
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex gap-3">
+                            <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-sm text-blue-800">
+                                For questions regarding your application status, please contact the Procurement Office at <strong>procurement@wmsu.edu.ph</strong> or call <strong>(062) 123-4567</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="mt-8 bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6">Application Timeline</h3>
+                <div class="relative">
+                    <!-- Timeline Line -->
+                    <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                    
+                    <!-- Timeline Item 1 -->
+                    <div class="relative flex gap-4 mb-6">
+                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center z-10">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">Application Submitted</p>
+                            <p class="text-sm text-gray-500">January 15, 2024 - 10:30 AM</p>
+                            <p class="text-xs text-gray-400 mt-1">Your application has been successfully submitted and is awaiting review.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Item 2 - Pending Review -->
+                    <div id="timelineReview" class="relative flex gap-4 mb-6">
+                        <div class="flex-shrink-0 w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center z-10">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">Under Review</p>
+                            <p class="text-sm text-gray-500">January 16, 2024 - 09:00 AM</p>
+                            <p class="text-xs text-gray-400 mt-1">Your application is currently being reviewed by the procurement team.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Item 3 - Final Decision -->
+                    <div id="timelineDecision" class="relative flex gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center z-10">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-400">Final Decision</p>
+                            <p class="text-sm text-gray-400">Pending</p>
+                            <p class="text-xs text-gray-400 mt-1">The final decision will be communicated once the review is complete.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simulate different statuses - In production, this would come from the backend
+        // Possible values: 'pending', 'approved', 'declined'
+        const status = 'pending'; // Change this to 'approved' or 'declined' to test different states
+        
+        // Get DOM elements
+        const pendingStatus = document.getElementById('pendingStatus');
+        const approvedStatus = document.getElementById('approvedStatus');
+        const declinedStatus = document.getElementById('declinedStatus');
+        const pendingActions = document.getElementById('pendingActions');
+        const approvedActions = document.getElementById('approvedActions');
+        const declinedActions = document.getElementById('declinedActions');
+        const remarksSection = document.getElementById('remarksSection');
+        const timelineReview = document.getElementById('timelineReview');
+        const timelineDecision = document.getElementById('timelineDecision');
+        
+        // Update UI based on status
+        function updateStatusUI() {
+            if (status === 'pending') {
+                pendingStatus.classList.remove('hidden');
+                approvedStatus.classList.add('hidden');
+                declinedStatus.classList.add('hidden');
+                pendingActions.classList.remove('hidden');
+                approvedActions.classList.add('hidden');
+                declinedActions.classList.add('hidden');
+                remarksSection.classList.add('hidden');
+                
+                // Update timeline
+                timelineReview.classList.remove('opacity-50');
+                timelineDecision.classList.add('opacity-50');
+                
+            } else if (status === 'approved') {
+                pendingStatus.classList.add('hidden');
+                approvedStatus.classList.remove('hidden');
+                declinedStatus.classList.add('hidden');
+                pendingActions.classList.add('hidden');
+                approvedActions.classList.remove('hidden');
+                declinedActions.classList.add('hidden');
+                remarksSection.classList.add('hidden');
+                
+                // Update timeline
+                timelineReview.classList.remove('opacity-50');
+                const decisionIcon = timelineDecision.querySelector('.flex-shrink-0 div');
+                timelineDecision.querySelector('.flex-shrink-0').innerHTML = `
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center z-10">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                `;
+                timelineDecision.querySelector('.flex-1 p:first-child').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:first-child').classList.add('text-gray-800');
+                timelineDecision.querySelector('.flex-1 p:first-child').textContent = 'Application Approved';
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').classList.add('text-gray-500');
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').textContent = 'January 20, 2024 - 02:30 PM';
+                timelineDecision.querySelector('.flex-1 p:last-child').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:last-child').classList.add('text-gray-500');
+                timelineDecision.querySelector('.flex-1 p:last-child').textContent = 'Congratulations! Your application has been approved. You can now log in to your account.';
+                
+            } else if (status === 'declined') {
+                pendingStatus.classList.add('hidden');
+                approvedStatus.classList.add('hidden');
+                declinedStatus.classList.remove('hidden');
+                pendingActions.classList.add('hidden');
+                approvedActions.classList.add('hidden');
+                declinedActions.classList.remove('hidden');
+                remarksSection.classList.remove('hidden');
+                
+                // Update timeline
+                timelineReview.classList.remove('opacity-50');
+                const decisionIcon = timelineDecision.querySelector('.flex-shrink-0 div');
+                timelineDecision.querySelector('.flex-shrink-0').innerHTML = `
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center z-10">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                `;
+                timelineDecision.querySelector('.flex-1 p:first-child').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:first-child').classList.add('text-gray-800');
+                timelineDecision.querySelector('.flex-1 p:first-child').textContent = 'Application Declined';
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').classList.add('text-gray-500');
+                timelineDecision.querySelector('.flex-1 p:nth-child(2)').textContent = 'January 19, 2024 - 11:15 AM';
+                timelineDecision.querySelector('.flex-1 p:last-child').classList.remove('text-gray-400');
+                timelineDecision.querySelector('.flex-1 p:last-child').classList.add('text-gray-500');
+                timelineDecision.querySelector('.flex-1 p:last-child').textContent = 'Unfortunately, your application has been declined. Please review the remarks and reapply.';
+            }
+        }
+        
+        // Initialize the UI
+        updateStatusUI();
+        
+        // In production, you would fetch the status from the backend:
+        /*
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/registration-status/?id=' + registrationId);
+                const data = await response.json();
+                const status = data.status;
+                updateStatusUI(status, data);
+            } catch (error) {
+                console.error('Error fetching status:', error);
+            }
+        }
+        
+        fetchStatus();
+        */
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PPMP Details | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Review complete procurement plan details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <div class="mb-6 flex justify-between items-center">
+        <a href="{% url 'ppmp:list_page' %}" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">
+            ← Back to List
+        </a>
+        <button onclick="window.print()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2">
+            🖨️ Print / PDF
+        </button>
+    </div>
+
+    <div id="printableArea" class="bg-white rounded-2xl shadow-lg border overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b">
+            <div class="text-center mb-4">
+                <h1 class="text-2xl font-bold">PROJECT PROCUREMENT MANAGEMENT PLAN</h1>
+                <p class="text-gray-600">Republic of the Philippines</p>
+                <p class="text-gray-700 font-medium">WESTERN MINDANAO STATE UNIVERSITY</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p><strong>PPMP No.:</strong> PPMP-2026-001</p>
+                    <p><strong>End-User Unit:</strong> Registrar's Office</p>
+                    <p><strong>Department:</strong> Academic Affairs</p>
+                </div>
+                <div>
+                    <p><strong>Date Prepared:</strong> April 4, 2026</p>
+                    <p><strong>Fiscal Year:</strong> 2026</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content (Hardcoded sample data) -->
+        <div class="p-8 space-y-6">
+            <!-- Section 1 -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">I. PROJECT INFORMATION</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><p class="text-xs text-gray-500">PAP Code (UACS)</p><p class="font-mono">50604050 02</p></div>
+                    <div><p class="text-xs text-gray-500">System Identifier</p><p class="font-mono">SYS-2026-001</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p><p>Information and Communications Technology Equipment</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Name of Procurement Project</p><p class="font-bold text-lg">Supply and Delivery of ICT Equipment</p></div>
+                    <div><p class="text-xs text-gray-500">Classification</p><p>Goods</p></div>
+                    <div><p class="text-xs text-gray-500">Quantity/Size</p><p>20 units (desktop), 10 units (laptop)</p></div>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">II. PROCUREMENT DETAILS</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><p class="text-xs text-gray-500">Mode of Procurement</p><p class="font-medium">Competitive Bidding</p></div>
+                    <div><p class="text-xs text-gray-500">Delivery Type</p><p>One-time</p></div>
+                    <div><p class="text-xs text-gray-500">Contracting Duration</p><p>Single Year</p></div>
+                    <div><p class="text-xs text-gray-500">Framework Agreement</p><p>No</p></div>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">III. SCHEDULE & DATES</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><p class="text-xs text-gray-500">PR Submission Date</p><p class="font-medium">2026-03-01</p></div>
+                    <div><p class="text-xs text-gray-500">Start of Implementation</p><p class="font-medium">2026-06-01</p></div>
+                    <div><p class="text-xs text-gray-500">Target Delivery Date</p><p class="font-medium">2026-07-15</p></div>
+                    <div class="md:col-span-3"><p class="text-xs text-gray-500">Location / Delivery Site</p><p>Main Campus, Quezon City</p></div>
+                </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">IV. BUDGET & FUNDING</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><p class="text-xs text-gray-500">Budget Source</p><p>Government of the Philippines (current year's budget)</p></div>
+                    <div><p class="text-xs text-gray-500">Project Recurrence</p><p>New</p></div>
+                    <div class="md:col-span-2 bg-green-50 rounded-lg p-3">
+                        <p class="text-xs text-green-600">Approved Budget for the Contract (ABC)</p>
+                        <p class="text-2xl font-bold text-green-700">₱ 1,250,000.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Market Scoping -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">V. MARKET SCOPING</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm border rounded-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Supplier</th>
+                                <th class="px-4 py-2 text-left">Quotation</th>
+                                <th class="px-4 py-2 text-left">Source</th>
+                                <th class="px-4 py-2 text-left">Date Gathered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t"><td class="px-4 py-2">Tech Solutions Inc.</td><td class="px-4 py-2">₱ 1,250,000.00</td><td class="px-4 py-2">Canvass within 6 months</td><td class="px-4 py-2">2026-02-15</td></tr>
+                            <tr class="border-t"><td class="px-4 py-2">Digital World Corp.</td><td class="px-4 py-2">₱ 1,280,000.00</td><td class="px-4 py-2">Supplier website</td><td class="px-4 py-2">2026-02-20</td></tr>
+                            <tr class="border-t"><td class="px-4 py-2">IT Hub Philippines</td><td class="px-4 py-2">₱ 1,220,000.00</td><td class="px-4 py-2">Proposal from previous procurement</td><td class="px-4 py-2">2026-02-10</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div><p class="text-xs text-gray-500">Average Quotation</p><p class="font-bold">₱ 1,250,000.00</p></div>
+                    <div><p class="text-xs text-gray-500">Delivery / Installation Cost</p><p class="font-medium">₱ 50,000.00</p></div>
+                    <div><p class="text-xs text-gray-500">Life-cycle Cost (TCO)</p><p class="font-medium">₱ 200,000.00</p></div>
+                </div>
+            </div>
+
+            <!-- Section 6: Remarks -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">VI. REMARKS</h2>
+                <p class="text-gray-700">Urgent requirement for new academic year. Priority shipment requested.</p>
+            </div>
+
+            <!-- Signatories -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center pt-4 border-t">
+                <div>
+                    <p class="text-sm text-gray-500 mb-4">Prepared by:</p>
+                    <div class="border-t border-gray-300 pt-2 mt-8">
+                        <p class="font-medium">[Procurement Focal Person]</p>
+                        <p class="text-xs text-gray-500">End-User</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-4">Submitted by:</p>
+                    <div class="border-t border-gray-300 pt-2 mt-8">
+                        <p class="font-medium">Dr. Maria Santos</p>
+                        <p class="text-xs text-gray-500">Date: _______________</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-4">Received by:</p>
+                    <div class="border-t border-gray-300 pt-2 mt-8">
+                        <p class="font-medium">[BAC Secretariat]</p>
+                        <p class="text-xs text-gray-500">Date: _______________</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

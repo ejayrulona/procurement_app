@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PPMP | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Create and manage Project Procurement Management Plans{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Header with Create Button -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Create PPMP</h1>
+            <p class="text-gray-500 text-sm mt-1">Submit a new Project Procurement Management Plan</p>
+        </div>
+        <button onclick="window.location.href='{% url 'ppmp:ppmp_form' %}'" 
+                class="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Create PPMP
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search PPMP by title, PPMP No., or division..." 
+                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+        </div>
+    </div>
+
+    <!-- PPMP Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PPMP No.</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created by</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ppmpTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Sample Data -->
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-001</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Office Supply Procurement</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button onclick="viewDetails('PPMP-2026-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Approved
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-002</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Infrastructure Development</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button onclick="viewDetails('PPMP-2026-002')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                Rejected
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-003</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IT Equipment Upgrade</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Department</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Director</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 23, 2026 10:30AM</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button onclick="viewDetails('PPMP-2026-003')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No PPMPs found</h3>
+            <p class="text-gray-500">Create your first PPMP by clicking the "Create PPMP" button above.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="bg-white px-6 py-4 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">3</span> of <span class="font-medium" id="totalCount">3</span> results
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Previous
+                    </button>
+                    <button id="nextPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample PPMP Data
+    let ppmpData = [
+        {
+            id: "PPMP-2026-001",
+            year: "2026",
+            title: "Office Supply Procurement",
+            division: "Admin",
+            created_by: "College Dean",
+            date: "April 24, 2026 1:00PM",
+            status: "Pending"
+        },
+        {
+            id: "PPMP-2026-002",
+            year: "2026",
+            title: "Infrastructure Development",
+            division: "Admin",
+            created_by: "College Dean",
+            date: "April 24, 2026 1:00PM",
+            status: "Approved"
+        },
+        {
+            id: "PPMP-2026-003",
+            year: "2026",
+            title: "IT Equipment Upgrade",
+            division: "IT Department",
+            created_by: "IT Director",
+            date: "April 23, 2026 10:30AM",
+            status: "Rejected"
+        }
+    ];
+
+    // Helper function to get status badge
+    function getStatusBadge(status) {
+        const badges = {
+            'Pending': 'bg-yellow-100 text-yellow-800',
+            'Approved': 'bg-green-100 text-green-800',
+            'Rejected': 'bg-red-100 text-red-800',
+            'Submitted': 'bg-blue-100 text-blue-800'
+        };
+        const badgeClass = badges[status] || 'bg-gray-100 text-gray-800';
+        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span>`;
+    }
+
+    // Render table
+    let currentPage = 1;
+    const rowsPerPage = 5;
+    let filteredData = [];
+
+    function renderTable() {
+        const tableBody = document.getElementById('ppmpTableBody');
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        if (filteredData.length === 0) {
+            tableBody.innerHTML = '';
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.querySelector('table').classList.add('hidden');
+            return;
+        }
+
+        document.getElementById('emptyState').classList.add('hidden');
+        document.querySelector('table').classList.remove('hidden');
+        
+        tableBody.innerHTML = '';
+        pageData.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 transition';
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(item.status)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">${escapeHtml(item.id)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.year)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.division)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.created_by)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.date)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button onclick="viewDetails('${item.id}')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Update pagination info
+        const startNum = start + 1;
+        const endNum = Math.min(end, filteredData.length);
+        document.getElementById('showingStart').textContent = filteredData.length > 0 ? startNum : 0;
+        document.getElementById('showingEnd').textContent = endNum;
+        document.getElementById('totalCount').textContent = filteredData.length;
+
+        // Update pagination buttons
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = end >= filteredData.length;
+    }
+
+    // Escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Apply search filter
+    function applySearch() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredData = ppmpData.filter(item => {
+            return item.id.toLowerCase().includes(searchTerm) ||
+                   item.title.toLowerCase().includes(searchTerm) ||
+                   item.division.toLowerCase().includes(searchTerm) ||
+                   item.created_by.toLowerCase().includes(searchTerm);
+        });
+        
+        currentPage = 1;
+        renderTable();
+    }
+
+    // View details function
+    function viewDetails(ppmpId) {
+        const ppmp = ppmpData.find(p => p.id === ppmpId);
+        if (ppmp) {
+            // Store in localStorage for detailed view page
+            localStorage.setItem('selectedPPMP', JSON.stringify(ppmp));
+            // Redirect to detailed view (you can change this URL as needed)
+            window.location.href = `/ppmp/detailed_view/?ppmp_id=${ppmpId}`;
+        } else {
+            alert('PPMP details not found.');
+        }
+    }
+
+    // Pagination event listeners
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    });
+    
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const maxPage = Math.ceil(filteredData.length / rowsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            renderTable();
+        }
+    });
+
+    // Search event listener
+    document.getElementById('searchInput').addEventListener('input', applySearch);
+
+    // Initialize
+    filteredData = [...ppmpData];
+    renderTable();
+
+    // Make viewDetails global for onclick
+    window.viewDetails = viewDetails;
+</script>
+{% endblock %}

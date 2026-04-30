@@ -26,6 +26,7 @@ urlpatterns = [
     path("activity_logs/", include("apps.activity_logs.urls", namespace="activity_logs")),
     path("inventory/", include("apps.inventory.urls", namespace="inventory")),
     path("users/", include("apps.users.urls", namespace="users")),
+    path("ppmp/", include("apps.ppmp.urls", namespace="ppmp")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
