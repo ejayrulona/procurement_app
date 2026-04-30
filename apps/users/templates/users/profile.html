@@ -87,10 +87,24 @@
                     <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-8 text-center">
                         <div class="relative inline-block">
                             <div class="w-32 h-32 rounded-full bg-white mx-auto overflow-hidden border-4 border-white shadow-lg">
-                                <img id="profile-preview" 
-                                     src="{% if user.profile.logo %}{{ user.profile.logo.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" 
-                                     alt="Profile Logo" 
-                                     class="w-full h-full object-cover">
+                                {% if not user.user_profile.profile_photo or not user.user_profile.college_office.college_photo %}
+                                    <span class="text-gray-600 font-semibold">
+                                        {% if user.first_name and user.last_name %}
+                                            {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                                        {% elif user.first_name %}
+                                            {{ user.first_name|slice:":1" }}
+                                        {% elif user.last_name %}
+                                            {{ user.last_name|slice:":1" }}
+                                        {% else %}
+                                            U
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <img id="profile-preview" 
+                                        src="{% if user.role == "admin" or user.role == "admin_aid" %}{{ user.user_profile.profile_photo.url }}{% else %}{{ user.user_profile.college_office.college_photo.url }}{% endif %}" 
+                                        alt="Profile Logo" 
+                                        class="w-full h-full object-cover">
+                                {% endif %}
                             </div>
                             <label for="logo-upload" class="absolute bottom-0 right-0 bg-red-600 rounded-full p-2 cursor-pointer hover:bg-red-700 transition shadow-md">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +115,7 @@
                             <input type="file" id="logo-upload" name="logo" accept="image/*" class="hidden">
                         </div>
                         <h2 class="text-white text-xl font-bold mt-4" id="profile-name">{{ user.get_full_name|default:user.username }}</h2>
-                        <p class="text-red-100 text-sm mt-1" id="profile-role">{{ user.user_type|default:"College/Office User" }}</p>
+                        <p class="text-red-100 text-sm mt-1" id="profile-role">{{ user.role }}</p>
                     </div>
                     <div class="px-6 py-4 border-t border-gray-100">
                         <div class="space-y-3 text-sm">
@@ -121,7 +135,7 @@
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
-                                <span id="profile-college">{{ user.college_name|default:"Not specified" }}</span>
+                                <span id="profile-college">{{ user.college_profile.college_office.name|default:"Procurement Office" }}</span>
                             </div>
                         </div>
                     </div>
@@ -147,106 +161,96 @@
                             <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Personal Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">First Name</label>
-                                    <input type="text" name="first_name" id="first_name" 
-                                           value="{{ user.first_name|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
+                                    <label for="{{ user_form.username.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Username</label>
+                                    {{ user_form.username }}
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Last Name</label>
-                                    <input type="text" name="last_name" id="last_name"
-                                           value="{{ user.last_name|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
+                                    <label for="{{ user_form.first_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">First Name</label>
+                                    {{ user_form.first_name }}
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Email Address</label>
-                                    <input type="email" name="email" id="email"
-                                           value="{{ user.email|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
+                                    <label for="{{ user_form.middle_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Middle Name</label>
+                                    {{ user_form.middle_name }}
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Phone Number</label>
-                                    <input type="tel" name="phone" id="phone"
-                                           value="{{ user.phone|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-                                           placeholder="(123) 456-7890">
+                                    <label for="{{ user_form.last_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Last Name</label>
+                                    {{ user_form.last_name }}
+                                </div>
+                            </div>
+                            <!-- Add the position title field here -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label for="{{ user_form.email.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Email Address</label>
+                                    {{ user_form.email}}
+                                </div>
+                                <div>
+                                    <label for="{{ user_form.phone_number.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Phone Number</label>
+                                    {{ user_form.phone_number }}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- College/Office Information Section -->
+                        <!-- College/Office or Admin Information Section -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">College/Office Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">College/Office Name</label>
-                                    <input type="text" name="college_name" id="college_name"
-                                           value="{{ user.college_name|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
+                            {% if user.role == "admin" or user.role == "admin_aid" %}
+                                {% if user.role == "admin"%}
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Admin Information</h3>
+                                {% else %}
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Admin Aid Information</h3>
+                                {% endif %}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="{{ user_profile_form.employee_id_number.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Employee ID Number</label>
+                                        {{ user_profile_form.employee_id_number }}
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">College/Office Code</label>
-                                    <input type="text" name="college_code" id="college_code"
-                                           value="{{ user.college_code|default:'' }}"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
+                            {% else %}
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">College/Office Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="{{ user_profile_form.college_office.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">College/Office Name</label>
+                                        {{ user_profile_form.college_office }}
+                                        <datalist id="college-office-list">
+                                        {% for college_office in colleges_offices %}
+                                            <option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
+                                                data-code="{{ college_office.code}}"
+                                                data-type="{{ college_office.get_organization_type_display }}"
+                                                data-campus="{{ college_office.get_campus_display }}"
+                                                data-address="{{ college_office.address }}"
+                                                data-photo="{% if college_office.college_photo %}{{college_office.college_photo.url}}{% endif %}">
+                                            </option>
+                                        {% endfor %}
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 font-medium text-sm mb-2">College/Office Code</label>
+                                        <input type="text" id="college-code" required readonly
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+                                            placeholder="Auto-generated">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Type</label>
-                                    <select name="type" id="type"
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
-                                        <option value="college" {% if user.type == 'college' %}selected{% endif %}>College</option>
-                                        <option value="office" {% if user.type == 'office' %}selected{% endif %}>Office</option>
-                                        <option value="department" {% if user.type == 'department' %}selected{% endif %}>Department</option>
-                                    </select>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div>
+                                        <label class="block text-gray-700 font-medium text-sm mb-2">Type</label>
+                                        <input type="text" id="college-type" required readonly
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+                                            placeholder="Auto-generated">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 font-medium text-sm mb-2">Campus</label>
+                                        <input type="text" id="college-campus" required readonly
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+                                            placeholder="Auto-generated">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Position Title</label>
-                                    <select name="position" id="position"
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200">
-                                        <option value="">Select Position Title</option>
-                                        <option value="Dean" {% if user.position == 'Dean' %}selected{% endif %}>Dean</option>
-                                        <option value="Associate Dean" {% if user.position == 'Associate Dean' %}selected{% endif %}>Associate Dean</option>
-                                        <option value="Department Head" {% if user.position == 'Department Head' %}selected{% endif %}>Department Head</option>
-                                        <option value="Director" {% if user.position == 'Director' %}selected{% endif %}>Director</option>
-                                        <option value="Coordinator" {% if user.position == 'Coordinator' %}selected{% endif %}>Coordinator</option>
-                                        <option value="Chairperson" {% if user.position == 'Chairperson' %}selected{% endif %}>Chairperson</option>
-                                        <option value="OIC - Officer in Charge" {% if user.position == 'OIC - Officer in Charge' %}selected{% endif %}>OIC - Officer in Charge</option>
-                                        <option value="Program Head" {% if user.position == 'Program Head' %}selected{% endif %}>Program Head</option>
-                                        <option value="Unit Head" {% if user.position == 'Unit Head' %}selected{% endif %}>Unit Head</option>
-                                        <option value="Division Chief" {% if user.position == 'Division Chief' %}selected{% endif %}>Division Chief</option>
-                                    </select>
+                                <div class="mt-4">
+                                    <label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
+                                    <input type="text" id="college-address" required readonly
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+                                            placeholder="Auto-generated">
                                 </div>
-                            </div>
-                            <div class="mt-4">
-                                <label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
-                                <textarea name="address" id="address" rows="2"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-                                          placeholder="Building, Room Number, etc.">{{ user.address|default:'' }}</textarea>
-                            </div>
-                        </div>
-
-                        <!-- Change Password Section -->
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Change Password</h3>
-                            <p class="text-sm text-gray-500 mb-4">Leave blank if you don't want to change your password</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">New Password</label>
-                                    <input type="password" name="new_password" id="new_password"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-                                           placeholder="Enter new password">
-                                </div>
-                                <div>
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Confirm New Password</label>
-                                    <input type="password" name="confirm_password" id="confirm_password"
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200"
-                                           placeholder="Confirm new password">
-                                </div>
-                            </div>
+                            {% endif %}
                         </div>
 
                         <!-- Form Actions -->

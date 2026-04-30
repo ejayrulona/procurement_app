@@ -101,13 +101,13 @@
 							{{ college_profile_form.college_office }}
 							<datalist id="college-office-list">
 								{% for college_office in colleges_offices %}
-								<option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
-									data-code="{{ college_office.code}}"
-									data-type="{{ college_office.get_organization_type_display }}"
-									data-campus="{{ college_office.get_campus_display }}"
-									data-address="{{ college_office.address }}"
-									data-photo="{% if college_office.college_photo %}{{college_office.college_photo.url}}{% endif %}">
-								</option>
+									<option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
+										data-code="{{ college_office.code}}"
+										data-type="{{ college_office.get_organization_type_display }}"
+										data-campus="{{ college_office.get_campus_display }}"
+										data-address="{{ college_office.address }}"
+										data-photo="{% if college_office.college_photo %}{{college_office.college_photo.url}}{% endif %}">
+									</option>
 								{% endfor %}
 							</datalist>
 						</div>

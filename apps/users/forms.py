@@ -53,7 +53,6 @@ class UserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
         self.fields["username"].widget.attrs.pop("autofocus", None)
 
         self.fields["password1"].widget = forms.PasswordInput(
@@ -69,6 +68,58 @@ class UserForm(UserCreationForm):
             }
         )
         
+
+class UserEditForm(forms.ModelForm):
+    class Meta():
+        model = User
+        fields = (
+            "username", "first_name", "middle_name", "last_name", "email", "phone_number"
+        )
+        widgets = {
+            "username": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "juan123", 
+                }
+            ),
+            "first_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Juan"
+                }
+            ),
+            "middle_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Santos"
+                }
+            ),
+            "last_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Dela Cruz"
+                }
+            ),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "juandelacruz@wmsu.edu.ph"
+                }
+            ),
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "123 456 7890"
+                }
+            ),
+        }
+
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["username"].widget.attrs.pop("autofocus", None)
+
 
 class AdminProfileForm(forms.ModelForm):
     class Meta:

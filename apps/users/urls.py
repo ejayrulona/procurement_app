@@ -17,6 +17,6 @@ urlpatterns = (
     path("admin/registration-requests/", views.list_registration_requests, name="list_registration_requests"),
     path("admin/registration-requests/<int:id>/approve", views.approve_registration_request, name="approve_registration_request"),
     path("admin/registration-requests/<int:id>/decline", views.decline_registration_request, name="decline_registration_request"),
-    path("profile/", views.profile, name="profile"),
+    path("profile/<int:id>", views.profile, name="profile"),
     path("settings/", views.settings, name="settings"),
 )

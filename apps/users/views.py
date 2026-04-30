@@ -10,7 +10,7 @@ from .email import (
     send_registration_approved_email, send_registration_declined_email
 )
 from .forms import (
-    UserForm, AdminProfileForm, CollegeReapplyUserForm, CollegeProfileForm, 
+    UserForm, UserEditForm, AdminProfileForm, CollegeReapplyUserForm, CollegeProfileForm, 
     AdminAidCreationForm, AdminAidSetupForm, AdminAidSetupProfileForm
 )
 from .models import CollegeOffice, User, AdminProfile, CollegeProfile, RegistrationRequest
@@ -41,8 +41,9 @@ def create_admin_aid(request):
                 )
 
                 send_account_setup_email(user, request)
-                messages.success(request, f"Account created and setup email sent to {user.email}.")
-                return redirect("users:list_admin_aid_accounts")
+
+            messages.success(request, f"Account created and setup email sent to {user.email}.")
+            return redirect("users:list_admin_aid_accounts")
     else:
         form = AdminAidCreationForm()
 
@@ -153,7 +154,7 @@ def toggle_user_status(request, id):
             send_account_deactivated_email(user)
         
         status_label = "activated" if user.is_active else "deactivated"
-        messages.success(request, f"{user.full_name} has been {status_label}")
+        messages.success(request, f"{user.full_name} has been {status_label}.")
 
     return redirect("users:list_admin_aid_accounts")
 
@@ -176,7 +177,7 @@ def register_college(request):
                 RegistrationRequest.objects.create(user=user)
                 send_registration_confirmation_email(user, request)
 
-                return redirect("users:college_account_status", username=user.username)
+            return redirect("users:college_account_status", username=user.username)
     else:
         user_form = UserForm(prefix="user")
         college_profile_form = CollegeProfileForm(prefix="college_profile")
@@ -336,8 +337,45 @@ def reapply_registration(request, username):
     return render(request, "users/college_registration.html", context)
 
 @login_required
-def profile(request):
-    return render(request, "users/profile.html")
+def profile(request, id):
+    user = get_object_or_404(User, pk=id)
+    user_profile = (
+        get_object_or_404(AdminProfile, user=user)  
+        if user.role == User.Role.ADMIN or user.role == User.Role.ADMIN_AID 
+        else get_object_or_404(CollegeProfile, user=user)
+    )
+
+    if request.method == "POST":
+        user_form = UserEditForm(request.POST, instance=user, prefix="user")
+        user_profile_form = (
+            AdminProfileForm(request.POST, request.FILES, instance=user_profile, prefix="admin_profile")
+            if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
+            else CollegeProfileForm(request.POST, instance=user_profile, prefix="college_profile")
+        )
+
+        if user_form.is_valid() and user_profile_form.is_valid():
+            with transaction.atomic():
+                user_form.save()
+                user_profile_form.save()
+
+            messages.success(request, "Your profile has been updated.")
+            return redirect("users:profile", id=id)
+    else:
+        user_form = UserEditForm(instance=user, prefix="user")
+        user_profile_form = (
+            AdminProfileForm(instance=user_profile, prefix="admin_profile")
+            if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
+            else CollegeProfileForm(instance=user_profile, prefix="college_profile")
+        )
+
+    context = {
+        "user": user,
+        "user_form": user_form,
+        "user_profile_form": user_profile_form,
+        "colleges_offices": CollegeOffice.objects.all()
+    }
+
+    return render(request, "users/profile.html", context)
 
 @login_required
 def settings(request):
