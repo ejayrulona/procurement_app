@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import environ
 import os
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_auto_logout.middleware.auto_logout",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -69,6 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django_auto_logout.context_processors.auto_logout_client",
             ],
         },
     },
@@ -145,6 +148,13 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "core:dashboard"
 LOGIN_URL = "core:home"
 LOGOUT_REDIRECT_URL = "core:home"
+
+AUTO_LOGOUT = {
+    "IDLE_TIME": timedelta(minutes=15),
+    "SESSION_TIME": timedelta(hours=8),
+    "MESSAGE": "The session has expired. Please login again to continue.",
+    "REDIRECT_TO_LOGIN_IMMEDIATELY": True,
+}
 
 # Email
 

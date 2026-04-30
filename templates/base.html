@@ -440,7 +440,7 @@
 
 							<!-- College/Office Side -->
 							<hr>
-							<h1">College/Office Side</h1>
+							<h1>College/Office Side</h1>
 
 							<!-- College Dashboard Link -->
 							<a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'college_dashboard' %}nav-active{% endif %}">
@@ -563,6 +563,8 @@
 	</script>
 
 	{% block extra_js %}{% endblock %}
+
+	{{ redirect_to_login_immediately }}
 </body>
 
 </html>
