@@ -10,10 +10,12 @@
 <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8 border border-red-100">
 	<div class="flex justify-between items-start flex-wrap gap-4">
 		<div>
-			<h2 class="text-2xl font-bold text-gray-800">Hello, <span id="userNameDisplay">{{
-					user.get_full_name|default:"John
-					Doe" }}</span></h2>
-			<p class="text-gray-600 mt-1">Welcome back, Sir <span id="adminNameDisplay">Reymart</span>!</p>
+			<h2 class="text-2xl font-bold text-gray-800">Hello, 
+				<span id="userNameDisplay">
+					{{ request.user.full_name }}
+				</span>
+			</h2>
+			<p class="text-gray-600 mt-1">Welcome back, Sir <span id="adminNameDisplay">{{ request.user.first_name }}</span>!</p>
 		</div>
 		<button
 			class="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-md transition duration-200">
@@ -166,14 +168,4 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	// You can dynamically set the admin name from Django
-	document.addEventListener('DOMContentLoaded', function () {
-		// This can be replaced with actual Django variable
-		const adminName = "Reymart";  // Replace with {{ admin_name }} or similar
-		const adminNameSpan = document.getElementById('adminNameDisplay');
-		if (adminNameSpan) adminNameSpan.textContent = adminName;
-	});
-</script>
 {% endblock %}
