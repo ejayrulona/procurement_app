@@ -6,11 +6,6 @@ app_name = "core"
 
 urlpatterns = (
     path("", HomeLoginView.as_view(), name="home"),
-    path("dashboard/", views.dashboard, name="dashboard"),
-
-    
-
-
-    
-    path("college_dashboard/", views.college_dashboard, name="college_dashboard"),
+    path("procurement/dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("college/dashboard/", views.college_dashboard, name="college_dashboard"),
 )

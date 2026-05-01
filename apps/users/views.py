@@ -4,6 +4,7 @@ from django.core import signing
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from .decorators import admin_required, any_admin_required
 from .email import (
     send_account_setup_email, send_account_activated_email,
     send_account_deactivated_email, send_registration_confirmation_email, 
@@ -15,7 +16,7 @@ from .forms import (
 )
 from .models import CollegeOffice, User, AdminProfile, CollegeProfile, RegistrationRequest
 
-@login_required
+@admin_required
 def create_admin_aid(request):
     if request.method == "POST":
         form = AdminAidCreationForm(request.POST)
@@ -52,7 +53,7 @@ def create_admin_aid(request):
     }
     return render(request, "users/create_admin_aid.html", context)
 
-@login_required
+@admin_required
 def list_admin_aid_accounts(request):
     aid_accounts = User.objects.filter(
         role=User.Role.ADMIN_AID
@@ -123,7 +124,7 @@ def setup_account(request, token):
 
     return render(request, "users/aid_account_confirmation.html", context)
 
-@login_required
+@admin_required
 def resend_setup_email(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
 
@@ -136,7 +137,7 @@ def resend_setup_email(request, id):
 
     return redirect("users:list_admin_aid_accounts")
 
-@login_required
+@admin_required
 def toggle_user_status(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
 
@@ -204,7 +205,7 @@ def college_account_status(request, username):
 
     return render(request, "users/college_account_status.html", context)
 
-@login_required
+@any_admin_required
 def list_registration_requests(request):
     account_requests = RegistrationRequest.objects.filter(
         user__role=User.Role.COLLEGE,
@@ -229,7 +230,7 @@ def list_registration_requests(request):
     
     return render(request, "users/registration_requests.html", context)
 
-@login_required
+@any_admin_required
 def approve_registration_request(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.COLLEGE)
     registration_request = RegistrationRequest.objects.filter(
@@ -257,7 +258,7 @@ def approve_registration_request(request, id):
     messages.success(request, f"{registration_request.user.full_name}'s registration has been approved.")
     return redirect("users:list_registration_requests")
 
-@login_required
+@any_admin_required
 def decline_registration_request(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.COLLEGE)
     registration_request = RegistrationRequest.objects.filter(
@@ -285,7 +286,6 @@ def decline_registration_request(request, id):
     messages.success(request, f"{registration_request.user.full_name}'s registration has been declined.")
     return redirect("users:list_registration_requests")
 
-@login_required
 def reapply_registration(request, username):
     user = get_object_or_404(User, username=username, role=User.Role.COLLEGE,)
     college_profile = get_object_or_404(CollegeProfile, user=user)
@@ -341,7 +341,7 @@ def profile(request, id):
     user = get_object_or_404(User, pk=id)
     user_profile = (
         get_object_or_404(AdminProfile, user=user)  
-        if user.role == User.Role.ADMIN or user.role == User.Role.ADMIN_AID 
+        if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
         else get_object_or_404(CollegeProfile, user=user)
     )
 
