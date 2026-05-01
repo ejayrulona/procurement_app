@@ -341,7 +341,7 @@ def profile(request, id):
     user = get_object_or_404(User, pk=id)
     user_profile = (
         get_object_or_404(AdminProfile, user=user)  
-        if user.role == User.Role.ADMIN or user.role == User.Role.ADMIN_AID 
+        if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
         else get_object_or_404(CollegeProfile, user=user)
     )
 
