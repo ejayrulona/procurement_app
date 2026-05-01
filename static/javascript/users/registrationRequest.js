@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const userId = button.dataset.userId;
             const collegeName = button.dataset.collegeName;
 
-            declineForm.action = `/users/admin/registration-request/${userId}/decline`;
+            declineForm.action = `/users/admin/registration-requests/${userId}/decline/`;
 
             modalCollegeName.textContent = collegeName;
             remarksTextarea.value = '';

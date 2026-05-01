@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def inventory(request):
+def list_inventory(request):
     return render(request, "inventory/inventory.html")
