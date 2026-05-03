@@ -7,85 +7,153 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-	<!-- Header with Back Button -->
-	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-		<div>
-			<h2 class="text-xl sm:text-2xl font-bold text-gray-800">Inventory Item Details</h2>
-			<p class="text-xs sm:text-sm text-gray-500 mt-1">Complete catalog information for procurement planning</p>
-		</div>
-		<a href="{% url 'inventory:list_inventory' %}" 
-		   class="w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition shadow-sm flex items-center justify-center gap-2">
+	<!-- Back Button -->
+	<div class="mb-6">
+		<a href="{% url 'inventory:list_inventory' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
 			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 			</svg>
-			Back to Inventory
+			<span class="font-medium">Back to Inventory</span>
 		</a>
 	</div>
 
 	<!-- Item Details Card -->
 	<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-		<div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-6 py-3 sm:py-4">
-			<div class="flex items-center gap-2 sm:gap-3">
-				<div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
-					<svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+			<div class="flex items-center gap-3">
+				<div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+					<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
 					</svg>
 				</div>
 				<div>
-					<h3 class="text-lg sm:text-xl font-bold text-white">Detailed Item Information</h3>
-					<p class="text-blue-100 text-xs">Complete specifications and current stock status</p>
+					<h3 class="text-xl font-bold text-white">Detailed Item Information</h3>
+					<p class="text-blue-100 text-sm">Complete specifications and details for procurement planning</p>
 				</div>
 			</div>
 		</div>
 
-		<div class="p-4 sm:p-6" id="detailsContent">
+		<div class="p-6" id="detailsContent">
 			<div class="text-center py-8">
 				<div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
 				<p class="mt-2 text-gray-500">Loading item details...</p>
 			</div>
 		</div>
 	</div>
+
+	<!-- Info Card -->
+	<div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+		<div class="flex gap-3">
+			<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+			</svg>
+			<div>
+				<p class="text-sm text-blue-800 font-medium">PPMP Integration Note</p>
+				<p class="text-xs text-blue-600 mt-1">This item can be selected by colleges/offices when creating their Procurement Project Management Plans (PPMP).</p>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
-	// Get item ID from URL
+	// Get item ID from URL - e.g., /inventory/view/IT-001/
 	const pathParts = window.location.pathname.split('/');
 	const itemId = pathParts[pathParts.length - 2];
 	
 	// Sample inventory data - in production, this would come from your backend
-	const inventoryData = [
-		{
-			id: "IT-001", name: "Supply and Delivery of Desktop Computers", category: "Goods",
-			quantity: 45, unit: "unit", unit_cost: 45000, reorder_level: 5,
-			location: "Main Building, Rm 101", status: "In Stock",
-			description: "High-performance desktop computers for office use. Intel Core i5, 16GB RAM, 512GB SSD, Energy Star Certified. Packaged per unit."
+	const inventoryData = {
+		"IT-001": {
+			id: "IT-001",
+			name: "Supply and Delivery of Desktop Computers",
+			category: "Goods",
+			quantity: 45,
+			unit: "unit",
+			unit_cost: 45000,
+			reorder_level: 5,
+			location: "Main Building, Rm 101",
+			status: "In Stock",
+			description: "High-performance desktop computers for office use. Intel Core i5, 16GB RAM, 512GB SSD, Energy Star Certified. Packaged per unit.",
+			object_expenditure: "MOOE - Maintenance and Other Operating Expenses",
+			object_code: "503 - Supplies and Materials",
+			item_code: "503-01 - Office Supplies",
+			specification: "Intel Core i5-13400 processor, 16GB DDR4 RAM, 512GB NVMe SSD, 23.8-inch monitor included, Windows 11 Pro. Unit includes keyboard, mouse, and 3-year warranty. Packaged per unit."
 		},
-		{
-			id: "OFF-001", name: "Supply and Delivery of Various Office Supplies (Bond Paper)", category: "Goods",
-			quantity: 25, unit: "ream", unit_cost: 250, reorder_level: 50,
-			location: "Supply Room A", status: "Low Stock",
-			description: "A4 Bond Paper, 80gsm, 500 sheets per ream. Packaged per ream."
+		"OFF-001": {
+			id: "OFF-001",
+			name: "Supply and Delivery of Various Office Supplies (Bond Paper)",
+			category: "Goods",
+			quantity: 25,
+			unit: "ream",
+			unit_cost: 250,
+			reorder_level: 50,
+			location: "Supply Room A",
+			status: "Low Stock",
+			description: "A4 Bond Paper, 80gsm, 500 sheets per ream. Packaged per ream.",
+			object_expenditure: "MOOE - Maintenance and Other Operating Expenses",
+			object_code: "503 - Supplies and Materials",
+			item_code: "503-02 - Janitorial Supplies",
+			specification: "A4 size (210mm x 297mm), 80gsm weight, 500 sheets per ream. High brightness (98%+). Suitable for printing and photocopying. Packaged per ream in sealed wrapper."
 		},
-		{
-			id: "FURN-002", name: "Supply and Delivery of Ergonomic Office Chairs", category: "Goods",
-			quantity: 8, unit: "unit", unit_cost: 5500, reorder_level: 5,
-			location: "Admin Building, 2nd Fl", status: "In Stock",
-			description: "Adjustable ergonomic chairs with lumbar support, armrests, and mesh back. Packaged per unit."
+		"FURN-002": {
+			id: "FURN-002",
+			name: "Supply and Delivery of Ergonomic Office Chairs",
+			category: "Goods",
+			quantity: 8,
+			unit: "unit",
+			unit_cost: 5500,
+			reorder_level: 5,
+			location: "Admin Building, 2nd Fl",
+			status: "In Stock",
+			description: "Adjustable ergonomic chairs with lumbar support, armrests, and mesh back. Packaged per unit.",
+			object_expenditure: "CO - Capital Outlay",
+			object_code: "513 - Furniture and Fixtures",
+			item_code: "513-01 - Office Chair",
+			specification: "Ergonomic mesh back chair with adjustable height (18-22 inches), padded armrests, lumbar support, 360-degree swivel, heavy-duty nylon base with smooth-rolling casters. Weight capacity: 250 lbs. Packaged per unit in flat-pack box."
 		},
-		{
-			id: "IT-045", name: "Supply and Delivery of Wireless Mouse", category: "Goods",
-			quantity: 0, unit: "unit", unit_cost: 850, reorder_level: 10,
-			location: "IT Equipment Room", status: "Out of Stock",
-			description: "Wireless optical mouse with USB receiver, 1600 DPI, compatible with Windows and macOS. Packaged per unit."
+		"IT-045": {
+			id: "IT-045",
+			name: "Supply and Delivery of Wireless Mouse",
+			category: "Goods",
+			quantity: 0,
+			unit: "unit",
+			unit_cost: 850,
+			reorder_level: 10,
+			location: "IT Equipment Room",
+			status: "Out of Stock",
+			description: "Wireless optical mouse with USB receiver, 1600 DPI, compatible with Windows and macOS. Packaged per unit.",
+			object_expenditure: "MOOE - Maintenance and Other Operating Expenses",
+			object_code: "503 - Supplies and Materials",
+			item_code: "503-03 - IT Consumables",
+			specification: "2.4GHz wireless connection, USB nano receiver (storable inside mouse), 3 buttons plus scroll wheel, 1600 DPI optical tracking, battery life up to 12 months, range up to 10 meters. Compatible with Windows, macOS, Linux. Packaged per unit in retail box."
 		},
-		{
-			id: "CONS-001", name: "Procurement of Construction Materials for Building Repair", category: "Infrastructure",
-			quantity: 15, unit: "lot", unit_cost: 12500, reorder_level: 3,
-			location: "Construction Site Warehouse", status: "In Stock",
-			description: "Complete set of construction materials for building repair and maintenance. Includes cement, rebars, and aggregate. Packaged per lot."
+		"CONS-001": {
+			id: "CONS-001",
+			name: "Procurement of Construction Materials for Building Repair",
+			category: "Infrastructure",
+			quantity: 15,
+			unit: "lot",
+			unit_cost: 12500,
+			reorder_level: 3,
+			location: "Construction Site Warehouse",
+			status: "In Stock",
+			description: "Complete set of construction materials for building repair and maintenance. Includes cement, rebars, and aggregate. Packaged per lot.",
+			object_expenditure: "CO - Capital Outlay",
+			object_code: "515 - Machinery and Equipment",
+			item_code: "515-01 - Construction Equipment",
+			specification: "Per lot includes: 50 bags Portland cement (40kg each), 100 pcs 10mm rebar (6m length), 2 cubic meters washed sand, 3 cubic meters gravel. Packaged per delivery lot on pallets."
 		}
-	];
+	};
+	
+	function formatCurrency(value) {
+		if (!value && value !== 0) return '—';
+		return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
+	}
+	
+	function escapeHtml(str) {
+		if (!str) return '';
+		return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+	}
 	
 	function getStatusClass(status) {
 		switch (status) {
@@ -96,92 +164,115 @@
 		}
 	}
 	
-	function escapeHtml(str) {
-		if (!str) return '';
-		return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
-	}
-	
 	function loadItemDetails() {
-		const item = inventoryData.find(i => i.id === itemId);
+		const container = document.getElementById('detailsContent');
+		
+		// Find the item in the sample data
+		const item = inventoryData[itemId];
+		
 		if (!item) {
-			document.getElementById('detailsContent').innerHTML = `
+			container.innerHTML = `
 				<div class="text-center py-12">
 					<svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
 					</svg>
 					<h3 class="text-lg font-medium text-gray-900 mb-2">Item Not Found</h3>
 					<p class="text-gray-500 mb-4">The requested inventory item does not exist.</p>
-					<a href="/inventory/inventory/" class="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Return to Inventory</a>
+					<p class="text-sm text-gray-500 mb-6">Item ID: ${escapeHtml(itemId)}</p>
+					<div class="flex flex-col sm:flex-row gap-3 justify-center">
+						<a href="{% url 'inventory:list_inventory' %}" class="inline-block px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Back to Inventory</a>
+					</div>
 				</div>
 			`;
 			return;
 		}
 		
 		const html = `
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-				<div class="space-y-4">
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Item Code</label>
-						<p class="text-lg sm:text-xl font-mono font-bold text-gray-900">${escapeHtml(item.id)}</p>
-						<p class="text-xs text-gray-400 mt-1">Unique identifier for this inventory item</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Classification</label>
-						<p class="text-base sm:text-lg font-semibold text-gray-900">${escapeHtml(item.category)}</p>
-						<p class="text-xs text-gray-400 mt-1">PPMP Column 6 - Goods, Infrastructure, or Consulting Services</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Current Stock Quantity</label>
-						<p class="text-2xl sm:text-3xl font-bold">${item.quantity} <span class="text-sm text-gray-500">${escapeHtml(item.unit)}</span></p>
-						<p class="text-xs text-gray-400 mt-1">Available quantity in the procurement office inventory</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Unit of Measure</label>
-						<p class="text-base sm:text-lg font-semibold text-gray-900">${escapeHtml(item.unit)}</p>
-						<p class="text-xs text-gray-400 mt-1">PPMP Column 7 - How the item is measured</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Unit Cost / Estimated Budget</label>
-						<p class="text-2xl sm:text-3xl font-bold text-green-600">₱ ${item.unit_cost ? item.unit_cost.toLocaleString() : '—'}</p>
-						<p class="text-xs text-gray-400 mt-1">PPMP Column 15 - Estimated budget per unit</p>
-					</div>
+			<div class="space-y-6">
+				<!-- Object of Expenditure (Level 1) -->
+				<div class="bg-gray-50 rounded-lg p-4">
+					<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Object of Expenditure</label>
+					<p class="text-base font-medium text-gray-900">${escapeHtml(item.object_expenditure || '—')}</p>
+					<p class="text-xs text-gray-400 mt-1">Major classification of expenditure (MOOE, CO, PS, FO)</p>
 				</div>
 
-				<div class="space-y-4">
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Stock Status</label>
-						<div><span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(item.status)}">${item.status}</span></div>
-						<p class="text-xs text-gray-400 mt-1">Current inventory status based on quantity and reorder level</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Reorder Level</label>
-						<p class="text-base sm:text-lg font-semibold text-gray-900">${item.reorder_level} ${escapeHtml(item.unit)}</p>
-						<p class="text-xs text-gray-400 mt-1">Minimum quantity before a Low Stock alert is triggered</p>
-					</div>
-
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Storage Location</label>
-						<p class="text-base sm:text-lg text-gray-900">${escapeHtml(item.location || 'Not specified')}</p>
-						<p class="text-xs text-gray-400 mt-1">Physical storage location in the procurement office</p>
-					</div>
+				<!-- Object Code (Level 2) -->
+				<div class="bg-gray-50 rounded-lg p-4">
+					<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Object Code</label>
+					<p class="text-base font-medium text-gray-900">${escapeHtml(item.object_code || '—')}</p>
+					<p class="text-xs text-gray-400 mt-1">Dependent on the selected Object of Expenditure</p>
 				</div>
 
-				<div class="md:col-span-2 space-y-4">
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Name of Procurement Project</label>
-						<p class="text-base sm:text-lg font-semibold text-gray-900">${escapeHtml(item.name)}</p>
-						<p class="text-xs text-gray-400 mt-1">PPMP Column 5 - Specific, action-based title</p>
-					</div>
+				<!-- Item Code (Level 3) -->
+				<div class="bg-gray-50 rounded-lg p-4">
+					<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Item Code</label>
+					<p class="text-base font-medium text-gray-900">${escapeHtml(item.item_code || '—')}</p>
+					<p class="text-xs text-gray-400 mt-1">Item classification code</p>
+				</div>
 
-					<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-						<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">General Description / Technical Specifications</label>
-						<p class="text-sm sm:text-base text-gray-800 whitespace-pre-wrap">${escapeHtml(item.description || 'No description provided')}</p>
-						<p class="text-xs text-gray-400 mt-1">Includes nature, type, specifications, and packaging details</p>
+				<!-- Divider -->
+				<div class="border-t border-gray-200 my-2"></div>
+
+				<!-- Item Details Section -->
+				<div>
+					<h4 class="text-md font-semibold text-gray-800 mb-4">Item Details</h4>
+					
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<!-- Item Name -->
+						<div class="md:col-span-2 bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Name of Procurement Project</label>
+							<p class="text-base font-semibold text-gray-900">${escapeHtml(item.name)}</p>
+							<p class="text-xs text-gray-400 mt-1">PPMP Column 5 — Specific, action-based title</p>
+						</div>
+
+						<!-- Specification / Description -->
+						<div class="md:col-span-2 bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Specification / Description</label>
+							<p class="text-sm text-gray-800 whitespace-pre-wrap">${escapeHtml(item.specification || item.description || '—')}</p>
+							<p class="text-xs text-gray-400 mt-1">Detailed description including technical specifications, dimensions, materials, and packaging details</p>
+						</div>
+
+						<!-- Unit -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Unit of Measure</label>
+							<p class="text-base font-semibold text-gray-900">${escapeHtml(item.unit)}</p>
+							<p class="text-xs text-gray-400 mt-1">PPMP Col. 7 — pc., lot, set, ream, etc.</p>
+						</div>
+
+						<!-- Unit Cost -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Unit Cost / Estimated Budget</label>
+							<p class="text-2xl font-bold text-green-600">${formatCurrency(item.unit_cost)}</p>
+							<p class="text-xs text-gray-400 mt-1">PPMP Col. 15 — estimated budget per unit</p>
+						</div>
+
+						<!-- Current Stock Quantity -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Current Stock Quantity</label>
+							<p class="text-2xl font-bold">${item.quantity} <span class="text-sm text-gray-500">${escapeHtml(item.unit)}</span></p>
+							<p class="text-xs text-gray-400 mt-1">Available quantity in the procurement office inventory</p>
+						</div>
+
+						<!-- Stock Status -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Stock Status</label>
+							<div><span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(item.status)}">${item.status}</span></div>
+							<p class="text-xs text-gray-400 mt-1">Current inventory status based on quantity and reorder level</p>
+						</div>
+
+						<!-- Reorder Level -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Reorder Level</label>
+							<p class="text-base font-semibold text-gray-900">${item.reorder_level} ${escapeHtml(item.unit)}</p>
+							<p class="text-xs text-gray-400 mt-1">Minimum quantity before a Low Stock alert is triggered</p>
+						</div>
+
+						<!-- Storage Location -->
+						<div class="bg-gray-50 rounded-lg p-4">
+							<label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Storage Location</label>
+							<p class="text-base text-gray-900">${escapeHtml(item.location || 'Not specified')}</p>
+							<p class="text-xs text-gray-400 mt-1">Physical storage location in the procurement office</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -198,7 +289,7 @@
 			</div>
 		`;
 		
-		document.getElementById('detailsContent').innerHTML = html;
+		container.innerHTML = html;
 	}
 	
 	// Load the item details when page loads
