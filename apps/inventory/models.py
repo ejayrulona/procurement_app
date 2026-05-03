@@ -1,12 +1,48 @@
 from django.db import models
 
+class ObjectOfExpenditure(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+
+    class Meta:
+        verbose_name = "Object of Expenditure"
+        verbose_name_plural = "Object of Expenditures"
+        ordering = ["name"]
+
+
+    def __str__(self):
+        return self.name
+
+
+class ObjectCode(models.Model):
+    code = models.CharField(max_length=30)
+    expenditure = models.ForeignKey(ObjectOfExpenditure, on_delete=models.PROTECT, related_name="object_codes")
+
+    class Meta:
+        verbose_name = "Object Code"
+        verbose_name_plural = "Object Codes"
+        ordering = ["code"]
+
+
+    def __str__(self):
+        return f"{self.code} - {self.expenditure}"
+
+
+class ItemCode(models.Model):
+    code = models.CharField(max_length=30)
+    general_description = models.CharField(max_length=150)
+    object_code = models.ForeignKey(ObjectCode, on_delete=models.PROTECT, related_name="item_codes")
+
+    class Meta:
+        verbose_name  = "Item Code"
+        verbose_name_plural = "Item Codes"
+        ordering = ["code"]
+
+    
+    def __str__(self):
+        return f"{self.code} - {self.general_description}"
+    
+
 class Item(models.Model):
-    class Category(models.TextChoices):
-        GOODS = "goods", "Goods"
-        INFRASTRUCTURE = "infrastructure", "Infrastructure"
-        CONSULTING_SERVICES = "consulting_services", "Consulting Services"
-
-
     class Unit(models.TextChoices):
         PIECE = "piece", "Piece"
         UNIT = "unit", "Unit"
@@ -25,16 +61,11 @@ class Item(models.Model):
         GALLON = "gallon", "Gallon"
 
 
-    code = models.CharField(max_length=30)
     name = models.CharField(max_length=100)
-    description = models.TextField()
-    category = models.CharField(max_length=20, choices=Category.choices)
-    cost = models.DecimalField(max_digits=12, decimal_places=2)
-    quantity = models.IntegerField()
+    specification = models.CharField(max_length=100)
     unit = models.CharField(max_length=20, choices=Unit.choices)
-    reorder_level = models.IntegerField()
-    location = models.TextField()
-    supplier = models.CharField(max_length=150)
+    unit_cost = models.DecimalField(max_digits=12, decimal_places=2)
+    item_code = models.ForeignKey(ItemCode, on_delete=models.PROTECT, related_name="item_records")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -46,32 +77,3 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
-    
-    @property
-    def stock_status(self):
-        if self.quantity <= 0:
-            return "Out of Stock"
-        elif self.quantity <= self.reorder_level:
-            return "Low Stock"
-        
-        return "In Stock"
-    
-
-class StockMovementLog(models.Model):
-    class MovementType(models.TextChoices):
-        STOCK_IN = "stock_in", "Stock In"
-        STOCK_OUT = "stock_out", "Stock Out"
-        ADJUSTMENT = "adjustment", "Adjustment"
-
-
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="movement_logs")
-    movement_type = models.CharField(max_length=10, choices=MovementType.choices)
-    quantity_changed = models.IntegerField()
-    previous_quantity = models.IntegerField()
-    new_quantity = models.IntegerField()
-    remarks = models.TextField()
-    performed_by = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True, related_name="stock_movements")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.item.name} | {self.get_movement_type_display()} | Qty: {self.quantity_changed} | {self.created_at:%B %d, %Y %I:%M %p} | By: {self.performed_by}"
