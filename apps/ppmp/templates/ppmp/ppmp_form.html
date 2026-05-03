@@ -6,322 +6,641 @@
 {% block header_subtitle %}Create a new Project Procurement Management Plan{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-6">
-    <form id="ppmpForm" class="space-y-8">
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Page Title -->
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Create Project Procurement Management Plan</h1>
+        <p class="text-gray-500">Fill out the form below to generate a new PPMP</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mt-3 rounded-full"></div>
+    </div>
+
+    <form id="ppmpForm" class="space-y-6">
         {% csrf_token %}
 
         <!-- ==================== 1. BASIC INFORMATION ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">1</span>
-                Project Information
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">PAP Code (UACS)</label>
-                    <input type="text" id="papCode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="e.g., 50604050 02">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">System Identifier (optional)</label>
-                    <input type="text" id="systemId" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50" placeholder="Auto‑generated" readonly>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">Program / Activity / Project (PAP)</label>
-                    <textarea id="pap" rows="2" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="Describe the program, activity or project..."></textarea>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">Name of Procurement Project</label>
-                    <input type="text" id="projectName" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="e.g., Supply and Delivery of ICT Equipment">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Classification</label>
-                    <select id="classification" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="">-- Select --</option>
-                        <option value="Goods">Goods</option>
-                        <option value="Infrastructure">Infrastructure</option>
-                        <option value="Consulting Services">Consulting Services</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Quantity / Size</label>
-                    <input type="text" id="quantitySize" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="e.g., 20 units, 1 lot">
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 2. PROCUREMENT DETAILS ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">2</span>
-                Procurement Details
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Mode of Procurement</label>
-                    <select id="mode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="">-- Select --</option>
-                        <option value="Competitive Bidding">Competitive Bidding</option>
-                        <option value="Limited Source Bidding">Limited Source Bidding</option>
-                        <option value="Direct Contracting">Direct Contracting</option>
-                        <option value="Repeat Order">Repeat Order</option>
-                        <option value="Small Value Procurement">Small Value Procurement</option>
-                        <option value="Shopping">Shopping</option>
-                        <option value="Negotiated Procurement">Negotiated Procurement</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Delivery Type</label>
-                    <select id="deliveryType" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="One-time">One‑time</option>
-                        <option value="Staggered">Staggered</option>
-                        <option value="Progressive">Progressive</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Contracting Duration</label>
-                    <select id="contractingType" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="Single Year">Single Year (≤1 year)</option>
-                        <option value="Multi-Year">Multi‑Year (>1 year)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Procurement Outsourcing</label>
-                    <select id="outsourcing" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="N/A">N/A</option>
-                        <option value="Another government agency">Another government agency</option>
-                        <option value="Private agent">Private agent</option>
-                        <option value="Consultant">Consultant</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Framework Agreement?</label>
-                    <select id="framework" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 3. SCHEDULE & DATES ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">3</span>
-                Schedule & Dates
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">PR Submission Date</label>
-                    <input type="date" id="prDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Start of Implementation</label>
-                    <input type="date" id="startDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Target Delivery Date</label>
-                    <input type="date" id="deliveryDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                </div>
-                <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">Location / Delivery Site</label>
-                    <input type="text" id="location" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="e.g., Main Campus, Quezon City">
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 4. BUDGET & FUNDING ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">4</span>
-                Budget & Funding
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Budget Source</label>
-                    <select id="budgetSource" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="Government of the Philippines (current year's budget)">GAA – Current Year</option>
-                        <option value="Government of the Philippines (continuing budget)">GAA – Continuing</option>
-                        <option value="Internally Generated Funds">Internally Generated Funds</option>
-                        <option value="Grant by an International Financing Institution">Grant – IFI</option>
-                        <option value="Loan from an International Financing Institution">Loan – IFI</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Project Recurrence</label>
-                    <select id="recurrence" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5">
-                        <option value="New">New</option>
-                        <option value="Expanded">Expanded</option>
-                        <option value="Recurring">Recurring</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 5. MARKET SCOPING (3 SUPPLIERS) ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">5</span>
-                Market Scoping <span class="text-sm font-normal text-red-500">(Mandatory – at least 3 suppliers)</span>
-            </h2>
-            <div id="suppliersContainer" class="space-y-6">
-                <!-- Supplier 1 -->
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h3 class="font-semibold text-gray-700 mb-3">Supplier 1</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div><label class="block text-xs text-gray-500">Name</label><input type="text" class="supplier-name w-full border rounded p-2" placeholder="Company A"></div>
-                        <div><label class="block text-xs text-gray-500">Contact/Email</label><input type="text" class="supplier-contact w-full border rounded p-2" placeholder="contact@example.com"></div>
-                        <div><label class="block text-xs text-gray-500">Quotation (₱)</label><input type="number" class="supplier-quote w-full border rounded p-2" step="0.01" value="0"></div>
-                        <div><label class="block text-xs text-gray-500">Source of Information</label><select class="supplier-source w-full border rounded p-2"><option>Canvass within 6 months</option><option>Proposal from previous procurement</option><option>Supplier website</option><option>PhilGEPS posting</option></select></div>
-                        <div><label class="block text-xs text-gray-500">Date Gathered</label><input type="date" class="supplier-date w-full border rounded p-2"></div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
+            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">1</span>
                     </div>
-                </div>
-                <!-- Supplier 2 -->
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h3 class="font-semibold text-gray-700 mb-3">Supplier 2</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div><input type="text" class="supplier-name w-full border rounded p-2" placeholder="Company B"></div>
-                        <div><input type="text" class="supplier-contact w-full border rounded p-2"></div>
-                        <div><input type="number" class="supplier-quote w-full border rounded p-2" step="0.01" value="0"></div>
-                        <div><select class="supplier-source w-full border rounded p-2"><option>Canvass within 6 months</option><option>Proposal from previous procurement</option><option>Supplier website</option><option>PhilGEPS posting</option></select></div>
-                        <div><input type="date" class="supplier-date w-full border rounded p-2"></div>
-                    </div>
-                </div>
-                <!-- Supplier 3 -->
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h3 class="font-semibold text-gray-700 mb-3">Supplier 3</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div><input type="text" class="supplier-name w-full border rounded p-2" placeholder="Company C"></div>
-                        <div><input type="text" class="supplier-contact w-full border rounded p-2"></div>
-                        <div><input type="number" class="supplier-quote w-full border rounded p-2" step="0.01" value="0"></div>
-                        <div><select class="supplier-source w-full border rounded p-2"><option>Canvass within 6 months</option><option>Proposal from previous procurement</option><option>Supplier website</option><option>PhilGEPS posting</option></select></div>
-                        <div><input type="date" class="supplier-date w-full border rounded p-2"></div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Basic Information</h2>
+                        <p class="text-red-100 text-xs">Essential project and budget details</p>
                     </div>
                 </div>
             </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Classification (Datalist) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Classification <span class="text-red-500">*</span></label>
+                        <input type="text" id="classification" list="classificationList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select classification">
+                        <datalist id="classificationList">
+                            <option value="Goods">
+                            <option value="Infrastructure">
+                            <option value="Consulting Services">
+                        </datalist>
+                        <p class="text-xs text-gray-400 mt-1">Identifies what type of procurement is being undertaken</p>
+                    </div>
 
-            <!-- Additional Costs -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div><label class="block text-sm font-medium">Delivery / Installation Cost (₱)</label><input type="number" id="deliveryCost" class="mt-1 w-full border rounded p-2" step="0.01" value="0"></div>
-                <div><label class="block text-sm font-medium">Life‑cycle Cost (₱)</label><input type="number" id="lifecycleCost" class="mt-1 w-full border rounded p-2" step="0.01" value="0"></div>
-                <div><label class="block text-sm font-medium">Other Project Costs (₱)</label><input type="number" id="otherCosts" class="mt-1 w-full border rounded p-2" step="0.01" value="0"></div>
-            </div>
+                    <!-- Source of Funds -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Source of Funds <span class="text-red-500">*</span></label>
+                        <input type="text" id="sourceFunds" list="sourceFundsList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select source">
+                        <datalist id="sourceFundsList">
+                            <option value="General Appropriations Act (GAA)">
+                            <option value="Internally Generated Funds (IGF)">
+                            <option value="Trust Fund">
+                            <option value="Foreign Assisted Project (FAP)">
+                            <option value="Special Account">
+                            <option value="Local Funds">
+                        </datalist>
+                        <p class="text-xs text-gray-400 mt-1">Determines which funding source will cover the procurement</p>
+                    </div>
 
-            <!-- ABC Display -->
-            <div class="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <p class="text-sm text-blue-700 font-medium">Approved Budget for the Contract (ABC)</p>
-                <p class="text-3xl font-bold text-blue-800" id="abcValue">₱ 0.00</p>
-                <p class="text-xs text-blue-600">(Average of 3 quotations + delivery + life‑cycle + other costs)</p>
+                    <!-- Offices Dropdown -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Office <span class="text-red-500">*</span></label>
+                        <select id="officeSelect" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
+                            <option value="">-- Select Office --</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Higher Education">Higher Education</option>
+                            <option value="IGP - Internally Generated Projects">IGP - Internally Generated Projects</option>
+                            <option value="Research and Development">Research and Development</option>
+                            <option value="Extension Services">Extension Services</option>
+                            <option value="Student Affairs">Student Affairs</option>
+                            <option value="Other">Other (Please specify)</option>
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Identifies which office/department is requesting the procurement</p>
+                    </div>
+
+                    <!-- Type of Office/Projects (appears when "Other" is selected) -->
+                    <div id="otherOfficeContainer" style="display: none;">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Type of Office/Projects <span class="text-red-500">*</span></label>
+                        <input type="text" id="otherOffice" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Please specify office/project type">
+                        <p class="text-xs text-gray-400 mt-1">For offices not listed in the dropdown</p>
+                    </div>
+
+                    <!-- Ceiling Amount -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Ceiling Amount (₱) <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
+                            <input type="number" id="ceilingAmount" class="mt-1 w-full pl-8 border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" placeholder="0.00">
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Maximum budget allocated for this PPMP request</p>
+                    </div>
+
+                    <!-- PAP Code (UACS) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">PAP Code (UACS)</label>
+                        <input type="text" id="papCode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., 50604050 02">
+                        <p class="text-xs text-gray-400 mt-1">Program/Activity/Project code for budget tracking</p>
+                    </div>
+
+                    <!-- Program / Activity / Project (PAP) -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Program / Activity / Project (PAP)</label>
+                        <textarea id="pap" rows="2" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" placeholder="Describe the program, activity or project..."></textarea>
+                        <p class="text-xs text-gray-400 mt-1">Brief description of what the procurement supports</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- ==================== 6. ATTACHMENTS & REMARKS ==================== -->
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">6</span>
-                Attachments & Remarks
-            </h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Specifications / TOR / SOW</label>
-                    <input type="file" id="specFile" class="mt-1 w-full border border-gray-300 rounded-lg p-2" accept=".pdf,.doc,.docx">
-                    <p class="text-xs text-gray-500 mt-1">Upload technical specifications, Terms of Reference, or Scope of Work (max 5MB).</p>
+        <!-- ==================== 2. PROCUREMENT DETAILS (with Schedule & Dates integrated) ==================== -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
+            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">2</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Procurement Details</h2>
+                        <p class="text-red-100 text-xs">Item specifications and delivery schedule</p>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Main Procurement Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    <!-- General Description (Datalist) -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">General Description <span class="text-red-500">*</span></label>
+                        <input type="text" id="generalDescription" list="generalDescList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select general description">
+                        <datalist id="generalDescList">
+                            <option value="Supply and Delivery of Office Supplies">
+                            <option value="Supply and Delivery of ICT Equipment">
+                            <option value="Supply and Delivery of Furniture and Fixtures">
+                            <option value="Construction of Building">
+                            <option value="Repair and Maintenance of Facilities">
+                            <option value="Consulting Services for System Development">
+                            <option value="Printing and Publication of Materials">
+                            <option value="Venue and Catering Services">
+                            <option value="Transportation and Delivery Services">
+                        </datalist>
+                        <p class="text-xs text-gray-400 mt-1">High-level summary of what is being procured</p>
+                    </div>
+
+                    <!-- Mode of Procurement (Dropdown) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mode of Procurement <span class="text-red-500">*</span></label>
+                        <select id="mode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
+                            <option value="">-- Select --</option>
+                            <option value="Competitive Bidding">Competitive Bidding</option>
+                            <option value="Limited Source Bidding">Limited Source Bidding</option>
+                            <option value="Direct Contracting">Direct Contracting</option>
+                            <option value="Repeat Order">Repeat Order</option>
+                            <option value="Small Value Procurement">Small Value Procurement</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Negotiated Procurement">Negotiated Procurement</option>
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Determines how suppliers will be selected and the procurement process</p>
+                    </div>
+
+                    <!-- UACS Code -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">UACS Code</label>
+                        <input type="text" id="uacsCode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., 50604050">
+                        <p class="text-xs text-gray-400 mt-1">Uniform Accounting Code System for budget classification</p>
+                    </div>
+
+                    <!-- Code (Additional Code field) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Code</label>
+                        <input type="text" id="code" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Additional code">
+                        <p class="text-xs text-gray-400 mt-1">Secondary identifier for tracking purposes</p>
+                    </div>
+
+                    <!-- Name of Procurement Project -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Name of Procurement Project <span class="text-red-500">*</span></label>
+                        <input type="text" id="projectName" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., Supply and Delivery of ICT Equipment">
+                        <p class="text-xs text-gray-400 mt-1">Specific title of the procurement project</p>
+                    </div>
+                </div>
+
+                <!-- Schedule & Dates Section (Smaller Design) -->
+                <div class="bg-red-50/50 rounded-lg p-3 border border-red-200">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <h3 class="text-sm font-semibold text-gray-800">Schedule & Dates</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Start of Implementation</label>
+                            <input type="date" id="startDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Target Delivery Date</label>
+                            <input type="date" id="deliveryDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Location / Delivery Site</label>
+                            <input type="text" id="location" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., Main Campus, Quezon City">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== AVAILABLE ITEMS CHECKLIST ==================== -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Available Items</h2>
+                        <p class="text-red-100 text-xs">Select items to add to your procurement list</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Desktop Computer" data-default-unit="unit">
+                        <span class="text-sm text-gray-700">Desktop Computer</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Laptop" data-default-unit="unit">
+                        <span class="text-sm text-gray-700">Laptop</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Printer" data-default-unit="unit">
+                        <span class="text-sm text-gray-700">Printer</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="A4 Bond Paper" data-default-unit="ream">
+                        <span class="text-sm text-gray-700">A4 Bond Paper</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Office Chair" data-default-unit="unit">
+                        <span class="text-sm text-gray-700">Office Chair</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Whiteboard Marker" data-default-unit="box">
+                        <span class="text-sm text-gray-700">Whiteboard Marker</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Envelope" data-default-unit="pack">
+                        <span class="text-sm text-gray-700">Envelope</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Ballpen" data-default-unit="box">
+                        <span class="text-sm text-gray-700">Ballpen</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Notebook" data-default-unit="piece">
+                        <span class="text-sm text-gray-700">Notebook</span>
+                    </label>
+                </div>
+                <button type="button" id="addSelectedItemsBtn" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Selected Items
+                </button>
+            </div>
+        </div>
+
+        <!-- Section C: Items to be Procured (Dynamic - Initially Empty) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
+            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-white">Items to be Procured</h2>
+                            <p class="text-red-100 text-xs">Manage selected items for this procurement</p>
+                        </div>
+                    </div>
+                    <button type="button" id="addItemBtn" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Custom Item
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div id="itemsContainer" class="space-y-4">
+                    <!-- Empty state message -->
+                    <div id="emptyItemsMessage" class="text-center py-8 text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586M4 13h2.586m0 0L4 10.414M6.586 13L4 15.586m12-2.586V9m0 4h2m-2 0V9m0 4h2" />
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No items added yet</h3>
+                        <p class="text-sm text-gray-500 mb-4">Add items by selecting from "Available Items" above or click "Add Custom Item" to manually enter items.</p>
+                    </div>
+                </div>
+                
+                <!-- Total Summary -->
+                <div class="mt-6 bg-gradient-to-r from-red-50 to-gray-50 rounded-lg p-5 border border-red-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-lg font-semibold text-gray-800">Grand Total</span>
+                            <p class="text-xs text-gray-500 mt-1">Total cost of all checked items</p>
+                        </div>
+                        <span class="text-3xl font-bold text-red-600" id="grandTotal">₱ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3. ATTACHMENTS & REMARKS ==================== -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
+            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">3</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Attachments & Remarks</h2>
+                        <p class="text-red-100 text-xs">Additional information and notes</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Remarks (optional)</label>
-                    <textarea id="remarks" rows="3" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5" placeholder="Additional details, justifications, changes from previous PPMP..."></textarea>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Remarks (optional)</label>
+                    <textarea id="remarks" rows="3" class="mt-1 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" placeholder="Additional details, justifications, changes from previous PPMP..."></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Any additional information or justifications</p>
                 </div>
             </div>
         </div>
 
         <!-- Form Actions -->
-        <div class="flex justify-end gap-4">
-            <button type="button" id="saveDraftBtn" class="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">Save as Draft</button>
-            <button type="button" id="submitBtn" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Submit PPMP</button>
+        <div class="flex justify-end gap-4 sticky bottom-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-200">
+            <button type="button" id="saveDraftBtn" class="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                Save as Draft
+            </button>
+            <button type="button" id="submitBtn" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Submit PPMP
+            </button>
         </div>
     </form>
 </div>
 
 <script>
-    // ---------- Helper: compute ABC from supplier quotes and extra costs ----------
-    function computeABC() {
-        let quotes = [];
-        document.querySelectorAll('.supplier-quote').forEach(input => {
-            let val = parseFloat(input.value);
-            if (!isNaN(val) && val > 0) quotes.push(val);
-        });
-        let avg = quotes.length ? quotes.reduce((a,b)=>a+b,0)/quotes.length : 0;
-        let delivery = parseFloat(document.getElementById('deliveryCost').value) || 0;
-        let lifecycle = parseFloat(document.getElementById('lifecycleCost').value) || 0;
-        let other = parseFloat(document.getElementById('otherCosts').value) || 0;
-        return avg + delivery + lifecycle + other;
-    }
+    // ==================== GLOBAL VARIABLES ====================
+    let itemCounter = 0;
 
-    function updateABC() {
-        let total = computeABC();
-        document.getElementById('abcValue').innerHTML = `₱ ${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
-    }
+    // ==================== UNIT OPTIONS ====================
+    const unitOptions = ['piece', 'unit', 'set', 'ream', 'box', 'pack', 'bottle', 'roll', 'meter', 'liter', 'kilogram', 'bag', 'pair', 'bundle', 'gallon'];
 
-    // Attach event listeners for real‑time ABC update
-    function bindCalculationEvents() {
-        document.querySelectorAll('.supplier-quote, #deliveryCost, #lifecycleCost, #otherCosts').forEach(el => {
-            el.addEventListener('input', updateABC);
-        });
-    }
+    // ==================== OFFICE DROPDOWN LOGIC ====================
+    const officeSelect = document.getElementById('officeSelect');
+    const otherOfficeContainer = document.getElementById('otherOfficeContainer');
+    const otherOfficeInput = document.getElementById('otherOffice');
 
-    // Validation before submit
-    function validateForm() {
-        let required = ['papCode', 'projectName', 'classification', 'mode', 'quantitySize', 'prDate', 'deliveryDate'];
-        for (let id of required) {
-            if (!document.getElementById(id).value) {
-                alert(`Please fill in: ${id.replace(/([A-Z])/g, ' $1').trim()}`);
-                return false;
-            }
+    officeSelect.addEventListener('change', function() {
+        if (this.value === 'Other') {
+            otherOfficeContainer.style.display = 'block';
+            otherOfficeInput.required = true;
+        } else {
+            otherOfficeContainer.style.display = 'none';
+            otherOfficeInput.required = false;
+            otherOfficeInput.value = '';
         }
-        let quotes = [];
-        document.querySelectorAll('.supplier-quote').forEach(q => { if (parseFloat(q.value) > 0) quotes.push(q.value); });
-        if (quotes.length < 3) {
-            alert("Market scoping requires at least three supplier quotations.");
+    });
+
+    // ==================== CREATE UNIT DROPDOWN ====================
+    function createUnitDropdown(selectedValue = '') {
+        const select = document.createElement('select');
+        select.className = 'item-unit w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white';
+        
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select unit';
+        defaultOption.disabled = true;
+        select.appendChild(defaultOption);
+        
+        unitOptions.forEach(unit => {
+            const option = document.createElement('option');
+            option.value = unit;
+            option.textContent = unit.charAt(0).toUpperCase() + unit.slice(1);
+            if (unit === selectedValue) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        });
+        
+        return select;
+    }
+
+    // ==================== HIDE EMPTY STATE MESSAGE ====================
+    function hideEmptyState() {
+        const emptyMessage = document.getElementById('emptyItemsMessage');
+        if (emptyMessage) {
+            emptyMessage.style.display = 'none';
+        }
+    }
+
+    // ==================== ADD SELECTED ITEMS FROM CHECKLIST ====================
+    document.getElementById('addSelectedItemsBtn').addEventListener('click', function() {
+        const selectedCheckboxes = document.querySelectorAll('.available-item-checkbox:checked');
+        
+        if (selectedCheckboxes.length === 0) {
+            alert('Please select at least one item to add.');
+            return;
+        }
+        
+        selectedCheckboxes.forEach(checkbox => {
+            const itemName = checkbox.getAttribute('data-name');
+            const defaultUnit = checkbox.getAttribute('data-default-unit');
+            addItemRow(itemName, defaultUnit);
+            checkbox.checked = false;
+        });
+        
+        hideEmptyState();
+    });
+
+    // ==================== ITEMS SECTION ====================
+    function addItemRow(itemName = '', defaultUnit = '') {
+        itemCounter++;
+        const container = document.getElementById('itemsContainer');
+        const itemId = `item_${itemCounter}`;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-all duration-200';
+        itemDiv.id = itemId;
+        
+        const unitSelect = createUnitDropdown(defaultUnit);
+        
+        itemDiv.innerHTML = `
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-semibold text-gray-700 flex items-center gap-2">
+                    <span class="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">${itemCounter}</span>
+                    Item Details
+                </h4>
+                <button type="button" class="remove-item text-red-600 hover:text-red-800 transition text-sm flex items-center gap-1" data-id="${itemId}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Remove
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Include</label>
+                    <input type="checkbox" class="item-checkbox w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500" data-id="${itemId}">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Item Name</label>
+                    <input type="text" class="item-name w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Item name" value="${itemName.replace(/'/g, "\\'")}">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Quantity</label>
+                    <input type="number" class="item-quantity w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" value="0">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Unit Cost</label>
+                    <input type="number" class="item-unit-cost w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" value="0">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Total</label>
+                    <input type="text" class="item-total w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-100 text-gray-600" readonly placeholder="0.00">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Remarks</label>
+                    <input type="text" class="item-remarks w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Optional">
+                </div>
+            </div>
+        `;
+        
+        // Replace the unit placeholder with the actual select dropdown
+        const grid = itemDiv.querySelector('.grid');
+        const itemNameDiv = grid.children[1];
+        const quantityDiv = grid.children[2];
+        
+        // Create unit div
+        const unitDiv = document.createElement('div');
+        unitDiv.className = 'md:col-span-1';
+        const unitLabel = document.createElement('label');
+        unitLabel.className = 'block text-xs font-medium text-gray-500 mb-1';
+        unitLabel.textContent = 'Unit';
+        unitDiv.appendChild(unitLabel);
+        unitDiv.appendChild(unitSelect);
+        
+        grid.insertBefore(unitDiv, quantityDiv);
+        
+        container.appendChild(itemDiv);
+        
+        // Add event listeners for this item
+        const checkbox = itemDiv.querySelector('.item-checkbox');
+        const quantity = itemDiv.querySelector('.item-quantity');
+        const unitCost = itemDiv.querySelector('.item-unit-cost');
+        const totalInput = itemDiv.querySelector('.item-total');
+        
+        function calculateTotal() {
+            const qty = parseFloat(quantity.value) || 0;
+            const cost = parseFloat(unitCost.value) || 0;
+            const total = qty * cost;
+            totalInput.value = total.toFixed(2);
+            updateGrandTotal();
+            return total;
+        }
+        
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                calculateTotal();
+            } else {
+                totalInput.value = '0.00';
+                updateGrandTotal();
+            }
+        });
+        
+        quantity.addEventListener('input', () => {
+            if (checkbox.checked) calculateTotal();
+        });
+        
+        unitCost.addEventListener('input', () => {
+            if (checkbox.checked) calculateTotal();
+        });
+        
+        // Remove button functionality
+        itemDiv.querySelector('.remove-item').addEventListener('click', function() {
+            itemDiv.remove();
+            updateGrandTotal();
+            
+            // Show empty state if no items left
+            if (document.querySelectorAll('#itemsContainer .border').length === 0) {
+                itemCounter = 0;
+                const emptyMessage = document.getElementById('emptyItemsMessage');
+                if (emptyMessage) {
+                    emptyMessage.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    function updateGrandTotal() {
+        let grandTotal = 0;
+        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+            const itemDiv = checkbox.closest('.border');
+            const totalInput = itemDiv.querySelector('.item-total');
+            const total = parseFloat(totalInput.value) || 0;
+            grandTotal += total;
+        });
+        document.getElementById('grandTotal').innerHTML = `₱ ${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    }
+    
+    // Add custom item button
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+        addItemRow();
+        hideEmptyState();
+    });
+
+    // ==================== VALIDATION ====================
+    function validateForm() {
+        // Validate Basic Information
+        const classification = document.getElementById('classification').value;
+        const sourceFunds = document.getElementById('sourceFunds').value;
+        const office = document.getElementById('officeSelect').value;
+        const ceiling = document.getElementById('ceilingAmount').value;
+        const projectName = document.getElementById('projectName').value;
+        const generalDescription = document.getElementById('generalDescription').value;
+        const mode = document.getElementById('mode').value;
+        
+        if (!classification) { alert("Please select a Classification."); return false; }
+        if (!sourceFunds) { alert("Please select Source of Funds."); return false; }
+        if (!office) { alert("Please select an Office."); return false; }
+        if (office === 'Other' && !document.getElementById('otherOffice').value) { alert("Please specify the Type of Office/Projects."); return false; }
+        if (!ceiling || parseFloat(ceiling) <= 0) { alert("Please enter a valid Ceiling Amount."); return false; }
+        if (!projectName) { alert("Please enter the Name of Procurement Project."); return false; }
+        if (!generalDescription) { alert("Please enter the General Description."); return false; }
+        if (!mode) { alert("Please select the Mode of Procurement."); return false; }
+        
+        // Validate at least one item is checked
+        const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+        if (checkedItems.length === 0) {
+            alert("Please select at least one item to include in the PPMP.");
             return false;
         }
+        
         return true;
     }
 
-    // Collect form data into an object (for demo)
+    // ==================== COLLECT FORM DATA ====================
     function collectFormData() {
-        let suppliers = [];
-        document.querySelectorAll('#suppliersContainer .border').forEach((supplierDiv, idx) => {
-            suppliers.push({
-                name: supplierDiv.querySelector('.supplier-name').value,
-                contact: supplierDiv.querySelector('.supplier-contact').value,
-                quotation: parseFloat(supplierDiv.querySelector('.supplier-quote').value) || 0,
-                source: supplierDiv.querySelector('.supplier-source').value,
-                date: supplierDiv.querySelector('.supplier-date').value
-            });
+        let items = [];
+        document.querySelectorAll('#itemsContainer .border').forEach(itemDiv => {
+            const checkbox = itemDiv.querySelector('.item-checkbox');
+            if (checkbox.checked) {
+                items.push({
+                    name: itemDiv.querySelector('.item-name')?.value || '',
+                    unit: itemDiv.querySelector('.item-unit')?.value || '',
+                    quantity: parseFloat(itemDiv.querySelector('.item-quantity').value) || 0,
+                    unit_cost: parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0,
+                    total: parseFloat(itemDiv.querySelector('.item-total').value) || 0,
+                    remarks: itemDiv.querySelector('.item-remarks').value || ''
+                });
+            }
         });
+        
+        const officeValue = document.getElementById('officeSelect').value === 'Other' ? 
+            document.getElementById('otherOffice').value : 
+            document.getElementById('officeSelect').value;
+        
         return {
-            papCode: document.getElementById('papCode').value,
-            systemId: document.getElementById('systemId').value,
-            pap: document.getElementById('pap').value,
-            projectName: document.getElementById('projectName').value,
             classification: document.getElementById('classification').value,
-            quantitySize: document.getElementById('quantitySize').value,
+            source_funds: document.getElementById('sourceFunds').value,
+            office: officeValue,
+            ceiling_amount: parseFloat(document.getElementById('ceilingAmount').value) || 0,
+            pap_code: document.getElementById('papCode').value,
+            pap: document.getElementById('pap').value,
+            project_name: document.getElementById('projectName').value,
+            general_description: document.getElementById('generalDescription').value,
             mode: document.getElementById('mode').value,
-            deliveryType: document.getElementById('deliveryType').value,
-            contractingType: document.getElementById('contractingType').value,
-            outsourcing: document.getElementById('outsourcing').value,
-            framework: document.getElementById('framework').value,
-            prDate: document.getElementById('prDate').value,
-            startDate: document.getElementById('startDate').value,
-            deliveryDate: document.getElementById('deliveryDate').value,
+            uacs_code: document.getElementById('uacsCode').value,
+            code: document.getElementById('code').value,
+            start_date: document.getElementById('startDate').value,
+            delivery_date: document.getElementById('deliveryDate').value,
             location: document.getElementById('location').value,
-            budgetSource: document.getElementById('budgetSource').value,
-            recurrence: document.getElementById('recurrence').value,
-            deliveryCost: parseFloat(document.getElementById('deliveryCost').value) || 0,
-            lifecycleCost: parseFloat(document.getElementById('lifecycleCost').value) || 0,
-            otherCosts: parseFloat(document.getElementById('otherCosts').value) || 0,
-            remarks: document.getElementById('remarks').value,
-            suppliers: suppliers,
-            abc: computeABC()
+            items: items,
+            total_cost: parseFloat(document.getElementById('grandTotal').innerHTML.replace(/[^0-9.-]/g, '')) || 0,
+            remarks: document.getElementById('remarks').value
         };
     }
 
@@ -334,19 +653,31 @@
     function submitPPMP() {
         if (!validateForm()) return;
         let data = collectFormData();
-        console.log('PPMP submitted:', data);
+        Console.log('PPMP submitted:', data);
         alert('PPMP submitted successfully! (Demo)');
-        // Optionally redirect
-        // window.location.href = '/draft/';
     }
 
-    // Initialize
+    // ==================== INITIALIZATION ====================
     window.addEventListener('DOMContentLoaded', () => {
-        bindCalculationEvents();
-        updateABC();
-
         document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
         document.getElementById('submitBtn').addEventListener('click', submitPPMP);
+        
+        // Update grand total when quantity or unit cost changes
+        document.addEventListener('input', function(e) {
+            if (e.target.classList && (e.target.classList.contains('item-quantity') || e.target.classList.contains('item-unit-cost'))) {
+                const itemDiv = e.target.closest('.border');
+                if (itemDiv) {
+                    const checkbox = itemDiv.querySelector('.item-checkbox');
+                    if (checkbox && checkbox.checked) {
+                        const qty = parseFloat(itemDiv.querySelector('.item-quantity').value) || 0;
+                        const cost = parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0;
+                        const total = qty * cost;
+                        itemDiv.querySelector('.item-total').value = total.toFixed(2);
+                        updateGrandTotal();
+                    }
+                }
+            }
+        });
     });
 </script>
 {% endblock %}
