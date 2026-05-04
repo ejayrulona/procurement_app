@@ -68,10 +68,17 @@
                             <option value="Research and Development">Research and Development</option>
                             <option value="Extension Services">Extension Services</option>
                             <option value="Student Affairs">Student Affairs</option>
-                            <option value="Other">Other (Please specify)</option>
+                            <option value="Other">Other</option>
                         </select>
-                        <input type="text" id="specificOfficeInput" class="mt-2 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Please specify your specific office/project type here..." style="display: none;">
-                        <p class="text-xs text-gray-400 mt-1">Select an office above, then specify your specific office/project type</p>
+                        <p class="text-xs text-gray-400 mt-1">Select the responsible office</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Office Type <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="text" id="ceilingAmount" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" placeholder="Registrar Office">
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Maximum budget allocated for this procurement request</p>
                     </div>
 
                     <div>
@@ -722,13 +729,11 @@
         const classification = document.getElementById('classification').value;
         const sourceFunds = document.getElementById('sourceFunds').value;
         const officeSelected = document.getElementById('officeSelect').value;
-        const specificOffice = document.getElementById('specificOfficeInput').value;
         const ceiling = document.getElementById('ceilingAmount').value;
         
         if (!classification) { alert("Please select a Classification."); return false; }
         if (!sourceFunds) { alert("Please select Source of Funds."); return false; }
         if (!officeSelected) { alert("Please select an Office."); return false; }
-        if (!specificOffice) { alert("Please specify your specific office/project type."); return false; }
         if (!ceiling || parseFloat(ceiling) <= 0) { alert("Please enter a valid Ceiling Amount."); return false; }
         
         for (let i = 0; i < ppmpList.length; i++) {
@@ -757,9 +762,7 @@
     }
     
     function collectAllFormData() {
-        const officeSelected = document.getElementById('officeSelect').value;
-        const specificOffice = document.getElementById('specificOfficeInput').value;
-        const officeValue = `${officeSelected} - ${specificOffice}`;
+        const officeValue = document.getElementById('officeSelect').value;
         
         const ppmpListData = ppmpList.map(ppmp => ppmp.getData());
         
@@ -786,23 +789,6 @@
         console.log('All Procurement Plans submitted:', data);
         alert(`${ppmpList.length} Procurement Plan(s) submitted successfully! (Demo)`);
     }
-    
-    // ==================== PAPs/OFFICE DROPDOWN LOGIC ====================
-    const officeSelect = document.getElementById('officeSelect');
-    const specificOfficeInput = document.getElementById('specificOfficeInput');
-    
-    officeSelect.addEventListener('change', function() {
-        if (this.value !== '') {
-            specificOfficeInput.style.display = 'block';
-            specificOfficeInput.required = true;
-            specificOfficeInput.placeholder = `Please specify your specific ${this.value} office/project type here...`;
-            specificOfficeInput.focus();
-        } else {
-            specificOfficeInput.style.display = 'none';
-            specificOfficeInput.required = false;
-            specificOfficeInput.value = '';
-        }
-    });
     
     // ==================== INITIALIZATION ====================
     window.addEventListener('DOMContentLoaded', () => {
