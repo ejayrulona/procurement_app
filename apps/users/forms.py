@@ -121,6 +121,33 @@ class UserEditForm(forms.ModelForm):
         self.fields["username"].widget.attrs.pop("autofocus", None)
 
 
+class ChangePasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "Current Password"
+            }
+        )
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "New Password"
+            }
+        )
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "Confirm Password"
+            }
+        )
+    )
+
+
 class AdminProfileForm(forms.ModelForm):
     class Meta:
         model = AdminProfile

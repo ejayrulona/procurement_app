@@ -23,5 +23,5 @@ urlpatterns = (
     path("settings/", views.settings, name="settings"),
     path("forgot_password/", views.forgot_password, name="forgot_password"),
     path("account_verification/", views.account_verification, name="account_verification"),
-    path("change_password/", views.change_password, name="change_password"),
+    path("change-password/<int:id>/", views.change_password, name="change_password"),
 )

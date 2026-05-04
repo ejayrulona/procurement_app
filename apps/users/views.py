@@ -11,8 +11,8 @@ from .email import (
     send_registration_approved_email, send_registration_declined_email
 )
 from .forms import (
-    UserForm, UserEditForm, AdminProfileForm,OfficeReapplyUserForm, OfficeProfileForm, 
-    AdminAidCreationForm, AdminAidSetupForm, AdminAidSetupProfileForm
+    UserForm, UserEditForm, ChangePasswordForm, AdminProfileForm,OfficeReapplyUserForm, 
+    OfficeProfileForm, AdminAidCreationForm, AdminAidSetupForm, AdminAidSetupProfileForm
 )
 from .models import (
     User, AdminProfile, OfficeProfile, RegistrationRequest, AccountSetupToken, 
@@ -458,11 +458,31 @@ def profile(request, id):
 def settings(request):
     return render(request, "users/settings.html")
 
+
+def change_password(request, id):
+    user = get_object_or_404(User, pk=id)
+
+    if request.method == "POST":
+        form = ChangePasswordForm(data=request.POST, user=user)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Password has been changed successfully.")
+            return redirect("users:settings")
+        
+    else:
+        form = ChangePasswordForm(user=user)
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "users/change-password.html", context)
+
+
 def forgot_password(request):
     return render(request, "users/forgot-password.html")
 
 def account_verification(request):
     return render(request, "users/account-verification.html")
-
-def change_password(request):
-    return render(request, "users/change-password.html")
