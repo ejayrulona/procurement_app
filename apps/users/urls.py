@@ -19,4 +19,5 @@ urlpatterns = (
     path("admin/registration-requests/<int:id>/decline/", views.decline_registration_request, name="decline_registration_request"),
     path("profile/<int:id>", views.profile, name="profile"),
     path("settings/", views.settings, name="settings"),
+    path("forgot_password/", views.forgot_password, name="forgot_password"),
 )

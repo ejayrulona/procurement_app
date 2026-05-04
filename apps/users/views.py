@@ -380,3 +380,6 @@ def profile(request, id):
 @login_required
 def settings(request):
     return render(request, "users/settings.html")
+
+def forgot_password(request):
+    return render(request, "users/forgot-password.html")
