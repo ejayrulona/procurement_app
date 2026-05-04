@@ -65,6 +65,12 @@ class Item(models.Model):
     specification = models.CharField(max_length=100)
     unit = models.CharField(max_length=20, choices=Unit.choices)
     unit_cost = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # might add quantity later
+    # quantity will be computed in the following:
+    # it starts at 0 and annually resets to 0
+    # all approved items from all ppmp will be added to quantity of that item record
+
     item_code = models.ForeignKey(ItemCode, on_delete=models.PROTECT, related_name="item_records")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
