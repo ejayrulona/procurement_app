@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import CollegeOffice, User, AdminProfile, CollegeProfile, RegistrationRequest 
+from .models import (
+    User, AdminProfile, OfficeProfile, RegistrationRequest, AccountSetupToken, EmailVerificationToken
+)
 
-# Register your models here.
-
-admin.site.register(CollegeOffice)
 admin.site.register(User)
 admin.site.register(AdminProfile)
-admin.site.register(CollegeProfile)
+admin.site.register(OfficeProfile)
 admin.site.register(RegistrationRequest)
+admin.site.register(AccountSetupToken)
+admin.site.register(EmailVerificationToken)

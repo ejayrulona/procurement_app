@@ -16,6 +16,7 @@ class Command(BaseCommand):
             last_name = "Admin",
             email = "admin@wmsu.edu.ph",
             phone_number = "",
+            email_verified = True,
             is_active = True,
             password = "admin12345"
         )
