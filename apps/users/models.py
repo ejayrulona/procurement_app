@@ -2,39 +2,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 
-# Might be moved to its own app since this is not a user model
-class CollegeOffice(models.Model):
-    class OrganizationType(models.TextChoices):
-        COLLEGE = "college", "College"
-        DEPARTMENT = "department", "Department"
-        OFFICE = "office", "Office"
-
-    
-    class Campus(models.TextChoices):
-        CAMPUS_A = "A", "Campus A"
-        CAMPUS_B = "B", "Campus B"
-        CAMPUS_C = "C", "Campus C"
-
-
-    name = models.CharField(max_length=150, unique=True)
-    code = models.CharField(max_length=20, unique=True)
-    organization_type = models.CharField(max_length=10, choices=OrganizationType.choices)
-    campus = models.CharField(max_length=10, choices=Campus.choices)
-    address = models.TextField()
-    college_photo = models.ImageField(upload_to="college_photos/", null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["name"]
-        verbose_name = "College / Office"
-        verbose_name_plural = "Colleges / Offices"
-
-
-    def __str__(self):
-        return f"{self.code} - {self.name}"
-    
-
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
@@ -42,19 +9,20 @@ class UserManager(BaseUserManager):
         
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("role", User.Role.COLLEGE)
+        extra_fields.setdefault("email_verified", False)
+        extra_fields.setdefault("role", User.Role.OFFICE)
         
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
-    
 
     def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("email_verified", True)
         extra_fields.setdefault("role", User.Role.ADMIN)
 
         return self.create_user(username, password, **extra_fields)
@@ -64,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         ADMIN = "admin", "Admin"
         ADMIN_AID = "admin_aid", "Admin Aid"
-        COLLEGE = "college", "College"
+        OFFICE = "office", "Office"
 
     username = models.CharField(max_length=50, unique=True)
     role = models.CharField(max_length=15, choices=Role.choices)
@@ -73,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=80)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20)
+    email_verified = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -98,8 +67,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.role == self.Role.ADMIN_AID
     
     @property
-    def is_college(self):
-        return self.role == self.Role.COLLEGE
+    def is_office(self):
+        return self.role == self.Role.OFFICE
     
     @property
     def is_any_admin(self):
@@ -110,7 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         parts = [self.first_name, self.middle_name, self.last_name]
 
         return " ".join(part for part in parts if part)
-    
     
     def __str__(self):
         return f"{self.full_name}, ({self.username})"
@@ -130,31 +98,34 @@ class AdminProfile(models.Model):
         return f"{self.user.role} - {self.user.full_name}"
 
 
-class CollegeProfile(models.Model):
-    class PositionTitle(models.TextChoices):
-        DEAN = "dean", "Dean"
-        ASSOCIATE_DEAN = "associate_dean", "Associate Dean"
-        DEPT_HEAD = "department_head", "Department Head"
-        DIRECTOR = "director", "Director"
-        ASSOCIATE_DIRECTOR = "associate_director", "Associate Director"
-        COORDINATOR = "coordinator", "Coordinator"
-        CHAIRPERSON = "chairperson", "Chairperson"
-        OFFICER_IN_CHARGE = "officer_in_charge", "OIC - Officer in Charge"
-        PROGRAM_HEAD = "program_head", "Program Head"
-        UNIT_HEAD = "unit_head", "Unit Head"
-        DIVISION_CHIEF = "division_chief", "Division Head"
+class OfficeProfile(models.Model):
+    class PAPCategory(models.TextChoices):
+        ADMIN = "administration", "Administration"
+        HIGHER_EDUCATION = "higher_education", "Higher Education"
+        RESEARCH = "research", "Research"
+        EXTENSION = "extension", "Extension"
+        INCOME_GENERATING_PROJECT = "income_generating_project", "Income Generating Project"
+        FIDUCIARY = "fiduciary", "Fiduciary"
+        OUTSOURCING = "outsourcing", "Outsourcing"
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="college_profile")
-    college_office = models.OneToOneField(CollegeOffice, on_delete=models.PROTECT, related_name="college_office")
-    position_title = models.CharField(max_length=30, choices=PositionTitle.choices)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="office_profile")
+    pap_category = models.CharField(max_length=30, choices=PAPCategory.choices)
+    office_name = models.CharField(max_length=150)
+    office_logo = models.ImageField(upload_to="office_logos/", null=True, blank=True)
+
+    # Secretary Information (Contact Person & Optional only)
+    secretary_full_name = models.CharField(max_length=150, blank=True)
+    secretary_email = models.EmailField(blank=True)
+    secretary_phone_number = models.CharField(max_length=20, blank=True)
 
     class Meta:
-        verbose_name = "College Profile"
-        verbose_name_plural = "College Profiles"
+        verbose_name = "Office Profile"
+        verbose_name_plural = "Office Profiles"
 
 
     def __str__(self):
-        return f"{self.college_office.name} - {self.user.full_name}"  
+        return f"{self.get_pap_category_display()} - {self.office_name} - {self.user.full_name}"  
 
 
 class RegistrationRequest(models.Model):
@@ -164,13 +135,13 @@ class RegistrationRequest(models.Model):
         DECLINED = "declined", "Declined"
 
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="registration_request")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="registration_requests")
     is_latest = models.BooleanField(default=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     remarks = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
-    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_request")
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_requests")
 
     class Meta: 
         verbose_name = "Registration Request"
@@ -180,3 +151,41 @@ class RegistrationRequest(models.Model):
     
     def __str__(self):
         return f"{self.user.full_name} - {self.status}"
+    
+
+class AccountSetupToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="setup_token")
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "Account Setup Token"
+        verbose_name_plural = "Account Setup Tokens"
+
+
+    def __str__(self):
+        return f"Setup token for {self.user.full_name}"
+    
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+    
+
+class EmailVerificationToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="email_verification_token")
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "Email Verification Token"
+        verbose_name_plural = "Email Verification Tokens"
+
+
+    def __str__(self):
+        return f"Email verification token for {self.user.full_name}"
+    
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at

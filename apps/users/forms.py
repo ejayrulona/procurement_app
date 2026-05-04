@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
-from .models import CollegeOffice, User, AdminProfile, CollegeProfile
+from .models import User, AdminProfile, OfficeProfile
 
 class UserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -121,6 +121,33 @@ class UserEditForm(forms.ModelForm):
         self.fields["username"].widget.attrs.pop("autofocus", None)
 
 
+class ChangePasswordForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "Current Password"
+            }
+        )
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "New Password"
+            }
+        )
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "w-full py-3 pl-10 pr-4 transition-all duration-200 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 focus:ring-1 focus:ring-red-400",
+                "placeholder": "Confirm Password"
+            }
+        )
+    )
+
+
 class AdminProfileForm(forms.ModelForm):
     class Meta:
         model = AdminProfile
@@ -139,6 +166,7 @@ class AdminProfileForm(forms.ModelForm):
                 }
             )
         }
+
 
 class AdminAidCreationForm(forms.ModelForm):
     employee_id_number = forms.CharField(
@@ -203,6 +231,7 @@ class AdminAidSetupForm(forms.ModelForm):
             ),
         }
 
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -237,7 +266,7 @@ class AdminAidSetupProfileForm(forms.ModelForm):
         }
 
 
-class CollegeReapplyUserForm(forms.ModelForm):
+class OfficeReapplyUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
@@ -277,44 +306,45 @@ class CollegeReapplyUserForm(forms.ModelForm):
         }
 
     
-class CollegeProfileForm(forms.ModelForm):
-    college_office = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
-                "id": "college-office-dropdown", "list": "college-office-list", "autocomplete": "off",
-                "placeholder": "College of Computing Studies"
-            }
-        )
-    )
-
+class OfficeProfileForm(forms.ModelForm):
     class Meta:
-        model = CollegeProfile
-        fields = ("college_office", "position_title",)
+        model = OfficeProfile
+        fields = ("pap_category", "office_name", "office_logo", "secretary_full_name", "secretary_email", "secretary_phone_number")
         widgets = {
-            "position_title": forms.Select(
+            "pap_category": forms.Select(
                 attrs={
                     "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
-                    "placeholder": "Dean"
+                    "placeholder": ""
+                }
+            ),
+            "office_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "College of Computing Studies"
+                }
+            ),
+            "office_logo": forms.FileInput(
+                attrs={
+                    "class": "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100",
+                    "id": "profile-photo-id", "accept": "image/*"
+                }
+            ),
+            "secretary_full_name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "Maria Angela Reyes"
+                }
+            ),
+            "secretary_email": forms.EmailInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "maria@gmail.com"
+                }
+            ),
+            "secretary_phone_number": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:border-red-400 transition-all duration-200",
+                    "placeholder": "123 456 7890"
                 }
             ),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Pre-fills college office with name instead of id when editing an existing instance
-        if self.instance and self.instance.pk:
-            try:
-                self.initial["college_office"] = self.instance.college_office.name
-            except:
-                pass
-
-    def clean_college_office(self):
-        college_office_name = self.cleaned_data["college_office"]
-        college_office = CollegeOffice.objects.filter(name=college_office_name).first()
-
-        if not college_office:
-            raise forms.ValidationError("Invalide college/office selected. Please choose from the given options")
-        
-        return college_office

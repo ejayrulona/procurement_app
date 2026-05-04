@@ -21,10 +21,10 @@ def any_admin_required(view_function):
     
     return wrapper
 
-def college_required(view_function):
+def office_required(view_function):
     @wraps(view_function)
     def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_college:
+        if not request.user.is_authenticated or not request.user.is_office:
             return redirect("core:home")
         
         return view_function(request, *args, **kwargs)
