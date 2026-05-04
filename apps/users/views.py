@@ -383,3 +383,6 @@ def settings(request):
 
 def forgot_password(request):
     return render(request, "users/forgot-password.html")
+
+def account_verification(request):
+    return render(request, "users/account-verification.html")

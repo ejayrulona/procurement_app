@@ -20,4 +20,5 @@ urlpatterns = (
     path("profile/<int:id>", views.profile, name="profile"),
     path("settings/", views.settings, name="settings"),
     path("forgot_password/", views.forgot_password, name="forgot_password"),
+    path("account_verification/", views.account_verification, name="account_verification"),
 )
