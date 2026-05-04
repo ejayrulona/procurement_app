@@ -3,37 +3,36 @@
 
 {% block title %}Generate PPMP | Procurement Office{% endblock %}
 
-{% block header_subtitle %}Create a new Project Procurement Management Plan{% endblock %}
+{% block header_subtitle %}Create multiple Project Procurement Management Plans{% endblock %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto px-4 py-8">
     <!-- Page Title -->
     <div class="mb-8 text-center">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Create Project Procurement Management Plan</h1>
-        <p class="text-gray-500">Fill out the form below to generate a new PPMP</p>
+        <p class="text-gray-500">Create multiple Procurement Plans sharing the same basic information</p>
         <div class="w-24 h-1 bg-gradient-to-r from-red-500 to-red-300 mx-auto mt-3 rounded-full"></div>
     </div>
 
     <form id="ppmpForm" class="space-y-6">
         {% csrf_token %}
 
-        <!-- ==================== 1. BASIC INFORMATION ==================== -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
-            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+        <!-- ==================== 1. BASIC INFORMATION (Shared across all PPMPs) ==================== -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">1</span>
+                    <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                        <span class="text-red-600 font-bold text-sm">1</span>
                     </div>
                     <div>
-                        <h2 class="text-lg font-semibold text-white">Basic Information</h2>
-                        <p class="text-red-100 text-xs">Essential project and budget details</p>
+                        <h2 class="text-lg font-semibold text-gray-800">Basic Information (Shared)</h2>
+                        <p class="text-gray-500 text-xs">Classification, funding, and office details - common to all Procurement Plans</p>
                     </div>
                 </div>
             </div>
             
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <!-- Classification (Datalist) -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Classification <span class="text-red-500">*</span></label>
                         <input type="text" id="classification" list="classificationList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select classification">
@@ -45,7 +44,6 @@
                         <p class="text-xs text-gray-400 mt-1">Identifies what type of procurement is being undertaken</p>
                     </div>
 
-                    <!-- Source of Funds -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Source of Funds <span class="text-red-500">*</span></label>
                         <input type="text" id="sourceFunds" list="sourceFundsList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select source">
@@ -60,9 +58,8 @@
                         <p class="text-xs text-gray-400 mt-1">Determines which funding source will cover the procurement</p>
                     </div>
 
-                    <!-- Offices Dropdown -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Office <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">PAPs / Office <span class="text-red-500">*</span></label>
                         <select id="officeSelect" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
                             <option value="">-- Select Office --</option>
                             <option value="Admin">Admin</option>
@@ -73,274 +70,76 @@
                             <option value="Student Affairs">Student Affairs</option>
                             <option value="Other">Other (Please specify)</option>
                         </select>
-                        <p class="text-xs text-gray-400 mt-1">Identifies which office/department is requesting the procurement</p>
+                        <input type="text" id="specificOfficeInput" class="mt-2 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Please specify your specific office/project type here..." style="display: none;">
+                        <p class="text-xs text-gray-400 mt-1">Select an office above, then specify your specific office/project type</p>
                     </div>
 
-                    <!-- Type of Office/Projects (appears when "Other" is selected) -->
-                    <div id="otherOfficeContainer" style="display: none;">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Type of Office/Projects <span class="text-red-500">*</span></label>
-                        <input type="text" id="otherOffice" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Please specify office/project type">
-                        <p class="text-xs text-gray-400 mt-1">For offices not listed in the dropdown</p>
-                    </div>
-
-                    <!-- Ceiling Amount -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Ceiling Amount (₱) <span class="text-red-500">*</span></label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
                             <input type="number" id="ceilingAmount" class="mt-1 w-full pl-8 border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" placeholder="0.00">
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">Maximum budget allocated for this PPMP request</p>
-                    </div>
-
-                    <!-- PAP Code (UACS) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">PAP Code (UACS)</label>
-                        <input type="text" id="papCode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., 50604050 02">
-                        <p class="text-xs text-gray-400 mt-1">Program/Activity/Project code for budget tracking</p>
-                    </div>
-
-                    <!-- Program / Activity / Project (PAP) -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Program / Activity / Project (PAP)</label>
-                        <textarea id="pap" rows="2" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" placeholder="Describe the program, activity or project..."></textarea>
-                        <p class="text-xs text-gray-400 mt-1">Brief description of what the procurement supports</p>
+                        <p class="text-xs text-gray-400 mt-1">Maximum budget allocated for this procurement request</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 2. PROCUREMENT DETAILS (with Schedule & Dates integrated) ==================== -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
-            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">2</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold text-white">Procurement Details</h2>
-                        <p class="text-red-100 text-xs">Item specifications and delivery schedule</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-6">
-                <!-- Main Procurement Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                    <!-- General Description (Datalist) -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">General Description <span class="text-red-500">*</span></label>
-                        <input type="text" id="generalDescription" list="generalDescList" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Type or select general description">
-                        <datalist id="generalDescList">
-                            <option value="Supply and Delivery of Office Supplies">
-                            <option value="Supply and Delivery of ICT Equipment">
-                            <option value="Supply and Delivery of Furniture and Fixtures">
-                            <option value="Construction of Building">
-                            <option value="Repair and Maintenance of Facilities">
-                            <option value="Consulting Services for System Development">
-                            <option value="Printing and Publication of Materials">
-                            <option value="Venue and Catering Services">
-                            <option value="Transportation and Delivery Services">
-                        </datalist>
-                        <p class="text-xs text-gray-400 mt-1">High-level summary of what is being procured</p>
-                    </div>
-
-                    <!-- Mode of Procurement (Dropdown) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mode of Procurement <span class="text-red-500">*</span></label>
-                        <select id="mode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
-                            <option value="">-- Select --</option>
-                            <option value="Competitive Bidding">Competitive Bidding</option>
-                            <option value="Limited Source Bidding">Limited Source Bidding</option>
-                            <option value="Direct Contracting">Direct Contracting</option>
-                            <option value="Repeat Order">Repeat Order</option>
-                            <option value="Small Value Procurement">Small Value Procurement</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Negotiated Procurement">Negotiated Procurement</option>
-                        </select>
-                        <p class="text-xs text-gray-400 mt-1">Determines how suppliers will be selected and the procurement process</p>
-                    </div>
-
-                    <!-- UACS Code -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">UACS Code</label>
-                        <input type="text" id="uacsCode" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., 50604050">
-                        <p class="text-xs text-gray-400 mt-1">Uniform Accounting Code System for budget classification</p>
-                    </div>
-
-                    <!-- Code (Additional Code field) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Code</label>
-                        <input type="text" id="code" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Additional code">
-                        <p class="text-xs text-gray-400 mt-1">Secondary identifier for tracking purposes</p>
-                    </div>
-
-                    <!-- Name of Procurement Project -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Name of Procurement Project <span class="text-red-500">*</span></label>
-                        <input type="text" id="projectName" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., Supply and Delivery of ICT Equipment">
-                        <p class="text-xs text-gray-400 mt-1">Specific title of the procurement project</p>
-                    </div>
-                </div>
-
-                <!-- Schedule & Dates Section (Smaller Design) -->
-                <div class="bg-red-50/50 rounded-lg p-3 border border-red-200">
-                    <div class="flex items-center gap-2 mb-3">
-                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <h3 class="text-sm font-semibold text-gray-800">Schedule & Dates</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Start of Implementation</label>
-                            <input type="date" id="startDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Target Delivery Date</label>
-                            <input type="date" id="deliveryDate" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Location / Delivery Site</label>
-                            <input type="text" id="location" class="mt-1 w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="e.g., Main Campus, Quezon City">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== AVAILABLE ITEMS CHECKLIST ==================== -->
+        <!-- ==================== PPMP NAVIGATION & CONTAINER ==================== -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold text-white">Available Items</h2>
-                        <p class="text-red-100 text-xs">Select items to add to your procurement list</p>
-                    </div>
-                </div>
-            </div>
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Desktop Computer" data-default-unit="unit">
-                        <span class="text-sm text-gray-700">Desktop Computer</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Laptop" data-default-unit="unit">
-                        <span class="text-sm text-gray-700">Laptop</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Printer" data-default-unit="unit">
-                        <span class="text-sm text-gray-700">Printer</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="A4 Bond Paper" data-default-unit="ream">
-                        <span class="text-sm text-gray-700">A4 Bond Paper</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Office Chair" data-default-unit="unit">
-                        <span class="text-sm text-gray-700">Office Chair</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Whiteboard Marker" data-default-unit="box">
-                        <span class="text-sm text-gray-700">Whiteboard Marker</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Envelope" data-default-unit="pack">
-                        <span class="text-sm text-gray-700">Envelope</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Ballpen" data-default-unit="box">
-                        <span class="text-sm text-gray-700">Ballpen</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="Notebook" data-default-unit="piece">
-                        <span class="text-sm text-gray-700">Notebook</span>
-                    </label>
-                </div>
-                <button type="button" id="addSelectedItemsBtn" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Add Selected Items
-                </button>
-            </div>
-        </div>
-
-        <!-- Section C: Items to be Procured (Dynamic - Initially Empty) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
-            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
+                        <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                            <span class="text-red-600 font-bold text-sm">2</span>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-white">Items to be Procured</h2>
-                            <p class="text-red-100 text-xs">Manage selected items for this procurement</p>
+                            <h2 class="text-lg font-semibold text-gray-800">Procurement Plans</h2>
+                            <p class="text-gray-500 text-xs">Create multiple Procurement Plans - each with its own details</p>
                         </div>
                     </div>
-                    <button type="button" id="addItemBtn" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
+                    <button type="button" id="createAnotherBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        Add Custom Item
+                        Create Another Plan
                     </button>
                 </div>
             </div>
             
             <div class="p-6">
-                <div id="itemsContainer" class="space-y-4">
-                    <!-- Empty state message -->
-                    <div id="emptyItemsMessage" class="text-center py-8 text-gray-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586M4 13h2.586m0 0L4 10.414M6.586 13L4 15.586m12-2.586V9m0 4h2m-2 0V9m0 4h2" />
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No items added yet</h3>
-                        <p class="text-sm text-gray-500 mb-4">Add items by selecting from "Available Items" above or click "Add Custom Item" to manually enter items.</p>
-                    </div>
+                <!-- PPMP Pagination Tabs -->
+                <div id="ppmpTabs" class="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-3">
+                    <!-- Tabs will be dynamically added here -->
                 </div>
                 
-                <!-- Total Summary -->
-                <div class="mt-6 bg-gradient-to-r from-red-50 to-gray-50 rounded-lg p-5 border border-red-200">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-lg font-semibold text-gray-800">Grand Total</span>
-                            <p class="text-xs text-gray-500 mt-1">Total cost of all checked items</p>
-                        </div>
-                        <span class="text-3xl font-bold text-red-600" id="grandTotal">₱ 0.00</span>
-                    </div>
+                <!-- PPMP Container (holds all PPMP forms) -->
+                <div id="ppmpContainer" class="space-y-6">
+                    <!-- PPMP forms will be dynamically added here -->
+                </div>
+                
+                <!-- Pagination Controls at Bottom -->
+                <div id="paginationControls" class="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-200">
+                    <button type="button" id="prevPpmpBtn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        ← Previous
+                    </button>
+                    <span id="pageIndicator" class="text-sm text-gray-600">Plan 1 of 1</span>
+                    <button type="button" id="nextPpmpBtn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Next →
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 3. ATTACHMENTS & REMARKS ==================== -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
-            <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">3</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold text-white">Attachments & Remarks</h2>
-                        <p class="text-red-100 text-xs">Additional information and notes</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-6">
+        <!-- Total Summary across all PPMPs -->
+        <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-5 border border-red-200">
+            <div class="flex justify-between items-center">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Remarks (optional)</label>
-                    <textarea id="remarks" rows="3" class="mt-1 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" placeholder="Additional details, justifications, changes from previous PPMP..."></textarea>
-                    <p class="text-xs text-gray-400 mt-1">Any additional information or justifications</p>
+                    <span class="text-lg font-semibold text-gray-800">Total Across All Plans</span>
+                    <p class="text-xs text-gray-500 mt-1">Sum of all checked items from all Procurement Plans</p>
                 </div>
+                <span class="text-3xl font-bold text-red-600" id="totalAllPpmps">₱ 0.00</span>
             </div>
         </div>
 
@@ -350,13 +149,13 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
-                Save as Draft
+                Save All as Draft
             </button>
             <button type="button" id="submitBtn" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Submit PPMP
+                Submit All Plans
             </button>
         </div>
     </form>
@@ -364,320 +163,687 @@
 
 <script>
     // ==================== GLOBAL VARIABLES ====================
-    let itemCounter = 0;
+    let ppmpList = [];
+    let currentPpmpIndex = 0;
+    let nextPpmpId = 1;
 
     // ==================== UNIT OPTIONS ====================
     const unitOptions = ['piece', 'unit', 'set', 'ream', 'box', 'pack', 'bottle', 'roll', 'meter', 'liter', 'kilogram', 'bag', 'pair', 'bundle', 'gallon'];
 
-    // ==================== OFFICE DROPDOWN LOGIC ====================
-    const officeSelect = document.getElementById('officeSelect');
-    const otherOfficeContainer = document.getElementById('otherOfficeContainer');
-    const otherOfficeInput = document.getElementById('otherOffice');
-
-    officeSelect.addEventListener('change', function() {
-        if (this.value === 'Other') {
-            otherOfficeContainer.style.display = 'block';
-            otherOfficeInput.required = true;
-        } else {
-            otherOfficeContainer.style.display = 'none';
-            otherOfficeInput.required = false;
-            otherOfficeInput.value = '';
-        }
-    });
-
-    // ==================== CREATE UNIT DROPDOWN ====================
-    function createUnitDropdown(selectedValue = '') {
-        const select = document.createElement('select');
-        select.className = 'item-unit w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white';
-        
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Select unit';
-        defaultOption.disabled = true;
-        select.appendChild(defaultOption);
-        
-        unitOptions.forEach(unit => {
-            const option = document.createElement('option');
-            option.value = unit;
-            option.textContent = unit.charAt(0).toUpperCase() + unit.slice(1);
-            if (unit === selectedValue) {
-                option.selected = true;
-            }
-            select.appendChild(option);
-        });
-        
-        return select;
-    }
-
-    // ==================== HIDE EMPTY STATE MESSAGE ====================
-    function hideEmptyState() {
-        const emptyMessage = document.getElementById('emptyItemsMessage');
-        if (emptyMessage) {
-            emptyMessage.style.display = 'none';
-        }
-    }
-
-    // ==================== ADD SELECTED ITEMS FROM CHECKLIST ====================
-    document.getElementById('addSelectedItemsBtn').addEventListener('click', function() {
-        const selectedCheckboxes = document.querySelectorAll('.available-item-checkbox:checked');
-        
-        if (selectedCheckboxes.length === 0) {
-            alert('Please select at least one item to add.');
-            return;
+    // ==================== PPMP CLASS ====================
+    class PpmpForm {
+        constructor(id, index) {
+            this.id = id;
+            this.index = index;
+            this.itemCounter = 0;
+            this.container = null;
+            this.tabButton = null;
+            this.init();
         }
         
-        selectedCheckboxes.forEach(checkbox => {
-            const itemName = checkbox.getAttribute('data-name');
-            const defaultUnit = checkbox.getAttribute('data-default-unit');
-            addItemRow(itemName, defaultUnit);
-            checkbox.checked = false;
-        });
-        
-        hideEmptyState();
-    });
-
-    // ==================== ITEMS SECTION ====================
-    function addItemRow(itemName = '', defaultUnit = '') {
-        itemCounter++;
-        const container = document.getElementById('itemsContainer');
-        const itemId = `item_${itemCounter}`;
-        
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-all duration-200';
-        itemDiv.id = itemId;
-        
-        const unitSelect = createUnitDropdown(defaultUnit);
-        
-        itemDiv.innerHTML = `
-            <div class="flex justify-between items-center mb-3">
-                <h4 class="font-semibold text-gray-700 flex items-center gap-2">
-                    <span class="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">${itemCounter}</span>
-                    Item Details
-                </h4>
-                <button type="button" class="remove-item text-red-600 hover:text-red-800 transition text-sm flex items-center gap-1" data-id="${itemId}">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Remove
-                </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Include</label>
-                    <input type="checkbox" class="item-checkbox w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500" data-id="${itemId}">
-                </div>
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Item Name</label>
-                    <input type="text" class="item-name w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Item name" value="${itemName.replace(/'/g, "\\'")}">
-                </div>
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Quantity</label>
-                    <input type="number" class="item-quantity w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" value="0">
-                </div>
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Unit Cost</label>
-                    <input type="number" class="item-unit-cost w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" step="0.01" value="0">
-                </div>
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Total</label>
-                    <input type="text" class="item-total w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-100 text-gray-600" readonly placeholder="0.00">
-                </div>
-                <div class="md:col-span-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Remarks</label>
-                    <input type="text" class="item-remarks w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Optional">
-                </div>
-            </div>
-        `;
-        
-        // Replace the unit placeholder with the actual select dropdown
-        const grid = itemDiv.querySelector('.grid');
-        const itemNameDiv = grid.children[1];
-        const quantityDiv = grid.children[2];
-        
-        // Create unit div
-        const unitDiv = document.createElement('div');
-        unitDiv.className = 'md:col-span-1';
-        const unitLabel = document.createElement('label');
-        unitLabel.className = 'block text-xs font-medium text-gray-500 mb-1';
-        unitLabel.textContent = 'Unit';
-        unitDiv.appendChild(unitLabel);
-        unitDiv.appendChild(unitSelect);
-        
-        grid.insertBefore(unitDiv, quantityDiv);
-        
-        container.appendChild(itemDiv);
-        
-        // Add event listeners for this item
-        const checkbox = itemDiv.querySelector('.item-checkbox');
-        const quantity = itemDiv.querySelector('.item-quantity');
-        const unitCost = itemDiv.querySelector('.item-unit-cost');
-        const totalInput = itemDiv.querySelector('.item-total');
-        
-        function calculateTotal() {
-            const qty = parseFloat(quantity.value) || 0;
-            const cost = parseFloat(unitCost.value) || 0;
-            const total = qty * cost;
-            totalInput.value = total.toFixed(2);
-            updateGrandTotal();
-            return total;
+        init() {
+            this.createContainer();
+            this.createTabButton();
+            this.addItemRow('', '', '');
         }
         
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                calculateTotal();
-            } else {
-                totalInput.value = '0.00';
-                updateGrandTotal();
-            }
-        });
-        
-        quantity.addEventListener('input', () => {
-            if (checkbox.checked) calculateTotal();
-        });
-        
-        unitCost.addEventListener('input', () => {
-            if (checkbox.checked) calculateTotal();
-        });
-        
-        // Remove button functionality
-        itemDiv.querySelector('.remove-item').addEventListener('click', function() {
-            itemDiv.remove();
-            updateGrandTotal();
+        createContainer() {
+            const ppmpContainer = document.getElementById('ppmpContainer');
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'ppmp-form bg-white rounded-lg border border-gray-200 overflow-hidden';
+            containerDiv.id = `ppmp_${this.id}`;
+            containerDiv.setAttribute('data-ppmp-id', this.id);
+            containerDiv.style.display = this.index === currentPpmpIndex ? 'block' : 'none';
             
-            // Show empty state if no items left
-            if (document.querySelectorAll('#itemsContainer .border').length === 0) {
-                itemCounter = 0;
-                const emptyMessage = document.getElementById('emptyItemsMessage');
-                if (emptyMessage) {
-                    emptyMessage.style.display = 'block';
+            containerDiv.innerHTML = `
+                <div class="p-6">
+                    <!-- Procurement Details Section -->
+                    <div class="mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">General Description <span class="text-red-500">*</span></label>
+                                <input type="text" class="general-desc-input w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" list="generalDescList" placeholder="Type or select general description">
+                                <p class="text-xs text-gray-400 mt-1">High-level summary of what is being procured</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mode of Procurement <span class="text-red-500">*</span></label>
+                                <select class="mode-select w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
+                                    <option value="">-- Select --</option>
+                                    <option value="Competitive Bidding">Competitive Bidding</option>
+                                    <option value="Limited Source Bidding">Limited Source Bidding</option>
+                                    <option value="Direct Contracting">Direct Contracting</option>
+                                    <option value="Repeat Order">Repeat Order</option>
+                                    <option value="Small Value Procurement">Small Value Procurement</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Negotiated Procurement">Negotiated Procurement</option>
+                                </select>
+                                <p class="text-xs text-gray-400 mt-1">Determines how suppliers will be selected</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">UACS Code</label>
+                                <input type="text" class="uacs-code-input w-full border border-gray-300 rounded-lg p-2.5 bg-gray-100 text-gray-600" readonly placeholder="Will be auto-generated">
+                                <p class="text-xs text-gray-400 mt-1">Auto-generated based on classification</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Code</label>
+                                <input type="text" class="code-input w-full border border-gray-300 rounded-lg p-2.5 bg-gray-100 text-gray-600" readonly placeholder="Will be auto-generated">
+                                <p class="text-xs text-gray-400 mt-1">Auto-generated tracking code</p>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Name of Procurement Project <span class="text-red-500">*</span></label>
+                                <select class="project-name-select w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white">
+                                    <option value="">-- Select Procurement Project --</option>
+                                    <option value="Supply and Delivery of ICT Equipment">Supply and Delivery of ICT Equipment</option>
+                                    <option value="Supply and Delivery of Office Supplies">Supply and Delivery of Office Supplies</option>
+                                    <option value="Supply and Delivery of Laboratory Equipment">Supply and Delivery of Laboratory Equipment</option>
+                                    <option value="Supply and Delivery of Furniture and Fixtures">Supply and Delivery of Furniture and Fixtures</option>
+                                    <option value="Repair and Maintenance of Facilities">Repair and Maintenance of Facilities</option>
+                                    <option value="Consulting Services for System Development">Consulting Services for System Development</option>
+                                    <option value="Construction of Building">Construction of Building</option>
+                                    <option value="Others">Others (Please specify)</option>
+                                </select>
+                                <input type="text" class="project-name-other mt-2 w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Please specify procurement project" style="display: none;">
+                                <p class="text-xs text-gray-400 mt-1">Specific title of the procurement project</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Available Items Checklist for this PPMP -->
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <h3 class="text-md font-semibold text-gray-800">Available Items</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            ${this.getAvailableItemsHTML()}
+                        </div>
+                        <button type="button" class="add-selected-btn mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Add Selected Items
+                        </button>
+                    </div>
+                    
+                    <!-- Items to be Procured Container -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            <h3 class="text-md font-semibold text-gray-800">Items to be Procured</h3>
+                        </div>
+                        <div class="items-container space-y-4">
+                            <!-- Items will be added here -->
+                        </div>
+                        
+                        <!-- Remarks for this PPMP -->
+                        <div class="mt-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Remarks (for this Procurement Plan)</label>
+                            <textarea class="ppmp-remarks w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" rows="3" placeholder="Enter remarks specific to this Procurement Plan..."></textarea>
+                        </div>
+                        
+                        <!-- Subtotal for this PPMP -->
+                        <div class="mt-3 bg-red-50 rounded-lg p-3 border border-red-200">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-semibold text-gray-700">Plan Subtotal</span>
+                                <span class="text-xl font-bold text-red-600 ppmp-subtotal">₱ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            ppmpContainer.appendChild(containerDiv);
+            this.container = containerDiv;
+            this.attachEventListeners();
+        }
+        
+        getAvailableItemsHTML() {
+            const items = [
+                { name: "Desktop Computer", unit: "unit", cost: "45000" },
+                { name: "Laptop", unit: "unit", cost: "55000" },
+                { name: "Printer", unit: "unit", cost: "12000" },
+                { name: "A4 Bond Paper", unit: "ream", cost: "250" },
+                { name: "Office Chair", unit: "unit", cost: "3500" },
+                { name: "Whiteboard Marker", unit: "box", cost: "450" },
+                { name: "Envelope", unit: "pack", cost: "150" },
+                { name: "Ballpen", unit: "box", cost: "300" },
+                { name: "Notebook", unit: "piece", cost: "50" },
+                { name: "Tablet", unit: "unit", cost: "18000" },
+                { name: "Projector", unit: "unit", cost: "25000" },
+                { name: "Whiteboard", unit: "piece", cost: "5000" }
+            ];
+            
+            return items.map(item => `
+                <label class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="available-item-checkbox w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500" data-name="${item.name}" data-unit="${item.unit}" data-cost="${item.cost}">
+                    <span class="text-sm text-gray-700">${item.name}</span>
+                </label>
+            `).join('');
+        }
+        
+        attachEventListeners() {
+            const container = this.container;
+            const that = this;
+            
+            // Add selected items button
+            container.querySelector('.add-selected-btn').addEventListener('click', function() {
+                const selectedCheckboxes = container.querySelectorAll('.available-item-checkbox:checked');
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select at least one item to add.');
+                    return;
                 }
-            }
-        });
-    }
-    
-    function updateGrandTotal() {
-        let grandTotal = 0;
-        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
-            const itemDiv = checkbox.closest('.border');
+                selectedCheckboxes.forEach(checkbox => {
+                    const itemName = checkbox.getAttribute('data-name');
+                    const defaultUnit = checkbox.getAttribute('data-unit');
+                    const defaultCost = checkbox.getAttribute('data-cost');
+                    that.addItemRow(itemName, defaultUnit, defaultCost);
+                    checkbox.checked = false;
+                });
+                that.updateSubtotal();
+            });
+            
+            // Project name dropdown logic
+            const projectNameSelect = container.querySelector('.project-name-select');
+            const projectNameOther = container.querySelector('.project-name-other');
+            
+            projectNameSelect.addEventListener('change', function() {
+                if (this.value === 'Others') {
+                    projectNameOther.style.display = 'block';
+                    projectNameOther.required = true;
+                } else {
+                    projectNameOther.style.display = 'none';
+                    projectNameOther.required = false;
+                    projectNameOther.value = '';
+                }
+            });
+            
+            // Auto-generate codes when classification or mode changes
+            const classificationInput = document.getElementById('classification');
+            const modeSelect = container.querySelector('.mode-select');
+            
+            const generateCodesForPpmp = () => {
+                const classification = classificationInput.value;
+                const mode = modeSelect.value;
+                const timestamp = Date.now().toString().slice(-6);
+                const uacsCodeInput = container.querySelector('.uacs-code-input');
+                const codeInput = container.querySelector('.code-input');
+                
+                let uacsPrefix = '';
+                switch(classification) {
+                    case 'Goods': uacsPrefix = '50601'; break;
+                    case 'Infrastructure': uacsPrefix = '50602'; break;
+                    case 'Consulting Services': uacsPrefix = '50603'; break;
+                    default: uacsPrefix = '50600';
+                }
+                uacsCodeInput.value = uacsPrefix + '-' + timestamp.slice(0,4);
+                
+                let codePrefix = '';
+                if (classification === 'Goods') codePrefix = 'GDS';
+                else if (classification === 'Infrastructure') codePrefix = 'INF';
+                else if (classification === 'Consulting Services') codePrefix = 'CNS';
+                else codePrefix = 'PRC';
+                
+                let modeSuffix = '';
+                if (mode === 'Competitive Bidding') modeSuffix = 'CB';
+                else if (mode === 'Small Value Procurement') modeSuffix = 'SVP';
+                else if (mode === 'Shopping') modeSuffix = 'SHP';
+                else if (mode === 'Negotiated Procurement') modeSuffix = 'NP';
+                else modeSuffix = 'GEN';
+                
+                codeInput.value = codePrefix + '-' + modeSuffix + '-' + timestamp;
+            };
+            
+            classificationInput.addEventListener('change', generateCodesForPpmp);
+            classificationInput.addEventListener('input', generateCodesForPpmp);
+            modeSelect.addEventListener('change', generateCodesForPpmp);
+            generateCodesForPpmp();
+            
+            // Listen for item changes to update subtotal (only quantity can change)
+            container.addEventListener('input', (e) => {
+                if (e.target.classList && (e.target.classList.contains('item-quantity'))) {
+                    const itemDiv = e.target.closest('.item-row');
+                    if (itemDiv) {
+                        const checkbox = itemDiv.querySelector('.item-checkbox');
+                        if (checkbox && checkbox.checked) {
+                            const qty = parseFloat(itemDiv.querySelector('.item-quantity').value) || 0;
+                            const cost = parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0;
+                            const total = qty * cost;
+                            itemDiv.querySelector('.item-total').value = total.toFixed(2);
+                            that.updateSubtotal();
+                            updateTotalAllPpmps();
+                        }
+                    }
+                }
+            });
+        }
+        
+        createUnitDropdown(selectedValue = '') {
+            const select = document.createElement('select');
+            select.className = 'item-unit w-full border border-gray-300 rounded-lg p-1.5 text-sm bg-gray-100 text-gray-600 cursor-not-allowed';
+            select.disabled = true;
+            
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select unit';
+            defaultOption.disabled = true;
+            select.appendChild(defaultOption);
+            
+            unitOptions.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit;
+                option.textContent = unit.charAt(0).toUpperCase() + unit.slice(1);
+                if (unit === selectedValue) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            return select;
+        }
+        
+        addItemRow(itemName = '', defaultUnit = '', defaultCost = '') {
+            this.itemCounter++;
+            const itemsContainer = this.container.querySelector('.items-container');
+            const itemId = `item_${this.id}_${this.itemCounter}`;
+            const today = new Date().toISOString().split('T')[0];
+            const unitSelect = this.createUnitDropdown(defaultUnit);
+            
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item-row border border-gray-200 rounded-lg p-3 bg-gray-50';
+            itemDiv.id = itemId;
+            
+            // Aligned grid: 12 columns total - each field gets appropriate span
+            // Include(1) | Item Name(2) | Quantity(1) | Unit(1) | Unit Cost(2) | Total(1) | Schedule(2) = 10 columns
+            // Remarks takes full width on next row (col-span-12)
+            itemDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-gray-600">Item ${this.itemCounter}</span>
+                    <button type="button" class="remove-item text-red-600 hover:text-red-800 text-xs flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Remove
+                    </button>
+                </div>
+                <div class="grid grid-cols-12 gap-2">
+                    <div class="col-span-1">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Include</label>
+                        <input type="checkbox" class="item-checkbox w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Item Name</label>
+                        <input type="text" class="item-name w-full border border-gray-300 rounded-lg p-1.5 text-sm bg-gray-100 text-gray-600 cursor-not-allowed" readonly disabled value="${itemName.replace(/'/g, "\\'")}">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Quantity</label>
+                        <input type="number" class="item-quantity w-full border border-gray-300 rounded-lg p-1.5 text-sm" step="0.01" value="1">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Unit</label>
+                        <div class="unit-container"></div>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Unit Cost (₱)</label>
+                        <input type="number" class="item-unit-cost w-full border border-gray-300 rounded-lg p-1.5 text-sm bg-gray-100 text-gray-600 cursor-not-allowed" readonly disabled value="${defaultCost}">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Total</label>
+                        <input type="text" class="item-total w-full border border-gray-300 rounded-lg p-1.5 text-sm bg-gray-100 text-gray-600 cursor-not-allowed" readonly disabled placeholder="0.00">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Schedule & Date</label>
+                        <input type="date" class="item-schedule w-full border border-gray-300 rounded-lg p-1.5 text-sm" value="${today}">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Delivery Site</label>
+                        <input type="text" class="item-location w-full border border-gray-300 rounded-lg p-1.5 text-sm" placeholder="Delivery location">
+                    </div>
+                    <div class="col-span-12 mt-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-0.5">Remarks</label>
+                        <input type="text" class="item-remarks w-full border border-gray-300 rounded-lg p-1.5 text-sm" placeholder="Optional remarks for this item">
+                    </div>
+                </div>
+            `;
+            
+            // Insert unit dropdown into the unit container
+            const unitContainer = itemDiv.querySelector('.unit-container');
+            unitContainer.appendChild(unitSelect);
+            
+            itemsContainer.appendChild(itemDiv);
+            
+            // Add event listeners
+            const checkbox = itemDiv.querySelector('.item-checkbox');
+            const quantity = itemDiv.querySelector('.item-quantity');
+            const unitCost = itemDiv.querySelector('.item-unit-cost');
             const totalInput = itemDiv.querySelector('.item-total');
-            const total = parseFloat(totalInput.value) || 0;
-            grandTotal += total;
-        });
-        document.getElementById('grandTotal').innerHTML = `₱ ${grandTotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            
+            const calculateTotal = () => {
+                if (checkbox.checked) {
+                    const qty = parseFloat(quantity.value) || 0;
+                    const cost = parseFloat(unitCost.value) || 0;
+                    totalInput.value = (qty * cost).toFixed(2);
+                    this.updateSubtotal();
+                    updateTotalAllPpmps();
+                } else {
+                    totalInput.value = '0.00';
+                    this.updateSubtotal();
+                    updateTotalAllPpmps();
+                }
+            };
+            
+            checkbox.addEventListener('change', calculateTotal);
+            quantity.addEventListener('input', calculateTotal);
+            
+            itemDiv.querySelector('.remove-item').addEventListener('click', () => {
+                itemDiv.remove();
+                this.updateSubtotal();
+                updateTotalAllPpmps();
+                if (itemsContainer.children.length === 0) this.itemCounter = 0;
+            });
+            
+            if (itemName && defaultUnit) {
+                checkbox.checked = true;
+                calculateTotal();
+            }
+        }
+        
+        updateSubtotal() {
+            let subtotal = 0;
+            this.container.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+                const itemDiv = checkbox.closest('.item-row');
+                const totalInput = itemDiv.querySelector('.item-total');
+                subtotal += parseFloat(totalInput.value) || 0;
+            });
+            this.container.querySelector('.ppmp-subtotal').innerHTML = `₱ ${subtotal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            return subtotal;
+        }
+        
+        getData() {
+            const items = [];
+            this.container.querySelectorAll('.item-row').forEach(itemDiv => {
+                const checkbox = itemDiv.querySelector('.item-checkbox');
+                if (checkbox.checked) {
+                    items.push({
+                        name: itemDiv.querySelector('.item-name')?.value || '',
+                        unit: itemDiv.querySelector('.item-unit')?.value || '',
+                        quantity: parseFloat(itemDiv.querySelector('.item-quantity').value) || 0,
+                        unit_cost: parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0,
+                        total: parseFloat(itemDiv.querySelector('.item-total').value) || 0,
+                        schedule_date: itemDiv.querySelector('.item-schedule')?.value || '',
+                        delivery_site: itemDiv.querySelector('.item-location')?.value || '',
+                        remarks: itemDiv.querySelector('.item-remarks').value || ''
+                    });
+                }
+            });
+            
+            let projectNameValue = this.container.querySelector('.project-name-select').value;
+            if (projectNameValue === 'Others') {
+                projectNameValue = this.container.querySelector('.project-name-other').value;
+            }
+            
+            return {
+                general_description: this.container.querySelector('.general-desc-input').value,
+                mode: this.container.querySelector('.mode-select').value,
+                uacs_code: this.container.querySelector('.uacs-code-input').value,
+                code: this.container.querySelector('.code-input').value,
+                project_name: projectNameValue,
+                items: items,
+                total_cost: parseFloat(this.container.querySelector('.ppmp-subtotal').innerHTML.replace(/[^0-9.-]/g, '')) || 0,
+                remarks: this.container.querySelector('.ppmp-remarks').value
+            };
+        }
+        
+        show() {
+            this.container.style.display = 'block';
+        }
+        
+        hide() {
+            this.container.style.display = 'none';
+        }
+        
+        destroy() {
+            this.container.remove();
+            this.tabButton.remove();
+        }
+        
+        createTabButton() {
+            const tabsContainer = document.getElementById('ppmpTabs');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${this.index === currentPpmpIndex ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+            button.innerHTML = `
+                <span>Plan ${this.index + 1}</span>
+                <svg class="w-4 h-4 delete-ppmp hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            `;
+            
+            const deleteBtn = button.querySelector('.delete-ppmp');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.deletePpmp();
+            });
+            
+            button.addEventListener('click', () => switchToPpmp(this.index));
+            tabsContainer.appendChild(button);
+            this.tabButton = button;
+        }
+        
+        deletePpmp() {
+            if (ppmpList.length === 1) {
+                alert("Cannot delete the last Procurement Plan. You need at least one plan.");
+                return;
+            }
+            
+            const confirmDelete = confirm(`Are you sure you want to delete Plan ${this.index + 1}?`);
+            if (!confirmDelete) return;
+            
+            const indexToRemove = this.index;
+            ppmpList.splice(indexToRemove, 1);
+            
+            this.destroy();
+            
+            ppmpList.forEach((ppmp, idx) => {
+                ppmp.index = idx;
+                ppmp.updateTabButton(idx);
+            });
+            
+            if (currentPpmpIndex >= ppmpList.length) {
+                currentPpmpIndex = ppmpList.length - 1;
+            }
+            
+            switchToPpmp(currentPpmpIndex);
+            updatePaginationButtons();
+            updateTotalAllPpmps();
+        }
+        
+        updateTabButton(index) {
+            this.index = index;
+            this.tabButton.innerHTML = `
+                <span>Plan ${index + 1}</span>
+                <svg class="w-4 h-4 delete-ppmp hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            `;
+            
+            const deleteBtn = this.tabButton.querySelector('.delete-ppmp');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.deletePpmp();
+            });
+            
+            if (index === currentPpmpIndex) {
+                this.tabButton.classList.add('bg-red-600', 'text-white');
+                this.tabButton.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            } else {
+                this.tabButton.classList.remove('bg-red-600', 'text-white');
+                this.tabButton.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            }
+        }
+    }
+
+    // ==================== PPMP MANAGEMENT FUNCTIONS ====================
+    function createNewPpmp() {
+        const newIndex = ppmpList.length;
+        const newPpmp = new PpmpForm(nextPpmpId++, newIndex);
+        ppmpList.push(newPpmp);
+        switchToPpmp(newIndex);
+        updatePaginationButtons();
     }
     
-    // Add custom item button
-    document.getElementById('addItemBtn').addEventListener('click', () => {
-        addItemRow();
-        hideEmptyState();
-    });
-
-    // ==================== VALIDATION ====================
-    function validateForm() {
-        // Validate Basic Information
+    function switchToPpmp(index) {
+        if (index < 0 || index >= ppmpList.length) return;
+        
+        if (ppmpList[currentPpmpIndex]) {
+            ppmpList[currentPpmpIndex].hide();
+        }
+        
+        currentPpmpIndex = index;
+        ppmpList[currentPpmpIndex].show();
+        
+        ppmpList.forEach((ppmp, idx) => {
+            ppmp.updateTabButton(idx);
+        });
+        
+        document.getElementById('pageIndicator').textContent = `Plan ${currentPpmpIndex + 1} of ${ppmpList.length}`;
+        updatePaginationButtons();
+    }
+    
+    function updatePaginationButtons() {
+        const prevBtn = document.getElementById('prevPpmpBtn');
+        const nextBtn = document.getElementById('nextPpmpBtn');
+        
+        prevBtn.disabled = currentPpmpIndex === 0;
+        nextBtn.disabled = currentPpmpIndex === ppmpList.length - 1;
+    }
+    
+    function updateTotalAllPpmps() {
+        let totalAll = 0;
+        ppmpList.forEach(ppmp => {
+            totalAll += ppmp.updateSubtotal();
+        });
+        document.getElementById('totalAllPpmps').innerHTML = `₱ ${totalAll.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    }
+    
+    // ==================== VALIDATION & SUBMISSION ====================
+    function validateAllForms() {
         const classification = document.getElementById('classification').value;
         const sourceFunds = document.getElementById('sourceFunds').value;
-        const office = document.getElementById('officeSelect').value;
+        const officeSelected = document.getElementById('officeSelect').value;
+        const specificOffice = document.getElementById('specificOfficeInput').value;
         const ceiling = document.getElementById('ceilingAmount').value;
-        const projectName = document.getElementById('projectName').value;
-        const generalDescription = document.getElementById('generalDescription').value;
-        const mode = document.getElementById('mode').value;
         
         if (!classification) { alert("Please select a Classification."); return false; }
         if (!sourceFunds) { alert("Please select Source of Funds."); return false; }
-        if (!office) { alert("Please select an Office."); return false; }
-        if (office === 'Other' && !document.getElementById('otherOffice').value) { alert("Please specify the Type of Office/Projects."); return false; }
+        if (!officeSelected) { alert("Please select an Office."); return false; }
+        if (!specificOffice) { alert("Please specify your specific office/project type."); return false; }
         if (!ceiling || parseFloat(ceiling) <= 0) { alert("Please enter a valid Ceiling Amount."); return false; }
-        if (!projectName) { alert("Please enter the Name of Procurement Project."); return false; }
-        if (!generalDescription) { alert("Please enter the General Description."); return false; }
-        if (!mode) { alert("Please select the Mode of Procurement."); return false; }
         
-        // Validate at least one item is checked
-        const checkedItems = document.querySelectorAll('.item-checkbox:checked');
-        if (checkedItems.length === 0) {
-            alert("Please select at least one item to include in the PPMP.");
-            return false;
+        for (let i = 0; i < ppmpList.length; i++) {
+            const ppmp = ppmpList[i];
+            const data = ppmp.getData();
+            
+            if (!data.general_description) {
+                alert(`Plan ${i + 1}: Please enter the General Description.`);
+                return false;
+            }
+            if (!data.mode) {
+                alert(`Plan ${i + 1}: Please select the Mode of Procurement.`);
+                return false;
+            }
+            if (!data.project_name) {
+                alert(`Plan ${i + 1}: Please select/specify the Name of Procurement Project.`);
+                return false;
+            }
+            if (data.items.length === 0) {
+                alert(`Plan ${i + 1}: Please select at least one item to include.`);
+                return false;
+            }
         }
         
         return true;
     }
-
-    // ==================== COLLECT FORM DATA ====================
-    function collectFormData() {
-        let items = [];
-        document.querySelectorAll('#itemsContainer .border').forEach(itemDiv => {
-            const checkbox = itemDiv.querySelector('.item-checkbox');
-            if (checkbox.checked) {
-                items.push({
-                    name: itemDiv.querySelector('.item-name')?.value || '',
-                    unit: itemDiv.querySelector('.item-unit')?.value || '',
-                    quantity: parseFloat(itemDiv.querySelector('.item-quantity').value) || 0,
-                    unit_cost: parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0,
-                    total: parseFloat(itemDiv.querySelector('.item-total').value) || 0,
-                    remarks: itemDiv.querySelector('.item-remarks').value || ''
-                });
-            }
-        });
+    
+    function collectAllFormData() {
+        const officeSelected = document.getElementById('officeSelect').value;
+        const specificOffice = document.getElementById('specificOfficeInput').value;
+        const officeValue = `${officeSelected} - ${specificOffice}`;
         
-        const officeValue = document.getElementById('officeSelect').value === 'Other' ? 
-            document.getElementById('otherOffice').value : 
-            document.getElementById('officeSelect').value;
+        const ppmpListData = ppmpList.map(ppmp => ppmp.getData());
         
         return {
             classification: document.getElementById('classification').value,
             source_funds: document.getElementById('sourceFunds').value,
             office: officeValue,
             ceiling_amount: parseFloat(document.getElementById('ceilingAmount').value) || 0,
-            pap_code: document.getElementById('papCode').value,
-            pap: document.getElementById('pap').value,
-            project_name: document.getElementById('projectName').value,
-            general_description: document.getElementById('generalDescription').value,
-            mode: document.getElementById('mode').value,
-            uacs_code: document.getElementById('uacsCode').value,
-            code: document.getElementById('code').value,
-            start_date: document.getElementById('startDate').value,
-            delivery_date: document.getElementById('deliveryDate').value,
-            location: document.getElementById('location').value,
-            items: items,
-            total_cost: parseFloat(document.getElementById('grandTotal').innerHTML.replace(/[^0-9.-]/g, '')) || 0,
-            remarks: document.getElementById('remarks').value
+            ppmp_list: ppmpListData,
+            total_all_ppmp: parseFloat(document.getElementById('totalAllPpmps').innerHTML.replace(/[^0-9.-]/g, '')) || 0
         };
     }
-
-    function saveDraft() {
-        let data = collectFormData();
-        console.log('Draft saved:', data);
-        alert('Draft saved (demo). In production this would be stored in the database.');
+    
+    function saveAllDrafts() {
+        if (!validateAllForms()) return;
+        let data = collectAllFormData();
+        console.log('All drafts saved:', data);
+        alert(`Saved ${ppmpList.length} Procurement Plan(s) as draft (demo). In production this would be stored in the database.`);
     }
-
-    function submitPPMP() {
-        if (!validateForm()) return;
-        let data = collectFormData();
-        Console.log('PPMP submitted:', data);
-        alert('PPMP submitted successfully! (Demo)');
+    
+    function submitAll() {
+        if (!validateAllForms()) return;
+        let data = collectAllFormData();
+        console.log('All Procurement Plans submitted:', data);
+        alert(`${ppmpList.length} Procurement Plan(s) submitted successfully! (Demo)`);
     }
-
+    
+    // ==================== PAPs/OFFICE DROPDOWN LOGIC ====================
+    const officeSelect = document.getElementById('officeSelect');
+    const specificOfficeInput = document.getElementById('specificOfficeInput');
+    
+    officeSelect.addEventListener('change', function() {
+        if (this.value !== '') {
+            specificOfficeInput.style.display = 'block';
+            specificOfficeInput.required = true;
+            specificOfficeInput.placeholder = `Please specify your specific ${this.value} office/project type here...`;
+            specificOfficeInput.focus();
+        } else {
+            specificOfficeInput.style.display = 'none';
+            specificOfficeInput.required = false;
+            specificOfficeInput.value = '';
+        }
+    });
+    
     // ==================== INITIALIZATION ====================
     window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
-        document.getElementById('submitBtn').addEventListener('click', submitPPMP);
+        const firstPpmp = new PpmpForm(nextPpmpId++, 0);
+        ppmpList.push(firstPpmp);
         
-        // Update grand total when quantity or unit cost changes
-        document.addEventListener('input', function(e) {
-            if (e.target.classList && (e.target.classList.contains('item-quantity') || e.target.classList.contains('item-unit-cost'))) {
-                const itemDiv = e.target.closest('.border');
-                if (itemDiv) {
-                    const checkbox = itemDiv.querySelector('.item-checkbox');
-                    if (checkbox && checkbox.checked) {
-                        const qty = parseFloat(itemDiv.querySelector('.item-quantity').value) || 0;
-                        const cost = parseFloat(itemDiv.querySelector('.item-unit-cost').value) || 0;
-                        const total = qty * cost;
-                        itemDiv.querySelector('.item-total').value = total.toFixed(2);
-                        updateGrandTotal();
-                    }
-                }
-            }
-        });
+        document.getElementById('createAnotherBtn').addEventListener('click', createNewPpmp);
+        document.getElementById('prevPpmpBtn').addEventListener('click', () => switchToPpmp(currentPpmpIndex - 1));
+        document.getElementById('nextPpmpBtn').addEventListener('click', () => switchToPpmp(currentPpmpIndex + 1));
+        document.getElementById('saveDraftBtn').addEventListener('click', saveAllDrafts);
+        document.getElementById('submitBtn').addEventListener('click', submitAll);
+        
+        updatePaginationButtons();
+        document.getElementById('pageIndicator').textContent = `Plan 1 of 1`;
+        
+        const generalDescList = document.createElement('datalist');
+        generalDescList.id = 'generalDescList';
+        generalDescList.innerHTML = `
+            <option value="Supply and Delivery of Office Supplies">
+            <option value="Supply and Delivery of ICT Equipment">
+            <option value="Supply and Delivery of Furniture and Fixtures">
+            <option value="Construction of Building">
+            <option value="Repair and Maintenance of Facilities">
+            <option value="Consulting Services for System Development">
+            <option value="Printing and Publication of Materials">
+            <option value="Venue and Catering Services">
+            <option value="Transportation and Delivery Services">
+        `;
+        document.body.appendChild(generalDescList);
     });
 </script>
 {% endblock %}

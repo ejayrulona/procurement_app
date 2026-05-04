@@ -1,4 +1,4 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}College Dashboard | Procurement Office{% endblock %}
@@ -7,7 +7,7 @@
 
 {% block content %}
 <!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <div class="stat-card blue">
         <div class="stat-top">
             <span class="stat-label">Total Items</span>
@@ -15,8 +15,8 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
         </div>
-        <div class="stat-value">12</div>
-        <div class="stat-sub">Submitted for FY 2024</div>
+        <div class="stat-value">60</div>
+        <div class="stat-sub">Total line items across all PPMPs</div>
     </div>
 
     <div class="stat-card green">
@@ -26,13 +26,13 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             </div>
         </div>
-        <div class="stat-value green">8</div>
-        <div class="stat-sub">67% approval rate</div>
+        <div class="stat-value green">4</div>
+        <div class="stat-sub">Approved PPMPs (57% of total)</div>
     </div>
 
     <div class="stat-card red">
         <div class="stat-top">
-            <span class="stat-label">Number of Revision</span>
+            <span class="stat-label">Needs Revision</span>
             <div class="stat-icon red">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             </div>
@@ -50,7 +50,7 @@
         </svg>
         Create New PPMP
     </a>
-    <a href="#" class="btn-secondary">
+    <a href="{% url 'ppmp:ppmp' %}" class="btn-secondary">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -58,79 +58,76 @@
     </a>
 </div>
 
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Monthly Trend Chart -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly PPMP Submissions</h3>
-        <canvas id="monthlyChart" height="200"></canvas>
-    </div>
-
-    <!-- Status Distribution Chart -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">PPMP Status Distribution</h3>
-        <canvas id="statusChart" height="200"></canvas>
-    </div>
-</div>
-
-<!-- Recent PPMPs Table -->
+<!-- Recent PPMPs Table (Primary Focus) -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <div>
             <h3 class="text-lg font-semibold text-gray-800">Recent PPMP Submissions</h3>
-            <p class="text-sm text-gray-500 mt-1">Latest submissions from College of Engineering</p>
+            <p class="text-sm text-gray-500 mt-1">Latest submissions from College of Engineering — data is current as of today</p>
         </div>
         <a href="#" class="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1">
             View All Records →
         </a>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full">
+        <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">PPMP Title</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date Submitted</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Items</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PPMP Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Submitted</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Items</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200">
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">Engineering Equipment 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">March 15, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">15</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">₱2,450,000</td>
-                    <td class="px-6 py-4"><span class="status-badge badge-approved">Approved</span></td>
-                    <td class="px-6 py-4"><a href="#" class="action-link">View</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Engineering Equipment 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">March 15, 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">18</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₱2,890,000</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">Laboratory Supplies Q1</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">March 10, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">25</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">₱850,000</td>
-                    <td class="px-6 py-4"><span class="status-badge badge-pending">Pending</span></td>
-                    <td class="px-6 py-4"><a href="#" class="action-link">View</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Laboratory Supplies Q1</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">March 10, 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">32</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₱1,245,000</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-pending">Pending</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">IT Equipment Upgrade</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">March 5, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">8</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">₱1,200,000</td>
-                    <td class="px-6 py-4"><span class="status-badge badge-revision">Needs Revision</span></td>
-                    <td class="px-6 py-4"><a href="#" class="action-link">Revise</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IT Equipment Upgrade</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">March 5, 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">9</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₱1,560,000</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-revision">Needs Revision</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">Revise</a></td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">Office Furniture</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">February 28, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">12</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900">₱950,000</td>
-                    <td class="px-6 py-4"><span class="status-badge badge-approved">Approved</span></td>
-                    <td class="px-6 py-4"><a href="#" class="action-link">View</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Office Furniture</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">February 28, 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₱890,000</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Library Resources 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">February 20, 2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">22</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₱3,200,000</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <!-- Table summary for clarity -->
+    <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 text-xs text-gray-500">
+        Showing 5 most recent submissions · Total PPMPs this FY: 7 · Overall approval rate: 57%
     </div>
 </div>
 
@@ -174,6 +171,17 @@
                 <p class="text-xs text-gray-500 mt-1">2 days ago</p>
             </div>
         </div>
+        <div class="px-6 py-4 flex items-start gap-3 hover:bg-gray-50 transition">
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm text-gray-800">PPMP <strong>"Library Resources 2024"</strong> received final approval from the Budget Office.</p>
+                <p class="text-xs text-gray-500 mt-1">3 days ago</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -202,7 +210,6 @@
     }
     .stat-card.blue::before { background: #3b82f6; }
     .stat-card.green::before { background: #16a34a; }
-    .stat-card.amber::before { background: #d97706; }
     .stat-card.red::before { background: #dc2626; }
     
     .stat-top {
@@ -228,7 +235,6 @@
     }
     .stat-icon.blue { background: #eff6ff; color: #3b82f6; }
     .stat-icon.green { background: #f0fdf4; color: #16a34a; }
-    .stat-icon.amber { background: #fffbeb; color: #d97706; }
     .stat-icon.red { background: #fef2f2; color: #dc2626; }
     .stat-icon svg { width: 1.25rem; height: 1.25rem; }
     
@@ -239,7 +245,6 @@
         color: #1e293b;
     }
     .stat-value.green { color: #16a34a; }
-    .stat-value.amber { color: #d97706; }
     .stat-value.red { color: #dc2626; }
     .stat-sub {
         font-size: 0.75rem;
@@ -313,70 +318,5 @@
     .action-link:hover { background: #fef2f2; border-color: #dc2626; }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Monthly Trend Chart
-    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
-    new Chart(monthlyCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-                label: 'PPMP Submissions',
-                data: [2, 3, 5, 4, 6, 8, 7, 9, 11, 10, 12, 14],
-                borderColor: '#dc2626',
-                backgroundColor: 'rgba(220, 38, 38, 0.06)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#dc2626',
-                pointRadius: 3,
-                pointHoverRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.04)' }
-                }
-            }
-        }
-    });
-
-    // Status Distribution Chart
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Approved', 'Pending', 'Needs Revision'],
-            datasets: [{
-                data: [8, 3, 1],
-                backgroundColor: ['#16a34a', '#d97706', '#dc2626'],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            cutout: '65%',
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 16,
-                        usePointStyle: true,
-                        pointStyleWidth: 8
-                    }
-                }
-            }
-        }
-    });
-</script>
+<!-- Chart.js script removed as requested - no visual graphs remain -->
 {% endblock %}
