@@ -287,7 +287,7 @@
 							</span>
 						</div>
 						<span class="user-name text-sm font-medium text-white hidden md:inline">
-							{{ user.get_full_name|default:user.username }}
+							{{ request.user.get_full_name|default:user.username }}
 						</span>
 						<svg class="w-4 h-4 text-white transition-transform duration-200 hidden sm:block" fill="none"
 							stroke="currentColor" viewBox="0 0 24 24">
@@ -308,21 +308,14 @@
 								</p>
 							</div>
 
-							<!-- Profile Link - FIXED: Added conditional check -->
-							{% if request.user.is_authenticated and request.user.id %}
-							<a href="{% url 'users:profile' request.user.id %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-								</svg>
-								<span class="text-sm">My Profile</span>
-							</a>
-							{% else %}
-							<a href="#" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-								</svg>
-								<span class="text-sm">My Profile</span>
-							</a>
+							<!-- Profile Link -->
+							{% if request.user.is_authenticated %}
+								<a href="{% url 'users:profile' request.user.id %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+									</svg>
+									<span class="text-sm">My Profile</span>
+								</a>
 							{% endif %}
 
 							<!-- Settings with Nested Dropdown -->
@@ -412,7 +405,7 @@
 									<span>PPMP Drafts</span>
 								</a>
 								<!-- Inventory Link -->
-								<a href="{% url 'inventory:list_inventory' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'inventory' %}nav-active{% endif %}">
+								<a href="{% url 'inventory:item_list' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'inventory' %}nav-active{% endif %}">
 									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
 									</svg>

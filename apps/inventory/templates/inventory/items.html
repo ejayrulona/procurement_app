@@ -12,7 +12,7 @@
 		<h2 class="text-xl sm:text-2xl font-bold text-gray-800">Inventory</h2>
 		<p class="text-xs sm:text-sm text-gray-500 mt-1">Track stock levels of procured items</p>
 	</div>
-	<a href="{% url 'inventory:inventory_add' %}"
+	<a href="{% url 'inventory:item_create' %}"
 		class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition shadow-sm flex items-center justify-center gap-2 cursor-pointer">
 		<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -115,129 +115,36 @@
 			<thead class="bg-gray-50">
 				<tr>
 					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%]">Item Code</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[28%]">Name of Procurement Project</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">Classification</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[8%]">Qty</th>
+					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[28%]">Item Name</th>
+					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">Specification</th>
 					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">Unit</th>
 					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">Unit Cost (PHP)</th>
 					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%]">Actions</th>
 				</tr>
 			</thead>
 			<tbody id="inventoryTableBody" class="bg-white divide-y divide-gray-200">
-				<!-- IT-001: Desktop Computers -->
+				{% for item in items %}
 				<tr class="hover:bg-gray-50 transition align-middle" data-id="IT-001">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">01</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">Supply and Delivery of Desktop Computers</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">Goods</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 text-center align-middle">45</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">unit</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ 45,000</td>
+					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">{{ item.item_code.code }}</td>
+					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">{{ item.name}}</td>
+					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">{{ item.specification }}</td>
+					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">{{ item.get_unit_display }}</td>
+					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ {{ item.unit_cost }}</td>
 					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<button onclick="openEditPage('IT-001')" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
+						<a href="{% url 'inventory:item_edit' item.id %}" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
 							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 							</svg>
-						</button>
-						<button onclick="viewInventoryItem('IT-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+						</a>
+						<a href="{% url 'inventory:item_detail' item.id %}" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
 							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
 							</svg>
-						</button>
+						</a>
 					</td>
 				</tr>
-
-				<!-- OFF-001: Bond Paper (Low Stock) -->
-				<tr class="hover:bg-gray-50 transition align-middle" data-id="OFF-001">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">10</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">Supply and Delivery of Various Office Supplies (Bond Paper)</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">Goods</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 text-center align-middle">25</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">ream</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ 250</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<button onclick="openEditPage('OFF-001')" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-							</svg>
-						</button>
-						<button onclick="viewInventoryItem('OFF-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-							</svg>
-						</button>
-					</td>
-				</tr>
-
-				<!-- FURN-002: Office Chairs -->
-				<tr class="hover:bg-gray-50 transition align-middle" data-id="FURN-002">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">22</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">Supply and Delivery of Ergonomic Office Chairs</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">Goods</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 text-center align-middle">8</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">unit</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ 5,500</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<button onclick="openEditPage('FURN-002')" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-							</svg>
-						</button>
-						<button onclick="viewInventoryItem('FURN-002')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-							</svg>
-						</button>
-					</td>
-				</tr>
-
-				<!-- IT-045: Wireless Mouse (Out of Stock) -->
-				<tr class="hover:bg-gray-50 transition align-middle" data-id="IT-045">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">45</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">Supply and Delivery of Wireless Mouse</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">Goods</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 text-center align-middle">0</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">unit</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ 850</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<button onclick="openEditPage('IT-045')" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-							</svg>
-						</button>
-						<button onclick="viewInventoryItem('IT-045')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-							</svg>
-						</button>
-					</td>
-				</tr>
-
-				<!-- CONS-001: Construction Materials -->
-				<tr class="hover:bg-gray-50 transition align-middle" data-id="CONS-001">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">101</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">Procurement of Construction Materials for Building Repair</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">Infrastructure</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 text-center align-middle">15</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">lot</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ 12,500</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<button onclick="openEditPage('CONS-001')" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-							</svg>
-						</button>
-						<button onclick="viewInventoryItem('CONS-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-							</svg>
-						</button>
-					</td>
-				</tr>
+				{% endfor %}
 			</tbody>
 		</table>
 	</div>
@@ -261,15 +168,6 @@
 </div>
 
 <script>
-	// Function to handle view details redirect
-	function viewInventoryItem(itemId) {
-		window.location.href = `/inventory/view/${itemId}/`;
-	}
-
-	function openEditPage(itemId) {
-		window.location.href = `/inventory/edit/${itemId}/`;
-	}
-
 	// Simple filter functionality for static HTML table
 	const searchInput = document.getElementById('searchInput');
 	const statusFilter = document.getElementById('statusFilter');
@@ -378,8 +276,5 @@
 	// Initialize
 	filterRows();
 	updateStats();
-	
-	window.openEditPage = openEditPage;
-	window.viewInventoryItem = viewInventoryItem;
 </script>
 {% endblock %}
