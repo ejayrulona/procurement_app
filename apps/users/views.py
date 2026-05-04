@@ -7,14 +7,17 @@ from django.utils import timezone
 from .decorators import admin_required, any_admin_required
 from .email import (
     send_account_setup_email, send_account_activated_email,
-    send_account_deactivated_email, send_registration_confirmation_email, 
+    send_account_deactivated_email, send_email_verification, 
     send_registration_approved_email, send_registration_declined_email
 )
 from .forms import (
-    UserForm, UserEditForm, AdminProfileForm, CollegeReapplyUserForm, CollegeProfileForm, 
+    UserForm, UserEditForm, AdminProfileForm,OfficeReapplyUserForm, OfficeProfileForm, 
     AdminAidCreationForm, AdminAidSetupForm, AdminAidSetupProfileForm
 )
-from .models import CollegeOffice, User, AdminProfile, CollegeProfile, RegistrationRequest
+from .models import (
+    User, AdminProfile, OfficeProfile, RegistrationRequest, AccountSetupToken, 
+    EmailVerificationToken
+)
 
 @admin_required
 def create_admin_aid(request):
@@ -32,6 +35,7 @@ def create_admin_aid(request):
                     email=form.cleaned_data["email"],
                     phone_number=form.cleaned_data.get("phone_number", ""),
                     role=User.Role.ADMIN_AID,
+                    email_verified=False,
                     is_active=False,
                 )
 
@@ -52,6 +56,7 @@ def create_admin_aid(request):
         "form": form
     }
     return render(request, "users/create_admin_aid.html", context)
+
 
 @admin_required
 def list_admin_aid_accounts(request):
@@ -76,6 +81,7 @@ def list_admin_aid_accounts(request):
 
     return render(request, "users/admin_aid_accounts.html", context)
 
+
 def setup_account(request, token):
     # Validate the token
     try:
@@ -95,6 +101,16 @@ def setup_account(request, token):
         messages.info(request, "Your account has already been set up. Please log in.")
         return redirect("core:home")
     
+    # Verify if the token exists in the database
+    stored_token = AccountSetupToken.objects.filter(user=user, token=token).first()
+    if not stored_token:
+        messages.error(request, "This setup link has already been superseded. Please use the latest email")
+        return redirect("core:home")
+    
+    if stored_token.is_expired:
+        messages.error(request, "This verification link has expired. Please request a new one.")
+        return redirect("core:home")
+    
     if request.method == "POST":
         setup_form = AdminAidSetupForm(request.POST, instance=user)
         admin_aid_profile_form = AdminAidSetupProfileForm(request.POST, request.FILES, instance=profile)
@@ -103,12 +119,15 @@ def setup_account(request, token):
             with transaction.atomic():
                 user = setup_form.save(commit=False)
                 user.set_password(setup_form.cleaned_data["password1"])
+                user.email_verified = True
                 user.is_active = True
                 user.save()
 
                 profile = admin_aid_profile_form.save(commit=False)
                 profile.is_setup_complete = True
                 profile.save()
+
+                stored_token.delete()
 
             messages.success(request, "Your account setup is complete. You may now log in.")
             return redirect("core:home")
@@ -124,6 +143,7 @@ def setup_account(request, token):
 
     return render(request, "users/aid_account_confirmation.html", context)
 
+
 @admin_required
 def resend_setup_email(request, id):
     user = get_object_or_404(User, pk=id, role=User.Role.ADMIN_AID)
@@ -136,6 +156,7 @@ def resend_setup_email(request, id):
     messages.success(request, f"Setup email resent to {user.email}.")
 
     return redirect("users:list_admin_aid_accounts")
+
 
 @admin_required
 def toggle_user_status(request, id):
@@ -159,61 +180,114 @@ def toggle_user_status(request, id):
 
     return redirect("users:list_admin_aid_accounts")
 
-def register_college(request):
+
+def office_register(request):
     if request.method == "POST":
         user_form = UserForm(request.POST, prefix="user")
-        college_profile_form = CollegeProfileForm(request.POST, prefix="college_profile")
+        office_profile_form = OfficeProfileForm(request.POST, prefix="office_profile")
 
-        if user_form.is_valid() and college_profile_form.is_valid():
+        if user_form.is_valid() and office_profile_form.is_valid():
             with transaction.atomic():
                 user = user_form.save(commit=False)
-                user.role = User.Role.COLLEGE
+                user.role = User.Role.OFFICE
                 user.is_active = False
                 user.save()
 
-                college_profile = college_profile_form.save(commit=False)
-                college_profile.user = user
-                college_profile.save()
+                office_profile = office_profile_form.save(commit=False)
+                office_profile.user = user
+                office_profile.save()
 
                 RegistrationRequest.objects.create(user=user)
-                send_registration_confirmation_email(user, request)
+                send_email_verification(user, request)
 
-            return redirect("users:college_account_status", username=user.username)
+            return redirect("users:office_account_status", username=user.username)
     else:
         user_form = UserForm(prefix="user")
-        college_profile_form = CollegeProfileForm(prefix="college_profile")
+        office_profile_form = OfficeProfileForm(prefix="office_profile")
 
     context = {
         "user_form": user_form,
-        "college_profile_form": college_profile_form,
-        "colleges_offices": CollegeOffice.objects.all()
+        "office_profile_form": office_profile_form,
     }
 
-    return render(request, "users/college_registration.html", context)
+    return render(request, "users/office_registration.html", context)
 
-def college_account_status(request, username):
-    user = get_object_or_404(User, username=username, role=User.Role.COLLEGE)
+
+def verify_email(request, token):
+    # Validate token signature and expiry
+    try:
+        user_pk = signing.loads(token, salt="email-verification", max_age=86400)
+    except signing.SignatureExpired:
+        messages.error(request, "This verification link has expired. Please request a new one.")
+        return redirect("users:resend_verification", )
+    except signing.BadSignature:
+        messages.error(request, "This verification link is invalid.")
+        return redirect("users:login")
+
+    user = get_object_or_404(User, pk=user_pk)
+
+    if user.email_verified:
+        messages.info(request, "Your email is already verified.")
+        return redirect("users:office_account_status", username=user.username)
+
+    # Check token exists in database
+    stored_token = EmailVerificationToken.objects.filter(
+        user=user, token=token
+    ).first()
+
+    if not stored_token:
+        messages.error(request, "This verification link has already been used or superseded.")
+        return redirect("users:login")
+
+    if stored_token.is_expired:
+        messages.error(request, "This verification link has expired. Please request a new one.")
+        return redirect("users:office_account_status", username=user.username)
+
+    with transaction.atomic():
+        user.email_verified = True
+        user.save()
+        stored_token.delete()
+
+    messages.success(request, "Your email has been verified successfully.")
+    return redirect("users:office_account_status", username=user.username)
+
+
+def resend_verification_email(request, username):
+    user = get_object_or_404(User, username=username)
+
+    if user.email_verified:
+        messages.info(request, "Your email is already verified.")
+        return redirect("users:office_account_status", username=username)
+
+    send_email_verification(user, request)
+    messages.success(request, "A new verification email has been sent.")
+    return redirect("users:office_account_status", username=username)
+
+
+def office_account_status(request, username):
+    user = get_object_or_404(User, username=username, role=User.Role.OFFICE)
     registration_request = RegistrationRequest.objects.filter(user=user, is_latest=True).first()
 
     if not registration_request:
-        return redirect("users:register_college")
+        return redirect("users:office_register")
     
     context = {
         "user": user,
-        "registration_request": registration_request
+        "registration_request": registration_request,
+        "email_verified": user.email_verified,
     }
 
-    return render(request, "users/college_account_status.html", context)
+    return render(request, "users/office_account_status.html", context)
+
 
 @any_admin_required
 def list_registration_requests(request):
     account_requests = RegistrationRequest.objects.filter(
-        user__role=User.Role.COLLEGE,
+        user__role=User.Role.OFFICE,
         is_latest=True,
     ).select_related(
         "user",
-        "user__college_profile",
-        "user__college_profile__college_office",
+        "user__office_profile",
         "reviewed_by",
     ).order_by("-created_at")
     
@@ -230,9 +304,10 @@ def list_registration_requests(request):
     
     return render(request, "users/registration_requests.html", context)
 
+
 @any_admin_required
 def approve_registration_request(request, id):
-    user = get_object_or_404(User, pk=id, role=User.Role.COLLEGE)
+    user = get_object_or_404(User, pk=id, role=User.Role.OFFICE)
     registration_request = RegistrationRequest.objects.filter(
         user=user, is_latest=True
     ).first()
@@ -258,9 +333,10 @@ def approve_registration_request(request, id):
     messages.success(request, f"{registration_request.user.full_name}'s registration has been approved.")
     return redirect("users:list_registration_requests")
 
+
 @any_admin_required
 def decline_registration_request(request, id):
-    user = get_object_or_404(User, pk=id, role=User.Role.COLLEGE)
+    user = get_object_or_404(User, pk=id, role=User.Role.OFFICE)
     registration_request = RegistrationRequest.objects.filter(
         user=user, is_latest=True
     ).first()
@@ -287,24 +363,24 @@ def decline_registration_request(request, id):
     return redirect("users:list_registration_requests")
 
 def reapply_registration(request, username):
-    user = get_object_or_404(User, username=username, role=User.Role.COLLEGE,)
-    college_profile = get_object_or_404(CollegeProfile, user=user)
+    user = get_object_or_404(User, username=username, role=User.Role.OFFICE,)
+    office_profile = get_object_or_404(OfficeProfile, user=user)
     latest_request = RegistrationRequest.objects.filter(
         user=user, is_latest=True
     ).first()
 
     if not latest_request or latest_request.status != RegistrationRequest.Status.DECLINED:
         messages.error(request, "Only declined applications can be reapplied.")
-        return redirect("users:college_account_status", username=username)
+        return redirect("users:office_account_status", username=username)
     
     if request.method == "POST":
-        user_form = CollegeReapplyUserForm(request.POST, instance=user, prefix="user")
-        college_profile_form = CollegeProfileForm(request.POST, instance=college_profile, prefix="college_profile")
+        user_form = OfficeReapplyUserForm(request.POST, instance=user, prefix="user")
+        office_profile_form = OfficeProfileForm(request.POST, instance=office_profile, prefix="office_profile")
 
-        if user_form.is_valid() and college_profile_form.is_valid():
+        if user_form.is_valid() and office_profile_form.is_valid():
             with transaction.atomic():
                 user_form.save()
-                college_profile_form.save()
+                office_profile_form.save()
 
                 latest_request.is_latest = False
                 latest_request.save()
@@ -318,23 +394,23 @@ def reapply_registration(request, username):
                 user.is_active = False
                 user.save()
 
-                send_registration_confirmation_email(user, request)
+                send_email_verification(user, request)
 
-            return redirect("users:college_account_status", username=username)
+            return redirect("users:office_account_status", username=username)
         
     else:
-        user_form = CollegeReapplyUserForm(instance=user, prefix="user")
-        college_profile_form = CollegeProfileForm(instance=college_profile, prefix="college_profile")
+        user_form = OfficeReapplyUserForm(instance=user, prefix="user")
+        office_profile_form = OfficeProfileForm(instance=office_profile, prefix="office_profile")
 
     context = {
         "user": user,
         "user_form": user_form,
-        "college_profile_form": college_profile_form,
-        "colleges_offices": CollegeOffice.objects.all(),
+        "office_profile_form": office_profile_form,
         "is_reapply": True,
     }
 
-    return render(request, "users/college_registration.html", context)
+    return render(request, "users/office_registration.html", context)
+
 
 @login_required
 def profile(request, id):
@@ -342,7 +418,7 @@ def profile(request, id):
     user_profile = (
         get_object_or_404(AdminProfile, user=user)  
         if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
-        else get_object_or_404(CollegeProfile, user=user)
+        else get_object_or_404(OfficeProfile, user=user)
     )
 
     if request.method == "POST":
@@ -350,7 +426,7 @@ def profile(request, id):
         user_profile_form = (
             AdminProfileForm(request.POST, request.FILES, instance=user_profile, prefix="admin_profile")
             if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
-            else CollegeProfileForm(request.POST, instance=user_profile, prefix="college_profile")
+            else OfficeProfileForm(request.POST, instance=user_profile, prefix="office_profile")
         )
 
         if user_form.is_valid() and user_profile_form.is_valid():
@@ -365,17 +441,17 @@ def profile(request, id):
         user_profile_form = (
             AdminProfileForm(instance=user_profile, prefix="admin_profile")
             if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
-            else CollegeProfileForm(instance=user_profile, prefix="college_profile")
+            else OfficeProfileForm(instance=user_profile, prefix="office_profile")
         )
 
     context = {
         "user": user,
         "user_form": user_form,
         "user_profile_form": user_profile_form,
-        "colleges_offices": CollegeOffice.objects.all()
     }
 
     return render(request, "users/profile.html", context)
+
 
 @login_required
 def settings(request):

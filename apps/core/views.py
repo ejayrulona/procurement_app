@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from apps.users.decorators import any_admin_required, college_required
+from apps.users.decorators import any_admin_required, office_required
 
 class HomeLoginView(LoginView):
     template_name = "core/home.html"
@@ -18,6 +18,6 @@ class HomeLoginView(LoginView):
 def admin_dashboard(request):
     return render(request, "core/admin_dashboard.html")
 
-@college_required
+@office_required
 def college_dashboard(request):
     return render(request, "core/college_dashboard.html")
