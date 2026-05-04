@@ -279,12 +279,6 @@
                             <!-- Items will be added here -->
                         </div>
                         
-                        <!-- Remarks for this PPMP -->
-                        <div class="mt-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Remarks (for this Procurement Plan)</label>
-                            <textarea class="ppmp-remarks w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none" rows="3" placeholder="Enter remarks specific to this Procurement Plan..."></textarea>
-                        </div>
-                        
                         <!-- Subtotal for this PPMP -->
                         <div class="mt-3 bg-red-50 rounded-lg p-3 border border-red-200">
                             <div class="flex justify-between items-center">
@@ -402,7 +396,7 @@
             modeSelect.addEventListener('change', generateCodesForPpmp);
             generateCodesForPpmp();
             
-            // Listen for item changes to update subtotal (only quantity can change)
+            // Listen for item changes to update subtotal
             container.addEventListener('input', (e) => {
                 if (e.target.classList && (e.target.classList.contains('item-quantity'))) {
                     const itemDiv = e.target.closest('.item-row');
@@ -456,9 +450,6 @@
             itemDiv.className = 'item-row border border-gray-200 rounded-lg p-3 bg-gray-50';
             itemDiv.id = itemId;
             
-            // Aligned grid: 12 columns total - each field gets appropriate span
-            // Include(1) | Item Name(2) | Quantity(1) | Unit(1) | Unit Cost(2) | Total(1) | Schedule(2) = 10 columns
-            // Remarks takes full width on next row (col-span-12)
             itemDiv.innerHTML = `
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm font-semibold text-gray-600">Item ${this.itemCounter}</span>
@@ -509,13 +500,11 @@
                 </div>
             `;
             
-            // Insert unit dropdown into the unit container
             const unitContainer = itemDiv.querySelector('.unit-container');
             unitContainer.appendChild(unitSelect);
             
             itemsContainer.appendChild(itemDiv);
             
-            // Add event listeners
             const checkbox = itemDiv.querySelector('.item-checkbox');
             const quantity = itemDiv.querySelector('.item-quantity');
             const unitCost = itemDiv.querySelector('.item-unit-cost');
@@ -592,8 +581,7 @@
                 code: this.container.querySelector('.code-input').value,
                 project_name: projectNameValue,
                 items: items,
-                total_cost: parseFloat(this.container.querySelector('.ppmp-subtotal').innerHTML.replace(/[^0-9.-]/g, '')) || 0,
-                remarks: this.container.querySelector('.ppmp-remarks').value
+                total_cost: parseFloat(this.container.querySelector('.ppmp-subtotal').innerHTML.replace(/[^0-9.-]/g, '')) || 0
             };
         }
         
@@ -607,7 +595,7 @@
         
         destroy() {
             this.container.remove();
-            this.tabButton.remove();
+            if (this.tabButton) this.tabButton.remove();
         }
         
         createTabButton() {

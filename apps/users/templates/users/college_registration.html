@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-	<title>College Registration | Procurement Office</title>
+	<title>Office Registration | Procurement Office</title>
 	<link rel="icon" type="image/png" href="{% static 'images/wmsu_favicon.png' %}">
 	<link
 		href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
@@ -80,70 +80,43 @@
 					{% if is_reapply %}
 						Update and Reapply
 					{% else %}
-						College / Office Registration
+						Office Registration
 					{% endif %}
 				</h2>
-				<p class="text-gray-500 text-sm mt-1">Register your college or office for procurement access</p>
+				<p class="text-gray-500 text-sm mt-1">Register your office for procurement access</p>
 			</div>
 
 			<form method="post" enctype="multipart/form-data">
 				{% csrf_token %}
 
-				<!-- College/Office Information Section -->
+				<!-- Office Information Section -->
 				<div class="mb-8">
-					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">College / Office
-						Information</h3>
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Office Information</h3>
 
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 						<div>
 							<label class="block text-gray-700 font-medium text-sm mb-2"
-								for="{{ college_profile_form.college_office.id_for_label }}">College/Office Name</label>
-							{{ college_profile_form.college_office }}
-							<datalist id="college-office-list">
-								{% for college_office in colleges_offices %}
-									<option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
-										data-code="{{ college_office.code}}"
-										data-type="{{ college_office.get_organization_type_display }}"
-										data-campus="{{ college_office.get_campus_display }}"
-										data-address="{{ college_office.address }}"
-										data-photo="{% if college_office.college_photo %}{{college_office.college_photo.url}}{% endif %}">
-									</option>
-								{% endfor %}
-							</datalist>
+								for="{{ college_profile_form.college_office.id_for_label }}">Office Name</label>
+								<select class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200">
+									<option value="">Select Option</option>
+									<option value="">Higher Education</option>
+									<option value="">Admin</option>
+									<option value="">Extension</option>
+									<option value="">IGP</option>
+								</select>
+							
 						</div>
 						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2">College/Office Code</label>
-							<input type="text" id="college-code" required readonly
-								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-								placeholder="Auto-generated">
-						</div>
-					</div>
-
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2">Type</label>
-							<input type="text" id="college-type" required readonly
-								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-								placeholder="Auto-generated">
-						</div>
-						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2">Campus</label>
-							<input type="text" id="college-campus" required readonly
-								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-								placeholder="Auto-generated">
+							<label class="block text-gray-700 font-medium text-sm mb-2">Office Type</label>
+							<input type="text" id="college-type" required
+							class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200"
+							placeholder="College of Computing Studies">
 						</div>
 					</div>
 
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
-							<input type="text" id="college-address" required readonly
-								class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-								placeholder="Auto-generated">
-						</div>
-						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2">College/Office Profile
-								Photo</label>
+							<label class="block text-gray-700 font-medium text-sm mb-2">Office Profile Photo</label>
 							<div class="flex items-center gap-3">
 								<div
 									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
@@ -155,14 +128,14 @@
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 											d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
 									</svg>
-									<img src="#" alt="College / Office Photo" class="w-full h-full object-cover hidden"
+									<img src="#" alt="Office Photo" class="w-full h-full object-cover hidden"
 										id="college-photo-preview">
 								</div>
 								<div class="flex-1">
 									<p class="text-xs text-gray-500" id="photo-hint">Photo will be auto-generated from
-										the selected college/office record.</p>
+										the selected office record.</p>
 									<p class="text-xs text-red-400 hidden" id="no-photo-hint">No photo found for this
-										college/office. The admin can update it from the admin panel</p>
+										office. The admin can update it from the admin panel</p>
 								</div>
 							</div>
 						</div>
@@ -171,8 +144,7 @@
 
 				<!-- Head/Dean Information Section -->
 				<div class="mb-8">
-					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Head / Dean
-						Information</h3>
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Head / Dean Information</h3>
 					<p class="text-sm text-gray-500 mb-4">The person who will manage this account</p>
 
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -196,17 +168,9 @@
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 						<div>
 							<label class="block text-gray-700 font-medium text-sm mb-2"
-								for="{{ college_profile_form.position_title.id_for_label }}">Position Title</label>
-							{{ college_profile_form.position_title }}
-						</div>
-						<div>
-							<label class="block text-gray-700 font-medium text-sm mb-2"
 								for="{{ user_form.email.id_for_label }}">Email Address</label>
 							{{ user_form.email }}
 						</div>
-					</div>
-
-					<div class="grid grid-cols-1 md:grid-cols-1 gap-4">
 						<div>
 							<label class="block text-gray-700 font-medium text-sm mb-2"
 								for="{{ user_form.phone_number.id_for_label }}">Phone Number</label>
@@ -215,11 +179,51 @@
 					</div>
 				</div>
 
+				<!-- Secretary Information Section -->
+				<div class="mb-8">
+					<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Secretary / Alternate Contact Information</h3>
+					<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg">
+						<div class="flex items-start gap-2">
+							<svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+							<p class="text-sm text-blue-800">This information is used to contact the office in case the Head / Dean is not available or unreachable.</p>
+						</div>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    
+						<!-- Full Name (full width) -->
+						<div class="md:col-span-3">
+							<label class="block text-gray-700 font-medium text-sm mb-2" for="secretary_full_name">Full Name</label>
+							<input type="text" id="secretary_full_name" name="secretary_full_name" 
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-all duration-200"
+								placeholder="Enter secretary's full name">
+						</div>
+
+						<!-- Email -->
+						<div class="md:col-span-1">
+							<label class="block text-gray-700 font-medium text-sm mb-2" for="secretary_email">Email Address</label>
+							<input type="email" id="secretary_email" name="secretary_email" 
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-all duration-200"
+								placeholder="secretary@office.edu.ph">
+						</div>
+
+						<!-- Phone -->
+						<div class="md:col-span-2">
+							<label class="block text-gray-700 font-medium text-sm mb-2" for="secretary_phone">Phone Number</label>
+							<input type="tel" id="secretary_phone" name="secretary_phone" 
+								class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-all duration-200"
+								placeholder="+63 XXX XXX XXXX">
+						</div>
+
+					</div>
+				</div>
+
 				<!-- Account Credentials Section -->
 				{% if not is_reapply %}
 					<div class="mb-8">
-						<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Account
-							Credentials</h3>
+						<h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Account Credentials</h3>
 						<p class="text-sm text-gray-500 mb-4">This will be used to access the procurement system</p>
 
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
