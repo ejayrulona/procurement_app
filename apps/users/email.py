@@ -1,12 +1,23 @@
+from datetime import timedelta
 from django.conf import settings
 from django.core import signing
 from django.core.mail import send_mail
 from django.urls import reverse
+from django.utils import timezone
+from .models import AccountSetupToken, EmailVerificationToken
 
 def send_account_setup_email(user, request):
-    token = signing.dumps(user.pk, salt="account-setup")
+    AccountSetupToken.objects.filter(user=user).delete()
+
+    raw_token = signing.dumps(user.pk, salt="account-setup")
+    AccountSetupToken.objects.create(
+        user=user,
+        token=raw_token,
+        expires_at=timezone.now() + timedelta(hours=24)
+    )
+
     setup_url = request.build_absolute_uri(
-        reverse("users:setup_account", kwargs={"token": token})
+        reverse("users:setup_account", kwargs={"token": raw_token})
     )
     send_mail(
         subject="Your Procurement System Account",
@@ -26,6 +37,7 @@ If you did not expect this email, please ignore it.
         recipient_list=[user.email],
         fail_silently=False,
     )
+
 
 def send_account_activated_email(user, request):
     login_url = request.build_absolute_uri(reverse("core:home"))
@@ -47,6 +59,7 @@ please contact the procurement office immediately.
         fail_silently=False
     )
 
+
 def send_account_deactivated_email(user):
     send_mail(
         subject="",
@@ -63,28 +76,49 @@ If you believe this was done in error, please contact the procurement office imm
         fail_silently=False
     )
 
-def send_registration_confirmation_email(user, request):
+
+def send_email_verification(user, request):
+    EmailVerificationToken.objects.filter(user=user).delete()
+
+    raw_token = signing.dumps(user.pk, salt="email-verification")
+    EmailVerificationToken.objects.create(
+        user=user,
+        token=raw_token,
+        expires_at=timezone.now() + timedelta(hours=24)
+    )
+
+    verification_url = request.build_absolute_uri(
+        reverse("users:verify_email", kwargs={"token": raw_token})
+    )
     status_url = request.build_absolute_uri(
-        reverse("users:college_account_status", kwargs={"username": user.username})
+        reverse("users:office_account_status", kwargs={"username": user.username})
     )
     send_mail(
-        subject="Registration Request Recieved",
+        subject="Your Procurement System Account",
         message=f"""
 Hi {user.full_name},
 
-Your registration request for the WMSU Procurement System has been received
-and is currently pending review.
+Thank you for registering with the WMSU Procurement System.
+Your registration request has been received and is pending review.
 
-You can check your registration status anytime using the below:
+Before your request can be reviewed by the admin, please 
+verify your email address by clicking the link below.
+This link will expire in 24 hours.
+
+{verification_url}
+
+You can check your registration status anytime
+using the link below:
 
 {status_url}
 
-You will be notified via email once your request has been reviewed.
+If you did not create this account, please ignore this email.
         """,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
         fail_silently=False,
     )
+
 
 def send_registration_approved_email(user, request):
     login_url = request.build_absolute_uri(reverse("core:home"))
@@ -103,6 +137,7 @@ You may now log in to the system using the link below:
         recipient_list=[user.email],
         fail_silently=False,
     )
+
 
 def send_registration_declined_email(user, remarks):
     send_mail(
