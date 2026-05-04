@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Annual Procurement Plan | Procurement Office{% endblock %}
+{% block header_subtitle %}Annual Procurement Plan (APP) — FY 2026{% endblock %}
+{% block content %}
+
+<div class="w-full px-4 py-6 sm:px-6 lg:px-8">
+    <div class="max-w-full mx-auto">
+        <!-- Header Section with Agency details (static but informative) -->
+        <div class="mb-6 overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div class="px-6 py-5 bg-gradient-to-r from-red-50 to-gray-50 border-b border-gray-200">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center overflow-hidden border border-gray-200">
+                            <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-9 h-9 object-contain">
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">WESTERN MINDANAO STATE UNIVERSITY</h2>
+                            <p class="text-sm text-gray-500">Annual Procurement Plan for FY 2026 — Indicative / Final</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500 bg-white/80 px-4 py-2 rounded-lg">
+                        <span class="font-medium">Reporting Period:</span> January – December 2026
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 px-6 py-4 bg-white text-sm">
+                <div><span class="font-semibold text-gray-600">Complete Address:</span> Normal Rd., Baliwasan, Zamboanga City</div>
+                <div><span class="font-semibold text-gray-600">Contact Person:</span> BAC Secretariat Office</div>
+                <div><span class="font-semibold text-gray-600">Agency Email:</span> procurement@wmsu.edu.ph</div>
+                <div><span class="font-semibold text-gray-600">Total APP Budget (PhP):</span> <span class="text-red-700 font-bold">₱ 512,365,284.20</span></div>
+            </div>
+        </div>
+
+        <!-- APP Data Table (condensed but shows all columns from the NGPA APP sheet) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-red-700 text-white">
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">PAP Code</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">Name of Procurement Project</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">End-User</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">Classification</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">Mode of Procurement</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider border-r border-red-600">Source of Funds</th>
+                            <th class="px-4 py-3 text-right font-semibold text-xs uppercase tracking-wider border-r border-red-600">Total ABC (PhP)</th>
+                            <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wider">Remarks / EPA</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        <!-- ADMINISTRATION projects (major infrastructure & services) -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Construction of the College of Science and Mathematics Laboratory</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Infrastructure</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 47,000,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Not EPA</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Construction of the College of Liberal Arts School Infrastructure</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Infrastructure</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 96,000,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Not EPA</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Construction of the College of Engineering School Infrastructure</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Infrastructure</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 82,000,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Not EPA</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of SECURITY SERVICES for the University</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">General Services</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 17,300,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Not EPA</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of JANITORIAL SERVICES for the University</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">General Services</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 4,800,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Not EPA</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of Various Office Supplies and Consumables (University-wide)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN / Various</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 1,350,593.36</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">CSE (PS-DBM)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of Laptops for University Faculty (VPPA)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">VPPA</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 3,000,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">IT Modernization</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Supply and Delivery of Various IT Equipment (MISTO)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">MISTO</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 1,272,200.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Digital learning platform</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of Subscription Software (ExamSoft)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">CLAW / CM</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP / IGF</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 680,000.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Multi-year (software)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Printing and Binding of Tarpaulins (Accreditation)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">CLA / CHE / COE</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Direct Acquisition</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 42,600.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Accreditation support</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of Medical Supplies (University Health Service)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">UHS</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">Internally Generated Funds (IGF)</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 599,280.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Retained income</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Fuel and Lubricants for University Vehicles</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN / ESU</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Direct Retail Purchase</td>
+                            <td class="px-4 py-3 border-r">GOP / IGF</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 1,402,740.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Quarterly delivery</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Procurement of Office Furniture and Fixtures (Various Units)</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">Multiple</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP / IGF</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 2,110,846.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Multi-campus requirement</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Laboratory Equipment for CSM & CM Colleges</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">CSM / CM</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Competitive Bidding</td>
+                            <td class="px-4 py-3 border-r">GOP - Regular Agency Fund</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 729,324.00</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Increase carrying capacity</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500 border-r">N/A</td>
+                            <td class="px-4 py-3 font-medium text-gray-800 border-r">Common-Use Supplies (CSE) purchased from PS-DBM</td>
+                            <td class="px-4 py-3 text-gray-600 border-r">ADMIN / Various</td>
+                            <td class="px-4 py-3 border-r"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Goods</span></td>
+                            <td class="px-4 py-3 border-r">Procurement of CSE (Section 40)</td>
+                            <td class="px-4 py-3 border-r">GOP</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold border-r">₱ 6,712,999.39</td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">Centralised e‑procurement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Footer with strategic notes and version -->
+            <div class="border-t border-gray-200 bg-gray-50 px-6 py-4 text-xs text-gray-500 flex justify-between items-center flex-wrap gap-3">
+                <div class="flex gap-4">
+                    <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-blue-100 rounded-full"></span> Infrastructure</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-green-100 rounded-full"></span> Goods</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-purple-100 rounded-full"></span> General Services</span>
+                </div>
+                <div class="text-right space-y-0.5">
+                    <p><strong>Prepared by:</strong> BAC Secretariat | <strong>Recommended by:</strong> BAC Chairperson | <strong>Approved by:</strong> Head of Procuring Entity</p>
+                    <p class="text-gray-400">*This APP consolidates indicative and final procurement requirements for fiscal year 2026, aligned with RA 12009 and NGPA guidelines.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary information (derived from the dataset) -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-red-50 rounded-xl p-4 border border-red-100 text-center">
+                <p class="text-xs text-red-600 uppercase tracking-wide">Total ABC</p>
+                <p class="text-2xl font-bold text-red-800">₱ 512.37M</p>
+                <p class="text-xs text-gray-500">All PAPs combined</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
+                <p class="text-xs text-gray-600 uppercase tracking-wide">Competitive Bidding</p>
+                <p class="text-2xl font-bold text-gray-800">₱ 461.24M</p>
+                <p class="text-xs text-gray-500">90% of total volume</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
+                <p class="text-xs text-gray-600 uppercase tracking-wide">Alternative Methods</p>
+                <p class="text-2xl font-bold text-gray-800">₱ 51.13M</p>
+                <p class="text-xs text-gray-500">SVP, Direct Retail, Agency‑to‑Agency</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
+                <p class="text-xs text-gray-600 uppercase tracking-wide">EPA Projects</p>
+                <p class="text-2xl font-bold text-gray-800">₱ 0.00</p>
+                <p class="text-xs text-gray-500">No early procurement activity this cycle</p>
+            </div>
+        </div>
+
+        <!-- Additional remarks / guide -->
+        <div class="mt-6 text-center text-xs text-gray-400 border-t border-gray-200 pt-5">
+            This APP is prepared in accordance with the IRR of RA 12009 (New Government Procurement Act) and DBM-DOE-GPPB Joint Circular. 
+            Updated versions shall be highlighted and annotated accordingly. For questions, contact the Procurement Office.
+        </div>
+    </div>
+</div>
+{% endblock %}
