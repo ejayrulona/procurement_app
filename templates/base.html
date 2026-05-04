@@ -10,9 +10,6 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
 		rel="stylesheet">
-	<!-- <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
-	<script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script> -->
 	<script src="https://cdn.tailwindcss.com"></script>
 	<style>
 		* {
@@ -139,7 +136,7 @@
 			}
 		}
 
-		/* ========== FIXED NESTED DROPDOWN - SUBMENU ON LEFT SIDE ========== */
+		/* Simple Dropdown Menu - No nested dropdown */
 		.dropdown-menu {
 			position: absolute;
 			right: 0;
@@ -159,83 +156,6 @@
 		.dropdown-menu.show {
 			opacity: 1;
 			visibility: visible;
-		}
-
-		/* Settings menu item - relative positioning for submenu */
-		.settings-menu-item {
-			position: relative;
-		}
-
-		/* Nested submenu - NOW APPEARS ON THE LEFT SIDE */
-		.nested-submenu {
-			position: absolute;
-			right: 100%;
-			top: 0;
-			width: 240px;
-			background: white;
-			border-radius: 0.75rem;
-			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
-			border: 1px solid #e5e7eb;
-			opacity: 0;
-			visibility: hidden;
-			transition: opacity 0.2s ease, visibility 0.2s ease;
-			z-index: 1001;
-			margin-right: 8px;
-		}
-
-		/* Show submenu when hovering over settings item */
-		.settings-menu-item:hover .nested-submenu {
-			opacity: 1;
-			visibility: visible;
-		}
-
-		/* Keep submenu visible when hovering over it */
-		.nested-submenu:hover {
-			opacity: 1;
-			visibility: visible;
-		}
-
-		/* Mobile submenu adjustments - now expands downward */
-		@media (max-width: 768px) {
-			.nested-submenu {
-				position: static;
-				right: auto;
-				width: 100%;
-				box-shadow: none;
-				border: none;
-				border-left: 2px solid #e5e7eb;
-				border-radius: 0;
-				margin-left: 1.5rem;
-				margin-right: 0;
-				margin-top: 0.5rem;
-				opacity: 1;
-				visibility: visible;
-				display: none;
-				background: #fafafa;
-			}
-			
-			.settings-menu-item.active .nested-submenu {
-				display: block;
-			}
-			
-			.settings-menu-item .chevron-icon {
-				transition: transform 0.2s ease;
-			}
-			
-			.settings-menu-item.active .chevron-icon {
-				transform: rotate(90deg);
-			}
-			
-			.settings-menu-item > div {
-				cursor: pointer;
-			}
-		}
-
-		/* For very large screens, ensure submenu doesn't go off-screen left */
-		@media (min-width: 769px) and (max-width: 1024px) {
-			.nested-submenu {
-				width: 220px;
-			}
 		}
 	</style>
 	{% block extra_css %}{% endblock %}
@@ -295,7 +215,7 @@
 						</svg>
 					</button>
 
-					<!-- Main Dropdown Menu -->
+					<!-- Main Dropdown Menu - No nested dropdown -->
 					<div id="user-dropdown" class="dropdown-menu">
 						<div class="py-2">
 							<!-- User Info Section -->
@@ -318,50 +238,25 @@
 								</a>
 							{% endif %}
 
-							<!-- Settings with Nested Dropdown -->
-							<div class="settings-menu-item">
-								<div class="flex items-center justify-between px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-									<div class="flex items-center gap-3">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-										</svg>
-										<span class="text-sm">Settings</span>
-									</div>
-									<svg class="chevron-icon w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-									</svg>
-								</div>
-								
-								<!-- Nested Submenu -->
-								<div class="nested-submenu">
-									<div class="py-2">
-										<div class="px-4 py-2 border-b border-gray-100">
-											<p class="text-xs font-semibold text-gray-400 uppercase">Administration</p>
-										</div>
-										<a href="{% url 'users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-											</svg>
-											<span class="text-sm">General Settings</span>
-										</a>
-									</div>
-								</div>
-							</div>
+							<!-- Settings Link (Direct link, no nested dropdown) -->
+							<a href="{% url 'users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+								</svg>
+								<span class="text-sm">Settings</span>
+							</a>
 
 							<div class="border-t border-gray-100 my-1"></div>
 
-							<form method="post" action="{% url 'users:logout' %}">
+							<!-- Fixed Logout Button -->
+							<form method="post" action="{% url 'users:logout' %}" id="logout-form">
 								{% csrf_token %}
-								
-								<button type="submit" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
+								<button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition">
 									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
 									</svg>
-									<span class="text-sm">
-										Logout
-									</span>
+									<span class="text-sm font-medium">Logout</span>
 								</button>
 							</form>
 						</div>
@@ -449,7 +344,7 @@
 									</svg>
 									<span>Procurement Plan</span>
 								</a>
-								<!-- Activity Log Link - still in question if colleges should also record activity log -->
+								<!-- Activity Log Link -->
 								<a href="{% url 'activity_logs:activity_log' %}" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition {% if request.resolver_match.url_name == 'activity_log' %}nav-active{% endif %}">
 									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -518,26 +413,6 @@
 				closeSidebar();
 			}
 		});
-		
-		// Mobile submenu toggle (for Settings nested menu)
-		function handleMobileSubmenu() {
-			const settingsMenuItem = document.querySelector('.settings-menu-item');
-			if (settingsMenuItem && window.innerWidth <= 768) {
-				const settingsTrigger = settingsMenuItem.querySelector('div.flex.items-center.justify-between');
-				if (settingsTrigger && !settingsTrigger.hasListener) {
-					settingsTrigger.addEventListener('click', function(e) {
-						e.preventDefault();
-						e.stopPropagation();
-						settingsMenuItem.classList.toggle('active');
-					});
-					settingsTrigger.hasListener = true;
-				}
-			}
-		}
-		
-		// Run on load and resize
-		handleMobileSubmenu();
-		window.addEventListener('resize', handleMobileSubmenu);
 	</script>
 
 	{% block extra_js %}{% endblock %}

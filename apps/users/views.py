@@ -462,3 +462,6 @@ def forgot_password(request):
 
 def account_verification(request):
     return render(request, "users/account-verification.html")
+
+def change_password(request):
+    return render(request, "users/change-password.html")

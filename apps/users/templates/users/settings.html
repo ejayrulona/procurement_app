@@ -19,7 +19,7 @@
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 		
 		<!-- Edit Profile Card -->
-		<a href="{% url 'users:profile' %}" class="group block">
+		<a href="{% url 'users:profile' request.user.id %}" class="group block">
 			<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-all duration-300 hover:border-red-200 cursor-pointer">
 				<div class="flex flex-col items-center text-center">
 					<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200 transition">
@@ -31,6 +31,24 @@
 					<p class="text-gray-500 text-sm">Update your personal information, profile picture, and contact details</p>
 					<div class="mt-4 text-red-600 font-medium group-hover:text-red-700 transition">
 						Edit Profile →
+					</div>
+				</div>
+			</div>
+		</a>
+
+		<!-- Change Password Card (with lock icon) -->
+		<a href="{% url 'users:change_password' %}" class="group block">
+			<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 hover:shadow-md transition-all duration-300 hover:border-red-200 cursor-pointer">
+				<div class="flex flex-col items-center text-center">
+					<div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-200 transition">
+						<svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+						</svg>
+					</div>
+					<h3 class="text-xl font-semibold text-gray-800 mb-2">Change Password</h3>
+					<p class="text-gray-500 text-sm">Update your password</p>
+					<div class="mt-4 text-red-600 font-medium group-hover:text-red-700 transition">
+						Change Password →
 					</div>
 				</div>
 			</div>
