@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Inventory Item | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Update inventory catalog information{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+	<!-- Back Button -->
+	<div class="mb-6">
+		<a href="{% url 'inventory:item_list' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+			</svg>
+			<span class="font-medium">Back to Inventory</span>
+		</a>
+	</div>
+
+	<!-- Form Card -->
+	<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+		<div class="bg-gradient-to-r from-yellow-600 to-yellow-700 px-6 py-4">
+			<div class="flex items-center gap-3">
+				<div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+					<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+					</svg>
+				</div>
+				<div>
+					<h3 class="text-xl font-bold text-white">Edit Inventory Item</h3>
+					<p class="text-yellow-100 text-sm">Update catalog information and stock levels</p>
+				</div>
+			</div>
+		</div>
+
+		<form id="editInventoryForm" method="post" class="p-6">
+			{% csrf_token %}
+
+			<div class="space-y-6">
+				<div>
+					<label for="{{ form.object_of_expenditure.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Object of Expenditure <span class="text-red-500">*</span></label>
+					{{ form.object_of_expenditure }}
+					<datalist id="object-expenditure-list">
+						{% for object_of_expenditure in object_of_expenditures %}
+							<option value="{{ object_of_expenditure.name }}" data-id="{{ object_of_expenditure.id }}">
+							</option>
+						{% endfor %}
+					</datalist>
+					<p class="text-xs text-gray-400 mt-1">Select the major classification of expenditure (MOOE, CO, PS, FO).</p>
+				</div>
+
+				<div>
+					<label for="{{ form.object_code.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Object Code <span class="text-red-500">*</span></label>
+					{{ form.object_code }}
+					<datalist id="object-code-list">
+					</datalist>
+					<p class="text-xs text-gray-400 mt-1">Object Code is dependent on the selected Object of Expenditure.</p>
+				</div>
+
+				<div>
+					<label for="{{ form.item_code.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Item Code <span class="text-red-500">*</span></label>
+					{{ form.item_code }}
+					<datalist id="item-code-list">
+					</datalist>
+					<p class="text-xs text-gray-400 mt-1">Item Code is dependent on the selected Object Code.</p>
+				</div>
+
+				<div>
+					<label class="block text-gray-700 font-medium text-sm mb-2">General Description <span class="text-red-500">*</span></label>
+					<input type="text" id="general-description" required readonly
+						class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
+						placeholder="Auto-generated">
+				</div>
+
+				<!-- Divider -->
+				<div class="border-t border-gray-200 my-4"></div>
+
+				<!-- Item Details Section -->
+				<div>
+					<h4 class="text-md font-semibold text-gray-800 mb-4">Item Details</h4>
+					
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div class="md:col-span-2">
+							<label for="{{ form.name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Name of Item <span class="text-red-500">*</span></label>
+							{{ form.name }}
+							<p class="text-xs text-gray-400 mt-1">The specific name of the item to be procured.</p>
+						</div>
+
+						<div class="md:col-span-2">
+							<label for="{{ form.specification.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Specification / Description <span class="text-red-500">*</span></label>
+							{{ form.specification }}
+							<p class="text-xs text-gray-400 mt-1">Detailed description including technical specifications, dimensions, materials, and how the item is packaged.</p>
+						</div>
+
+						<div>
+							<label for="{{ form.unit.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Unit of Measure <span class="text-red-500">*</span></label>
+							{{ form.unit }}
+							<p class="text-xs text-gray-400 mt-1">PPMP Col. 7 — pc., lot, set, ream, etc.</p>
+						</div>
+
+						<div>
+							<label for="{{ form.unit_cost.id_for_label}}" class="block text-gray-700 font-medium text-sm mb-2">Unit Cost / Estimated Budget (PHP) <span class="text-red-500">*</span></label>
+							{{ form.unit_cost }}
+							<p class="text-xs text-gray-400 mt-1">PPMP Col. 15 — estimated budget per unit based on market scoping.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{{ form.errors }}
+
+			<!-- Form Actions -->
+			<div class="flex gap-3 justify-end mt-8 pt-4 border-t border-gray-200">
+				<a href="{% url 'inventory:item_list' %}"
+					class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition">
+					Cancel
+				</a>
+				<button type="submit"
+					class="px-5 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition">
+					Add Inventory Item
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<!-- Info Card -->
+	<div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+		<div class="flex gap-3">
+			<svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+			</svg>
+			<div>
+				<p class="text-sm text-yellow-800 font-medium">Editing Note</p>
+				<p class="text-xs text-yellow-600 mt-1">Changes made here will update the inventory catalog visible to all colleges/offices when creating their PPMP.</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="module" src="{% static 'javascript/inventory/item.js' %}"></script>
+{% endblock %}

@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import ObjectOfExpenditure, ObjectCode, ItemCode, Item
 
-# Register your models here.
+admin.site.register(ObjectOfExpenditure)
+admin.site.register(ObjectCode)
+admin.site.register(ItemCode)
+admin.site.register(Item)
