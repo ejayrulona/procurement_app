@@ -90,9 +90,6 @@ def send_email_verification(user, request):
     verification_url = request.build_absolute_uri(
         reverse("users:verify_email", kwargs={"token": raw_token})
     )
-    status_url = request.build_absolute_uri(
-        reverse("users:office_account_status", kwargs={"username": user.username})
-    )
     send_mail(
         subject="Your Procurement System Account",
         message=f"""
@@ -101,16 +98,11 @@ Hi {user.full_name},
 Thank you for registering with the WMSU Procurement System.
 Your registration request has been received and is pending review.
 
-Before your request can be reviewed by the admin, please 
-verify your email address by clicking the link below.
+Please verify your email address by clicking the link below.
 This link will expire in 24 hours.
 
 {verification_url}
 
-You can check your registration status anytime
-using the link below:
-
-{status_url}
 
 If you did not create this account, please ignore this email.
         """,
