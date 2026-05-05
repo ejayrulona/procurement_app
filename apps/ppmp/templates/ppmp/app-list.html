@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}APP | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Manage Annual Procurement Plans (APP){% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Header (no create button) -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
+        <p class="text-gray-500 text-sm mt-1">View and manage all consolidated Annual Procurement Plans</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mt-3 rounded-full"></div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search by project title, end-user unit, or fiscal year..." 
+                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+        </div>
+    </div>
+
+    <!-- APP Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fiscal Year</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procurement Program/Project</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End-User Unit</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mode of Procurement</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total ABC (₱)</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No APP records found</h3>
+            <p class="text-gray-500">APP entries are generated from approved PPMPs.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="bg-white px-6 py-4 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium" id="showingStart">0</span> to <span class="font-medium" id="showingEnd">0</span> of <span class="font-medium" id="totalCount">0</span> results
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Previous
+                    </button>
+                    <button id="nextPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for viewing details (optional) -->
+<div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeViewModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto my-8">
+            <div class="bg-white">
+                <div class="bg-red-50 px-6 py-4 border-b border-red-100 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800">APP Details</h3>
+                        <button type="button" onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="px-6 py-5 space-y-3" id="modalContent">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+                <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end">
+                    <button type="button" onclick="closeViewModal()" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg shadow-sm transition">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample APP Data (static for admin preview)
+    let appData = [
+        {
+            id: "APP-2026-001",
+            year: "2026",
+            title: "Construction of the College of Science and Mathematics Laboratory",
+            end_user: "ADMIN",
+            mode: "Competitive Bidding",
+            total_budget: 47000000,
+            status: "Approved",
+            remarks: "Major infrastructure project under GOP"
+        },
+        {
+            id: "APP-2026-002",
+            year: "2026",
+            title: "Construction of the College of Liberal Arts School Infrastructure",
+            end_user: "ADMIN",
+            mode: "Competitive Bidding",
+            total_budget: 96000000,
+            status: "Approved",
+            remarks: "New building construction"
+        },
+        {
+            id: "APP-2026-003",
+            year: "2026",
+            title: "Construction of the College of Engineering School Infrastructure",
+            end_user: "ADMIN",
+            mode: "Competitive Bidding",
+            total_budget: 82000000,
+            status: "Approved",
+            remarks: "Engineering complex"
+        },
+        {
+            id: "APP-2026-004",
+            year: "2026",
+            title: "Procurement of SECURITY SERVICES for the University",
+            end_user: "ADMIN",
+            mode: "Competitive Bidding",
+            total_budget: 17300000,
+            status: "Approved",
+            remarks: "Annual security services"
+        },
+        {
+            id: "APP-2026-005",
+            year: "2026",
+            title: "Supply and Delivery of Various IT Equipment (MISTO)",
+            end_user: "MISTO",
+            mode: "Competitive Bidding",
+            total_budget: 1272200,
+            status: "Approved",
+            remarks: "Digital learning platform"
+        }
+    ];
+
+    function getStatusBadge(status) {
+        const badges = {
+            'Approved': 'bg-green-100 text-green-800',
+            'Pending': 'bg-yellow-100 text-yellow-800',
+            'Draft': 'bg-gray-100 text-gray-800'
+        };
+        const badgeClass = badges[status] || 'bg-gray-100 text-gray-800';
+        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span>`;
+    }
+
+    function formatMoney(amount) {
+        return '₱ ' + amount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    let currentPage = 1;
+    const rowsPerPage = 5;
+    let filteredData = [];
+
+    function renderTable() {
+        const tableBody = document.getElementById('appTableBody');
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        if (filteredData.length === 0) {
+            tableBody.innerHTML = '';
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.querySelector('table').classList.add('hidden');
+            document.getElementById('showingStart').textContent = 0;
+            document.getElementById('showingEnd').textContent = 0;
+            document.getElementById('totalCount').textContent = 0;
+            return;
+        }
+
+        document.getElementById('emptyState').classList.add('hidden');
+        document.querySelector('table').classList.remove('hidden');
+
+        tableBody.innerHTML = '';
+        pageData.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 transition';
+            // Build actions with two buttons: view (eye) and edit (pencil)
+            const actionsHtml = `
+                <a href="{% url 'ppmp:app_procurement' %}?id=${item.id}" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </a>
+                <a href="#" class="ml-2 text-yellow-600 hover:text-yellow-800 transition" title="Edit APP">
+                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                </a>
+            `;
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(item.status)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.year)}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.end_user)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.mode)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-semibold text-gray-800">${formatMoney(item.total_budget)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${actionsHtml}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        document.getElementById('showingStart').textContent = filteredData.length > 0 ? start + 1 : 0;
+        document.getElementById('showingEnd').textContent = Math.min(end, filteredData.length);
+        document.getElementById('totalCount').textContent = filteredData.length;
+
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = end >= filteredData.length;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function applySearch() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        filteredData = appData.filter(item => {
+            return item.title.toLowerCase().includes(searchTerm) ||
+                   item.end_user.toLowerCase().includes(searchTerm) ||
+                   item.year.includes(searchTerm) ||
+                   item.mode.toLowerCase().includes(searchTerm);
+        });
+        currentPage = 1;
+        renderTable();
+    }
+
+    // Keep the modal for detailed view (used by the eye button? Actually eye button is now a direct link.
+    // We can remove the modal if not needed, but leave it for potential other uses.
+    function viewDetails(id) {
+        const item = appData.find(i => i.id === id);
+        if (item) {
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div><strong class="text-gray-700">Project Title:</strong><br>${escapeHtml(item.title)}</div>
+                <div><strong class="text-gray-700">End-User Unit:</strong><br>${escapeHtml(item.end_user)}</div>
+                <div><strong class="text-gray-700">Mode of Procurement:</strong><br>${escapeHtml(item.mode)}</div>
+                <div><strong class="text-gray-700">Fiscal Year:</strong><br>${escapeHtml(item.year)}</div>
+                <div><strong class="text-gray-700">Total ABC:</strong><br>${formatMoney(item.total_budget)}</div>
+                <div><strong class="text-gray-700">Status:</strong><br>${escapeHtml(item.status)}</div>
+                <div><strong class="text-gray-700">Remarks:</strong><br>${escapeHtml(item.remarks) || '—'}</div>
+            `;
+            document.getElementById('viewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        } else {
+            alert('APP details not found.');
+        }
+    }
+
+    function closeViewModal() {
+        document.getElementById('viewModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    });
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const maxPage = Math.ceil(filteredData.length / rowsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            renderTable();
+        }
+    });
+    document.getElementById('searchInput').addEventListener('input', applySearch);
+
+    filteredData = [...appData];
+    renderTable();
+
+    // Make functions available globally (if needed)
+    window.viewDetails = viewDetails;
+    window.closeViewModal = closeViewModal;
+</script>
+{% endblock %}

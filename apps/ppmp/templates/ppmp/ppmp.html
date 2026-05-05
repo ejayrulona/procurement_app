@@ -28,7 +28,7 @@
             <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" id="searchInput" placeholder="Search PPMP by title, PPMP No., or division..." 
+            <input type="text" id="searchInput" placeholder="Search by Procurement Program/Project, division, or creator..." 
                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
         </div>
     </div>
@@ -40,9 +40,8 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PPMP No.</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fiscal Year</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procurement Program/Project</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created by</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
@@ -50,70 +49,7 @@
                     </tr>
                 </thead>
                 <tbody id="ppmpTableBody" class="bg-white divide-y divide-gray-200">
-                    <!-- Sample Data -->
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                Pending
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-001</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Office Supply Procurement</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                Approved
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-002</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Infrastructure Development</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-002')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                Rejected
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-003</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IT Equipment Upgrade</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Department</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Director</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 23, 2026 10:30AM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-003')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
+                    <!-- Rows will be populated dynamically -->
                 </tbody>
             </table>
         </div>
@@ -131,7 +67,7 @@
         <div class="bg-white px-6 py-4 border-t border-gray-200">
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">3</span> of <span class="font-medium" id="totalCount">3</span> results
+                    Showing <span class="font-medium" id="showingStart">0</span> to <span class="font-medium" id="showingEnd">0</span> of <span class="font-medium" id="totalCount">0</span> results
                 </div>
                 <div class="flex gap-2">
                     <button id="prevPage"
@@ -150,8 +86,58 @@
     </div>
 </div>
 
+<!-- Modal for Edit Request -->
+<div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeEditRequestModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto my-8">
+            <div class="bg-white">
+                <div class="bg-red-50 px-6 py-4 border-b border-red-100 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800">Request PPMP Edit</h3>
+                        <button type="button" onclick="closeEditRequestModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <form id="editRequestForm" method="post" action="#">
+                    {% csrf_token %}
+                    <input type="hidden" name="ppmp_id" id="modal_ppmp_id">
+                    <div class="px-6 py-5 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">PPMP Title</label>
+                            <p id="modal_ppmp_title" class="text-sm text-gray-800 font-medium"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Edit Request <span class="text-red-500">*</span></label>
+                            <textarea name="reason" id="edit_reason" required rows="4"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                                      placeholder="Please describe the changes you need (e.g., update budget, add/remove items, change schedule, etc.)"></textarea>
+                            <p class="text-xs text-gray-400 mt-1">Your request will be reviewed by the BAC secretariat.</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <div class="flex gap-2">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="text-xs text-blue-800">Only pending PPMPs can be submitted for edit. Approved PPMPs must go through the revision process.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3">
+                        <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg shadow-sm transition">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Sample PPMP Data
+    // Sample PPMP Data (PPMP No. removed; we use title as identifier for demo)
     let ppmpData = [
         {
             id: "PPMP-2026-001",
@@ -164,25 +150,33 @@
         },
         {
             id: "PPMP-2026-002",
-            year: "2026",
+            year: "2025",
             title: "Infrastructure Development",
             division: "Admin",
             created_by: "College Dean",
-            date: "April 24, 2026 1:00PM",
+            date: "March 24, 2025 1:00PM",
             status: "Approved"
         },
         {
             id: "PPMP-2026-003",
-            year: "2026",
+            year: "2024",
             title: "IT Equipment Upgrade",
             division: "IT Department",
             created_by: "IT Director",
-            date: "April 23, 2026 10:30AM",
-            status: "Rejected"
+            date: "February 23, 2024 10:30AM",
+            status: "Approved"
+        },
+        {
+            id: "PPMP-2026-004",
+            year: "2023",
+            title: "Library Books Acquisition",
+            division: "Library",
+            created_by: "Librarian",
+            date: "February 25, 2023 9:00AM",
+            status: "Approved"
         }
     ];
 
-    // Helper function to get status badge
     function getStatusBadge(status) {
         const badges = {
             'Pending': 'bg-yellow-100 text-yellow-800',
@@ -194,7 +188,6 @@
         return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span>`;
     }
 
-    // Render table
     let currentPage = 1;
     const rowsPerPage = 5;
     let filteredData = [];
@@ -209,51 +202,59 @@
             tableBody.innerHTML = '';
             document.getElementById('emptyState').classList.remove('hidden');
             document.querySelector('table').classList.add('hidden');
+            document.getElementById('showingStart').textContent = 0;
+            document.getElementById('showingEnd').textContent = 0;
+            document.getElementById('totalCount').textContent = 0;
             return;
         }
 
         document.getElementById('emptyState').classList.add('hidden');
         document.querySelector('table').classList.remove('hidden');
-        
+
         tableBody.innerHTML = '';
         pageData.forEach(item => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-gray-50 transition';
+            let actionsHtml = `
+                <button onclick="viewDetails('${item.id}')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
+                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </button>
+            `;
+            if (item.status === 'Pending') {
+                actionsHtml += `
+                    <button onclick="openEditRequestModal('${item.id}', '${escapeHtml(item.title)}')" class="ml-2 text-yellow-600 hover:text-yellow-800 transition" title="Request Edit">
+                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </button>
+                    
+                `;
+            }
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(item.status)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">${escapeHtml(item.id)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.year)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.division)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.created_by)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.date)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button onclick="viewDetails('${item.id}')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${actionsHtml}</td>
             `;
             tableBody.appendChild(row);
         });
 
-        // Update pagination info
-        const startNum = start + 1;
-        const endNum = Math.min(end, filteredData.length);
-        document.getElementById('showingStart').textContent = filteredData.length > 0 ? startNum : 0;
-        document.getElementById('showingEnd').textContent = endNum;
+        document.getElementById('showingStart').textContent = filteredData.length > 0 ? start + 1 : 0;
+        document.getElementById('showingEnd').textContent = Math.min(end, filteredData.length);
         document.getElementById('totalCount').textContent = filteredData.length;
 
-        // Update pagination buttons
         const prevBtn = document.getElementById('prevPage');
         const nextBtn = document.getElementById('nextPage');
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = end >= filteredData.length;
     }
 
-    // Escape HTML
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -264,42 +265,47 @@
         });
     }
 
-    // Apply search filter
     function applySearch() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        
         filteredData = ppmpData.filter(item => {
-            return item.id.toLowerCase().includes(searchTerm) ||
-                   item.title.toLowerCase().includes(searchTerm) ||
+            return item.title.toLowerCase().includes(searchTerm) ||
                    item.division.toLowerCase().includes(searchTerm) ||
-                   item.created_by.toLowerCase().includes(searchTerm);
+                   item.created_by.toLowerCase().includes(searchTerm) ||
+                   item.id.toLowerCase().includes(searchTerm);
         });
-        
         currentPage = 1;
         renderTable();
     }
 
-    // View details function
     function viewDetails(ppmpId) {
         const ppmp = ppmpData.find(p => p.id === ppmpId);
         if (ppmp) {
-            // Store in localStorage for detailed view page
             localStorage.setItem('selectedPPMP', JSON.stringify(ppmp));
-            // Redirect to detailed view (you can change this URL as needed)
             window.location.href = `/ppmp/detailed_view/?ppmp_id=${ppmpId}`;
         } else {
             alert('PPMP details not found.');
         }
     }
 
-    // Pagination event listeners
+    function openEditRequestModal(ppmpId, ppmpTitle) {
+        document.getElementById('modal_ppmp_id').value = ppmpId;
+        document.getElementById('modal_ppmp_title').innerText = ppmpTitle;
+        document.getElementById('edit_reason').value = '';
+        document.getElementById('editRequestModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditRequestModal() {
+        document.getElementById('editRequestModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
     document.getElementById('prevPage').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
             renderTable();
         }
     });
-    
     document.getElementById('nextPage').addEventListener('click', () => {
         const maxPage = Math.ceil(filteredData.length / rowsPerPage);
         if (currentPage < maxPage) {
@@ -307,15 +313,13 @@
             renderTable();
         }
     });
-
-    // Search event listener
     document.getElementById('searchInput').addEventListener('input', applySearch);
 
-    // Initialize
     filteredData = [...ppmpData];
     renderTable();
 
-    // Make viewDetails global for onclick
     window.viewDetails = viewDetails;
+    window.openEditRequestModal = openEditRequestModal;
+    window.closeEditRequestModal = closeEditRequestModal;
 </script>
 {% endblock %}

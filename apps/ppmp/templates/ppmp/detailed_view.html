@@ -7,13 +7,23 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8 max-w-5xl">
-    <div class="mb-6 flex justify-between items-center">
-        <a href="{% url 'ppmp:list_page' %}" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">
+    <div class="mb-6 flex justify-between items-center flex-wrap gap-3">
+        <a href="{% url 'ppmp:ppmp' %}" class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-2">
             ← Back to List
         </a>
-        <button onclick="window.print()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2">
-            🖨️ Print / PDF
-        </button>
+        <div class="flex gap-3">
+            <button onclick="window.print()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2">
+                🖨️ Print / PDF
+            </button>
+            <!-- Request Edit Button (only if PPMP status allows editing, e.g., Pending, Approved, or Revision Requested) -->
+            <button onclick="openEditRequestModal('{{ ppmp.id|default:'PPMP-2026-001' }}', '{{ ppmp.title|default:'Supply and Delivery of ICT Equipment'|escapejs }}')"
+                    class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Request Edit
+            </button>
+        </div>
     </div>
 
     <div id="printableArea" class="bg-white rounded-2xl shadow-lg border overflow-hidden">
@@ -147,4 +157,73 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for Edit Request (same as in list page) -->
+<div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeEditRequestModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto my-8">
+            <div class="bg-white">
+                <div class="bg-red-50 px-6 py-4 border-b border-red-100 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800">Request PPMP Edit</h3>
+                        <button type="button" onclick="closeEditRequestModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <form id="editRequestForm" method="post" action="#">
+                    {% csrf_token %}
+                    <input type="hidden" name="ppmp_id" id="modal_ppmp_id">
+                    <div class="px-6 py-5 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">PPMP Title</label>
+                            <p id="modal_ppmp_title" class="text-sm text-gray-800 font-medium"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Edit Request <span class="text-red-500">*</span></label>
+                            <textarea name="reason" id="edit_reason" required rows="4"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition"
+                                      placeholder="Please describe the changes you need (e.g., update budget, add/remove items, change schedule, etc.)"></textarea>
+                            <p class="text-xs text-gray-400 mt-1">Your request will be reviewed by the BAC secretariat.</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <div class="flex gap-2">
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="text-xs text-blue-800">Once submitted, the admin will review your request. If approved, you will be able to edit this PPMP.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3">
+                        <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg shadow-sm transition">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditRequestModal(ppmpId, ppmpTitle) {
+        document.getElementById('modal_ppmp_id').value = ppmpId;
+        document.getElementById('modal_ppmp_title').innerText = ppmpTitle;
+        document.getElementById('edit_reason').value = '';
+        document.getElementById('editRequestModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditRequestModal() {
+        document.getElementById('editRequestModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // Optional: handle form submission via AJAX (if you prefer)
+    // For now, we let the form submit normally to the backend.
+    // Close the modal after successful submission can be handled by redirect/refresh.
+</script>
 {% endblock %}

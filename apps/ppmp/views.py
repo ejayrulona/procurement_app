@@ -22,5 +22,11 @@ def draft(request):
     return render(request, "ppmp/draft.html")
 
 
-# def ppmp_form(request):
-#     return render(request, "core/ppmp_form.html")
+def app_procurement(request):
+    return render(request, "ppmp/app-procurement.html")
+
+def request_detail(request):
+    return render(request, "ppmp/request_detail.html")
+
+def app_list(request):
+    return render(request, "ppmp/app-list.html")
