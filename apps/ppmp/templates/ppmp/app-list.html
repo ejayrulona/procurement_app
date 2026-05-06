@@ -6,18 +6,18 @@
 {% block header_subtitle %}Manage Annual Procurement Plans (APP){% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6 max-w-7xl">
+<div class="container px-4 py-6 mx-auto max-w-7xl">
     <!-- Header (no create button) -->
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
-        <p class="text-gray-500 text-sm mt-1">View and manage all consolidated Annual Procurement Plans</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-red-300 mt-3 rounded-full"></div>
+        <p class="mt-1 text-sm text-gray-500">View and manage all consolidated Annual Procurement Plans</p>
+        <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
     </div>
 
     <!-- Search Bar -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
         <div class="relative">
-            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input type="text" id="searchInput" placeholder="Search by project title, end-user unit, or fiscal year..." 
@@ -26,18 +26,17 @@
     </div>
 
     <!-- APP Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fiscal Year</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procurement Program/Project</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End-User Unit</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mode of Procurement</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total ABC (₱)</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Fiscal Year</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Procurement Program/Project</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">End-User Unit</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Mode of Procurement</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Total ABC (₱)</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
@@ -47,28 +46,28 @@
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div id="emptyState" class="hidden py-12 text-center">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No APP records found</h3>
+            <h3 class="mb-2 text-lg font-medium text-gray-900">No APP records found</h3>
             <p class="text-gray-500">APP entries are generated from approved PPMPs.</p>
         </div>
 
         <!-- Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 bg-white border-t border-gray-200">
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
                     Showing <span class="font-medium" id="showingStart">0</span> to <span class="font-medium" id="showingEnd">0</span> of <span class="font-medium" id="totalCount">0</span> results
                 </div>
                 <div class="flex gap-2">
                     <button id="prevPage"
-                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled>
                         Previous
                     </button>
                     <button id="nextPage"
-                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled>
                         Next
                     </button>
@@ -81,10 +80,10 @@
 <!-- Modal for viewing details (optional) -->
 <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeViewModal()"></div>
-        <div class="relative bg-white rounded-2xl shadow-xl transform transition-all w-full max-w-lg mx-auto my-8">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeViewModal()"></div>
+        <div class="relative w-full max-w-lg mx-auto my-8 transition-all transform bg-white shadow-xl rounded-2xl">
             <div class="bg-white">
-                <div class="bg-red-50 px-6 py-4 border-b border-red-100 rounded-t-2xl">
+                <div class="px-6 py-4 border-b border-red-100 bg-red-50 rounded-t-2xl">
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-semibold text-gray-800">APP Details</h3>
                         <button type="button" onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600">
@@ -97,8 +96,8 @@
                 <div class="px-6 py-5 space-y-3" id="modalContent">
                     <!-- Dynamic content will be inserted here -->
                 </div>
-                <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end">
-                    <button type="button" onclick="closeViewModal()" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg shadow-sm transition">Close</button>
+                <div class="flex justify-end px-6 py-4 bg-gray-50 rounded-b-2xl">
+                    <button type="button" onclick="closeViewModal()" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Close</button>
                 </div>
             </div>
         </div>
@@ -120,7 +119,7 @@
         },
         {
             id: "APP-2026-002",
-            year: "2026",
+            year: "2025",
             title: "Construction of the College of Liberal Arts School Infrastructure",
             end_user: "ADMIN",
             mode: "Competitive Bidding",
@@ -130,7 +129,7 @@
         },
         {
             id: "APP-2026-003",
-            year: "2026",
+            year: "2024",
             title: "Construction of the College of Engineering School Infrastructure",
             end_user: "ADMIN",
             mode: "Competitive Bidding",
@@ -140,7 +139,7 @@
         },
         {
             id: "APP-2026-004",
-            year: "2026",
+            year: "2023",
             title: "Procurement of SECURITY SERVICES for the University",
             end_user: "ADMIN",
             mode: "Competitive Bidding",
@@ -150,7 +149,7 @@
         },
         {
             id: "APP-2026-005",
-            year: "2026",
+            year: "2022",
             title: "Supply and Delivery of Various IT Equipment (MISTO)",
             end_user: "MISTO",
             mode: "Competitive Bidding",
@@ -203,26 +202,25 @@
             row.className = 'hover:bg-gray-50 transition';
             // Build actions with two buttons: view (eye) and edit (pencil)
             const actionsHtml = `
-                <a href="{% url 'ppmp:app_procurement' %}?id=${item.id}" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{% url 'ppmp:app_procurement' %}?id=${item.id}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                    <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                 </a>
-                <a href="#" class="ml-2 text-yellow-600 hover:text-yellow-800 transition" title="Edit APP">
-                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP">
+                    <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                 </a>
             `;
             row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(item.status)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.year)}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.year)}</td>
                 <td class="px-6 py-4 text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.end_user)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.mode)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-semibold text-gray-800">${formatMoney(item.total_budget)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${actionsHtml}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.end_user)}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.mode)}</td>
+                <td class="px-6 py-4 font-mono text-sm font-semibold text-gray-800 whitespace-nowrap">${formatMoney(item.total_budget)}</td>
+                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">${actionsHtml}</td>
             `;
             tableBody.appendChild(row);
         });
