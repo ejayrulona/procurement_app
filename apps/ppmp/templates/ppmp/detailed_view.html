@@ -15,14 +15,16 @@
             <button onclick="window.print()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2">
                 🖨️ Print / PDF
             </button>
-            <!-- Request Edit Button (only if PPMP status allows editing, e.g., Pending, Approved, or Revision Requested) -->
-            <button onclick="openEditRequestModal('{{ ppmp.id|default:'PPMP-2026-001' }}', '{{ ppmp.title|default:'Supply and Delivery of ICT Equipment'|escapejs }}')"
+            <!-- Request Edit Button (only if PPMP status allows) -->
+            {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
+            <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.project_name|escapejs }}')"
                     class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Request Edit
             </button>
+            {% endif %}
         </div>
     </div>
 
@@ -36,114 +38,138 @@
             </div>
             <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                    <p><strong>PPMP No.:</strong> PPMP-2026-001</p>
-                    <p><strong>End-User Unit:</strong> Registrar's Office</p>
-                    <p><strong>Department:</strong> Academic Affairs</p>
+                    <p><strong>PPMP No.:</strong> {{ ppmp.ppmp_number|default:"—" }}</p>
+                    <p><strong>End-User Unit:</strong> {{ ppmp.end_user_unit|default:"—" }}</p>
+                    <p><strong>Department/Office:</strong> {{ ppmp.office|default:"—" }}</p>
                 </div>
                 <div>
-                    <p><strong>Date Prepared:</strong> April 4, 2026</p>
-                    <p><strong>Fiscal Year:</strong> 2026</p>
+                    <p><strong>Date Prepared:</strong> {{ ppmp.created_at|date:"F d, Y" }}</p>
+                    <p><strong>Fiscal Year:</strong> {{ ppmp.fiscal_year|default:"2026" }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content (Hardcoded sample data) -->
+        <!-- Main Content -->
         <div class="p-8 space-y-6">
-            <!-- Section 1 -->
+            <!-- Section 1: Basic Information (matches the PPMP form) -->
             <div class="bg-gray-50 rounded-xl p-5">
-                <h2 class="text-lg font-bold mb-3 border-b pb-2">I. PROJECT INFORMATION</h2>
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">I. BASIC INFORMATION</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><p class="text-xs text-gray-500">PAP Code (UACS)</p><p class="font-mono">50604050 02</p></div>
-                    <div><p class="text-xs text-gray-500">System Identifier</p><p class="font-mono">SYS-2026-001</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p><p>Information and Communications Technology Equipment</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Name of Procurement Project</p><p class="font-bold text-lg">Supply and Delivery of ICT Equipment</p></div>
-                    <div><p class="text-xs text-gray-500">Classification</p><p>Goods</p></div>
-                    <div><p class="text-xs text-gray-500">Quantity/Size</p><p>20 units (desktop), 10 units (laptop)</p></div>
+                    <div><p class="text-xs text-gray-500">Classification</p><p>{{ ppmp.classification|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Source of Funds</p><p>{{ ppmp.source_funds|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Office</p><p>{{ ppmp.office|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Ceiling Amount</p><p class="font-mono">₱ {{ ppmp.ceiling_amount|floatformat:2|default:"0.00" }}</p></div>
+                    <div><p class="text-xs text-gray-500">PAP Code (UACS)</p><p class="font-mono">{{ ppmp.pap_code|default:"—" }}</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p><p>{{ ppmp.pap|default:"—" }}</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Name of Procurement Project</p><p class="font-bold text-lg">{{ ppmp.project_name|default:"—" }}</p></div>
                 </div>
             </div>
 
-            <!-- Section 2 -->
+            <!-- Section 2: Procurement Details -->
             <div class="bg-gray-50 rounded-xl p-5">
                 <h2 class="text-lg font-bold mb-3 border-b pb-2">II. PROCUREMENT DETAILS</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><p class="text-xs text-gray-500">Mode of Procurement</p><p class="font-medium">Competitive Bidding</p></div>
-                    <div><p class="text-xs text-gray-500">Delivery Type</p><p>One-time</p></div>
-                    <div><p class="text-xs text-gray-500">Contracting Duration</p><p>Single Year</p></div>
-                    <div><p class="text-xs text-gray-500">Framework Agreement</p><p>No</p></div>
+                    <div><p class="text-xs text-gray-500">General Description</p><p>{{ ppmp.general_description|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Mode of Procurement</p><p>{{ ppmp.mode|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">UACS Code</p><p>{{ ppmp.uacs_code|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Code</p><p>{{ ppmp.code|default:"—" }}</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Object of Expenditure</p><p>{{ ppmp.object_expenditure|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Object Code</p><p>{{ ppmp.object_code|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Item Code</p><p>{{ ppmp.item_code|default:"—" }}</p></div>
                 </div>
             </div>
 
-            <!-- Section 3 -->
+            <!-- Section 3: Schedule & Dates -->
             <div class="bg-gray-50 rounded-xl p-5">
                 <h2 class="text-lg font-bold mb-3 border-b pb-2">III. SCHEDULE & DATES</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div><p class="text-xs text-gray-500">PR Submission Date</p><p class="font-medium">2026-03-01</p></div>
-                    <div><p class="text-xs text-gray-500">Start of Implementation</p><p class="font-medium">2026-06-01</p></div>
-                    <div><p class="text-xs text-gray-500">Target Delivery Date</p><p class="font-medium">2026-07-15</p></div>
-                    <div class="md:col-span-3"><p class="text-xs text-gray-500">Location / Delivery Site</p><p>Main Campus, Quezon City</p></div>
-                </div>
-            </div>
-
-            <!-- Section 4 -->
-            <div class="bg-gray-50 rounded-xl p-5">
-                <h2 class="text-lg font-bold mb-3 border-b pb-2">IV. BUDGET & FUNDING</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><p class="text-xs text-gray-500">Budget Source</p><p>Government of the Philippines (current year's budget)</p></div>
-                    <div><p class="text-xs text-gray-500">Project Recurrence</p><p>New</p></div>
-                    <div class="md:col-span-2 bg-green-50 rounded-lg p-3">
-                        <p class="text-xs text-green-600">Approved Budget for the Contract (ABC)</p>
-                        <p class="text-2xl font-bold text-green-700">₱ 1,250,000.00</p>
-                    </div>
+                    <div><p class="text-xs text-gray-500">Start of Implementation</p><p>{{ ppmp.start_date|date:"F d, Y"|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Target Delivery Date</p><p>{{ ppmp.delivery_date|date:"F d, Y"|default:"—" }}</p></div>
+                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Location / Delivery Site</p><p>{{ ppmp.location|default:"—" }}</p></div>
                 </div>
             </div>
 
-            <!-- Section 5: Market Scoping -->
+            <!-- Section 4: Items to be Procured -->
             <div class="bg-gray-50 rounded-xl p-5">
-                <h2 class="text-lg font-bold mb-3 border-b pb-2">V. MARKET SCOPING</h2>
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">IV. ITEMS TO BE PROCURED</h2>
+                {% if items %}
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm border rounded-lg">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="px-4 py-2 text-left">Supplier</th>
-                                <th class="px-4 py-2 text-left">Quotation</th>
-                                <th class="px-4 py-2 text-left">Source</th>
-                                <th class="px-4 py-2 text-left">Date Gathered</th>
+                                <th class="px-4 py-2 text-left">Item Name</th>
+                                <th class="px-4 py-2 text-left">Unit</th>
+                                <th class="px-4 py-2 text-right">Quantity</th>
+                                <th class="px-4 py-2 text-right">Unit Cost (₱)</th>
+                                <th class="px-4 py-2 text-right">Total (₱)</th>
+                                <th class="px-4 py-2 text-left">Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-t"><td class="px-4 py-2">Tech Solutions Inc.</td><td class="px-4 py-2">₱ 1,250,000.00</td><td class="px-4 py-2">Canvass within 6 months</td><td class="px-4 py-2">2026-02-15</td></tr>
-                            <tr class="border-t"><td class="px-4 py-2">Digital World Corp.</td><td class="px-4 py-2">₱ 1,280,000.00</td><td class="px-4 py-2">Supplier website</td><td class="px-4 py-2">2026-02-20</td></tr>
-                            <tr class="border-t"><td class="px-4 py-2">IT Hub Philippines</td><td class="px-4 py-2">₱ 1,220,000.00</td><td class="px-4 py-2">Proposal from previous procurement</td><td class="px-4 py-2">2026-02-10</td></tr>
+                            {% for item in items %}
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-2">{{ item.name|default:"—" }}</td>
+                                <td class="px-4 py-2">{{ item.unit|default:"—" }}</td>
+                                <td class="px-4 py-2 text-right">{{ item.quantity|default:"0" }}</td>
+                                <td class="px-4 py-2 text-right">₱ {{ item.unit_cost|floatformat:2|default:"0.00" }}</td>
+                                <td class="px-4 py-2 text-right font-semibold">₱ {{ item.total|floatformat:2|default:"0.00" }}</td>
+                                <td class="px-4 py-2 text-gray-500">{{ item.remarks|default:"—" }}</td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
-                    </table>
+                        <tfoot class="bg-gray-100 font-semibold">
+                            <tr>
+                                <td colspan="4" class="px-4 py-2 text-right">GRAND TOTAL</td>
+                                <td class="px-4 py-2 text-right text-red-700">₱ {{ ppmp.total_cost|floatformat:2|default:"0.00" }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </td>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div><p class="text-xs text-gray-500">Average Quotation</p><p class="font-bold">₱ 1,250,000.00</p></div>
-                    <div><p class="text-xs text-gray-500">Delivery / Installation Cost</p><p class="font-medium">₱ 50,000.00</p></div>
-                    <div><p class="text-xs text-gray-500">Life-cycle Cost (TCO)</p><p class="font-medium">₱ 200,000.00</p></div>
-                </div>
+                {% else %}
+                <p class="text-gray-500 italic">No items added to this PPMP.</p>
+                {% endif %}
             </div>
 
-            <!-- Section 6: Remarks -->
+            <!-- Section 5: Budget & Funding Summary -->
             <div class="bg-gray-50 rounded-xl p-5">
-                <h2 class="text-lg font-bold mb-3 border-b pb-2">VI. REMARKS</h2>
-                <p class="text-gray-700">Urgent requirement for new academic year. Priority shipment requested.</p>
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">V. BUDGET & FUNDING</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><p class="text-xs text-gray-500">Budget Source</p><p>{{ ppmp.budget_source|default:"—" }}</p></div>
+                    <div><p class="text-xs text-gray-500">Project Recurrence</p><p>{{ ppmp.recurrence|default:"—" }}</p></div>
+                    <div class="md:col-span-2 bg-green-50 rounded-lg p-3">
+                        <p class="text-xs text-green-600">Approved Budget for the Contract (ABC)</p>
+                        <p class="text-2xl font-bold text-green-700">₱ {{ ppmp.ceiling_amount|floatformat:2|default:"0.00" }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Based on Ceiling Amount / Total cost of checked items</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Signatories -->
+            <!-- Section 6: Remarks / Attachments -->
+            <div class="bg-gray-50 rounded-xl p-5">
+                <h2 class="text-lg font-bold mb-3 border-b pb-2">VI. REMARKS & ATTACHMENTS</h2>
+                <div class="space-y-3">
+                    <div><p class="text-xs text-gray-500">Remarks</p><p>{{ ppmp.remarks|default:"No remarks provided." }}</p></div>
+                    {% if ppmp.attachment %}
+                    <div><p class="text-xs text-gray-500">Attached File</p><a href="{{ ppmp.attachment.url }}" class="text-blue-600 hover:underline" target="_blank">View Attachment</a></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Signatories (static for now) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center pt-4 border-t">
                 <div>
                     <p class="text-sm text-gray-500 mb-4">Prepared by:</p>
                     <div class="border-t border-gray-300 pt-2 mt-8">
-                        <p class="font-medium">[Procurement Focal Person]</p>
+                        <p class="font-medium">{{ ppmp.prepared_by.get_full_name|default:"[End-User]" }}</p>
                         <p class="text-xs text-gray-500">End-User</p>
                     </div>
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 mb-4">Submitted by:</p>
                     <div class="border-t border-gray-300 pt-2 mt-8">
-                        <p class="font-medium">Dr. Maria Santos</p>
-                        <p class="text-xs text-gray-500">Date: _______________</p>
+                        <p class="font-medium">{{ ppmp.submitted_by.get_full_name|default:"[Head of Office]" }}</p>
+                        <p class="text-xs text-gray-500">Date: {{ ppmp.submitted_at|date:"F d, Y"|default:"_______________" }}</p>
                     </div>
                 </div>
                 <div>
@@ -158,7 +184,7 @@
     </div>
 </div>
 
-<!-- Modal for Edit Request (same as in list page) -->
+<!-- Modal for Edit Request (unchanged but uses dynamic data) -->
 <div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeEditRequestModal()"></div>
@@ -221,9 +247,5 @@
         document.getElementById('editRequestModal').classList.add('hidden');
         document.body.style.overflow = '';
     }
-
-    // Optional: handle form submission via AJAX (if you prefer)
-    // For now, we let the form submit normally to the backend.
-    // Close the modal after successful submission can be handled by redirect/refresh.
 </script>
 {% endblock %}
