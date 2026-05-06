@@ -13,4 +13,5 @@ urlpatterns = (
     path("draft/", views.draft, name="draft"),
     path("app_procurement/", views.app_procurement, name="app_procurement"),
     path("app_list/", views.app_list, name="app_list"),
+    path("create_ppmp/", views.create_ppmp, name="create_ppmp"),
 )

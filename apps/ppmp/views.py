@@ -30,3 +30,6 @@ def request_detail(request):
 
 def app_list(request):
     return render(request, "ppmp/app-list.html")
+
+def create_ppmp(request):
+    return render(request, "ppmp/create-ppmp.html")
