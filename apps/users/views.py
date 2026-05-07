@@ -486,3 +486,6 @@ def forgot_password(request):
 
 def account_verification(request):
     return render(request, "users/account-verification.html")
+
+def email_sent(request):
+    return render(request, "users/email-sent.html")
