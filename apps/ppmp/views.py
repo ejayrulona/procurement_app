@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import JsonResponse
@@ -87,7 +88,7 @@ def ppmp_create(request):
     return render(request, "ppmp/create-ppmp.html", context)
 
 
-@office_required
+@login_required
 def ppmp(request, id):
     ppmp = get_object_or_404(
         ProcurementProjectManagementPlan.objects.select_related(
@@ -95,13 +96,14 @@ def ppmp(request, id):
             "submitted_by",
             "reviewed_by"
         ).prefetch_related(
+            "procurement_lines",
             "procurement_lines__item_code",
             "procurement_lines__line_entries__item"
         ), pk=id
     )
 
     # Guard - users can only view their ppmp
-    if ppmp.submitted_by != request.user:
+    if not request.user.is_any_admin and ppmp.submitted_by != request.user:
         return redirect("ppmp:ppmps")
 
     context = {
@@ -111,13 +113,24 @@ def ppmp(request, id):
     return render(request, "ppmp/ppmp.html", context)
 
 
+@login_required
 def ppmps(request):
-    ppmps = ProcurementProjectManagementPlan.objects.all().select_related(
-        "office_profile"
-    ).prefetch_related(
-        "procurement_lines__item_code",
-        "procurement_lines__line_entries__item"
-    )
+    if request.user.is_any_admin:
+        ppmps = ProcurementProjectManagementPlan.objects.all().select_related(
+            "office_profile"
+        ).prefetch_related(
+            "procurement_lines__item_code",
+            "procurement_lines__line_entries__item"
+        )
+    else:
+        ppmps = ProcurementProjectManagementPlan.objects.filter(
+            submitted_by=request.user
+        ).select_related(
+            "office_profile"
+        ).prefetch_related(
+            "procurement_lines__item_code",
+            "procurement_lines__line_entries__item"
+        )
 
     context = {
         "ppmps": ppmps
@@ -125,27 +138,19 @@ def ppmps(request):
 
     return render(request, "ppmp/ppmps.html", context)
 
-def request(request):
-    return render(request, "ppmp/request.html")
 
-def request_detail(request):
-    return render(request, "ppmp/request_detail.html")
-
-def list_page(request):
-    return render(request, "ppmp/list_page.html")
-
-def draft(request):
-    return render(request, "ppmp/draft.html")
+def approve_ppmp(request):
+    pass
 
 
-def app_procurement(request):
-    return render(request, "ppmp/app-procurement.html")
+# could be revise_ppmp
+def decline_ppmp(request):
+    pass
 
-def request_detail(request):
-    return render(request, "ppmp/request_detail.html")
 
 def app_list(request):
     return render(request, "ppmp/app-list.html")
 
-def create_ppmp(request):
-    return render(request, "ppmp/create-ppmp.html")
+
+def app(request):
+    return render(request, "ppmp/app.html")

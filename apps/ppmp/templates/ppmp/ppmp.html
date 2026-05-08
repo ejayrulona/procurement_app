@@ -73,8 +73,7 @@
           </div>
           <div class="md:col-span-2">
             <p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p>
-            <p>{{ ppmp.get_pap_category_display }}</p>
-            <p>Sample for now</p>
+            <p>{{ ppmp.office_profile.get_pap_category_display }}</p>
           </div>
         </div>
       </div>
@@ -86,184 +85,99 @@
           <h2 class="pb-2 mb-4 text-lg font-bold border-b">II. PROCUREMENT DETAILS</h2>
 
           <!-- Procurement Line Title -->
-          <div class="mb-4">
-            <h3 class="text-xl font-bold text-gray-800">A. PROCUREMENT LINE 1 – ICT EQUIPMENT</h3>
-          </div>
-          <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-                <p class="text-xs text-gray-500">Mode of Procurement</p>
-                <p class="font-medium">Public Bidding</p>
+          {% for procurement_line in ppmp.procurement_lines.all %}
+            <div class="mb-4">
+              <h3 class="text-xl font-bold text-gray-800">PROCUREMENT LINE {{ procurement_line.order }} – {{ procurement_line.item_code.object_code.expenditure.name }}</h3>
+            </div>
+            <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                  <p class="text-xs text-gray-500">Mode of Procurement</p>
+                  <p class="font-medium">{{ procurement_line.get_mode_of_procurement_display }}</p>
+                </div>
+              <div>
+                <p class="text-xs text-gray-500">General Description</p>
+                <p class="font-medium">{{ procurement_line.item_code.general_description }}</p>
               </div>
-            <div>
-              <p class="text-xs text-gray-500">General Description</p>
-              <p class="font-medium">Supply and Delivery of ICT Equipment</p>
+              <div>
+                <p class="text-xs text-gray-500">Item Code</p>
+                <p class="font-medium">{{ procurement_line.item_code.code }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">UACS / Object Code</p>
+                <p class="font-mono">{{ procurement_line.item_code.object_code.code }}</p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-gray-500">Item Code</p>
-              <p class="font-medium">108</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">UACS / Object Code</p>
-              <p class="font-mono">5020301000</p>
-            </div>
-          </div>
 
-          <h3 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h3>
+            <h3 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h3>
 
-          <div class="overflow-x-auto border border-gray-200 rounded-lg">
-            <table class="min-w-full text-sm divide-y divide-gray-200">
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Quantity</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Unit</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Unit Cost (₱)</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Total (₱)</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Date Needed</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Desktop Computer (i5, 16GB, 512GB SSD)</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">10</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">unit</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 45,000.00</td>
-                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 450,000.00</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">2026-06-30</td>
-                  <td class="px-4 py-3 text-sm text-gray-500">For new computer lab</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Ergonomic Office Chair</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">15</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">unit</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 5,500.00</td>
-                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 82,500.00</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">2026-07-15</td>
-                  <td class="px-4 py-3 text-sm text-gray-500">Faculty rooms upgrade</td>
-                </tr>
-              </tbody>
-              <tfoot class="bg-gray-50">
-                <tr>
-                  <td colspan="6" class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">Line 1 Total</td>
-                  <td class="px-4 py-3 text-sm font-bold text-red-600 text-right">₱ 532,500.00</td>
-                  <td colspan="2"></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+            <div class="overflow-x-auto border border-gray-200 rounded-lg">
+              <table class="min-w-full text-sm divide-y divide-gray-200">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Item Name</th>
+                    <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Quantity</th>
+                    <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Unit</th>
+                    <th class="px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase w-28">Unit Cost (₱)</th>
+                    <th class="w-32 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
+                    <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase w-28">Date Needed</th>
+                    <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remarks</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {% for entry in procurement_line.line_entries.all %}
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ entry.item.name }}</td>
+                      <td class="px-4 py-3 text-sm text-right text-gray-700">{{ entry.quantity }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-700">{{ entry.item.get_unit_display }}</td>
+                      <td class="px-4 py-3 text-sm text-right text-gray-700">₱ {{ entry.unit_cost_snapshot }}</td>
+                      <td class="px-4 py-3 text-sm font-semibold text-right text-gray-900">₱ {{ entry.total_amount }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-700">{{ entry.date_needed|date:"F d, Y"}}</td>
+                      <td class="px-4 py-3 text-sm text-gray-500">
+                        {{ entry.remarks|default:"No remarks." }}
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td>No items found.</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                  <tfoot class="bg-gray-50">
+                    <tr>
+                      <td colspan="6" class="px-4 py-3 text-sm font-semibold text-right text-gray-900">Line 1 Total</td>
+                      <td class="px-4 py-3 text-sm font-bold text-right text-red-600">₱ {{ procurement_line.total_amount }}</td>
+                      <td colspan="2"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+            </div>
 
           <!-- Line breaking -->
-           <br><hr><br>
-
-          <!-- Line 2 - Office Supply -->
-
-          <div class="mb-4">
-            <h3 class="text-xl font-bold text-gray-800">B. PROCUREMENT LINE 2 – OFFICE SUPPLIES</h3>
-          </div>
-          <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <p class="text-xs text-gray-500">General Description</p>
-              <p class="font-medium">Supply and Delivery of Various Office Supplies</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Mode of Procurement</p>
-              <p class="font-medium">Shopping</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Object of Expenditure</p>
-              <p class="font-medium">Office Supplies</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">UACS Code</p>
-              <p class="font-mono">5020301000</p>
-            </div>
-          </div>
-
-          <h3 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h3>
-          <div class="overflow-x-auto border border-gray-200 rounded-lg">
-            <table class="min-w-full text-sm divide-y divide-gray-200">
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Quantity</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Unit</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Unit Cost (₱)</th>
-                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Total (₱)</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Date Needed</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm font-medium text-gray-900">A4 Bond Paper (80gsm, 500 sheets/ream)</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">50</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">ream</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 250.00</td>
-                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 12,500.00</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-10</td>
-                  <td class="px-4 py-3 text-sm text-gray-500">One‑year supply</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Ballpen (0.5mm, black, 1 doz/box)</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">20</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">box</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 180.00</td>
-                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 3,600.00</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-15</td>
-                  <td class="px-4 py-3 text-sm text-gray-500">Centralized purchase</td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Folder (L-type, long, green)</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">100</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">piece</td>
-                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 8.50</td>
-                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 850.00</td>
-                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-20</td>
-                  <td class="px-4 py-3 text-sm text-gray-500">For all offices</td>
-                </tr>
-              </tbody>
-              <tfoot class="bg-gray-50">
-                <tr>
-                  <td colspan="6" class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">Line 2 Total</td>
-                  <td class="px-4 py-3 text-sm font-bold text-red-600 text-right">₱ 16,950.00</td>
-                  <td colspan="2"></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-        <hr>
-      </div>
+          <br><hr><br>
+          {% empty %}
+            <p>No procurement lines found.</p>
+          {% endfor %}
 
       <!-- GRAND TOTAL -->
-      <div class="p-5 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl border border-red-200">
+      <div class="p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl">
         <div class="flex items-center justify-between">
           <div>
             <span class="text-lg font-semibold text-gray-800">Grand Total (All Procurement Lines)</span>
-            <p class="text-xs text-gray-500">Sum of Line 1 + Line 2</p>
           </div>
           <div class="text-right">
-            <p class="text-3xl font-bold text-red-600">₱ 549,450.00</p>
-            <p class="text-xs text-gray-500">(Line 1: ₱532,500 + Line 2: ₱16,950)</p>
+            <p class="text-3xl font-bold text-red-600">₱ {{ ppmp.total_amount }}</p>
           </div>
         </div>
       </div>
 
       <!-- Section 4: Remarks & Attachments -->
       <div class="p-5 bg-gray-50 rounded-xl">
-        <h2 class="pb-2 mb-3 text-lg font-bold border-b">IV. REMARKS & ATTACHMENTS</h2>
+        <h2 class="pb-2 mb-3 text-lg font-bold border-b">IV. REMARKS</h2>
         <div class="space-y-3">
           <div>
             <p class="text-xs text-gray-500">Remarks</p>
             <p>{{ ppmp.remarks|default:"PPMP is out for review" }}</p>
           </div>
-          {% if ppmp.attachment %}
-          <div>
-            <p class="text-xs text-gray-500">Attached File</p>
-            <a href="{{ ppmp.attachment.url }}" class="text-blue-600 hover:underline" target="_blank">View Attachment</a>
-          </div>
-          {% endif %}
         </div>
       </div>
 
@@ -272,22 +186,15 @@
         <div>
           <p class="mb-4 text-sm text-gray-500">Prepared by:</p>
           <div class="pt-2 mt-8 border-t border-gray-300">
-            <p class="font-medium">{{ ppmp.prepared_by.get_full_name|default:"[End-User]" }}</p>
+            <p class="font-medium">{{ ppmp.office_profile.office_name|default:"[End-User]" }}</p>
             <p class="text-xs text-gray-500">End-User</p>
           </div>
         </div>
         <div>
           <p class="mb-4 text-sm text-gray-500">Submitted by:</p>
           <div class="pt-2 mt-8 border-t border-gray-300">
-            <p class="font-medium">{{ ppmp.submitted_by.get_full_name|default:"[Head of Office]" }}</p>
-            <p class="text-xs text-gray-500">Date: {{ ppmp.submitted_at|date:"F d, Y"|default:"_______________" }}</p>
-          </div>
-        </div>
-        <div>
-          <p class="mb-4 text-sm text-gray-500">Received by:</p>
-          <div class="pt-2 mt-8 border-t border-gray-300">
-            <p class="font-medium">[BAC Secretariat]</p>
-            <p class="text-xs text-gray-500">Date: _______________</p>
+            <p class="font-medium">{{ ppmp.submitted_by.full_name|default:"[Head of Office]" }}</p>
+            <p class="text-xs text-gray-500">Date: {{ ppmp.created_at|date:"F d, Y"|default:"_______________" }}</p>
           </div>
         </div>
       </div>

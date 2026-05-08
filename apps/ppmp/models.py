@@ -79,7 +79,7 @@ class ProcurementProjectManagementPlan(models.Model):
         return cls.objects.annotate(
             computed_total=Sum(
                 ExpressionWrapper(
-                    F("procurement_lines__line_entries_quantity") *
+                    F("procurement_lines__line_entries__quantity") *
                     F("procurement_lines__line_entries__item__unit_cost"),
                     output_field=DecimalField()
                 )
