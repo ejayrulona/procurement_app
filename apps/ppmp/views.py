@@ -154,3 +154,9 @@ def app_list(request):
 
 def app(request):
     return render(request, "ppmp/app.html")
+
+def create_ppmp(request):
+    return render(request, "ppmp/create-ppmp.html")
+
+def edit_ppmp(request):
+    return render(request, "ppmp/edit-ppmp.html")

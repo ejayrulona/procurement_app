@@ -7,20 +7,20 @@
 
 {% block content %}
 <div class="container px-4 py-6 mx-auto max-w-7xl">
-    <!-- Header (no create button) -->
+    <!-- Header -->
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
         <p class="mt-1 text-sm text-gray-500">View and manage all consolidated Annual Procurement Plans</p>
         <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
     </div>
 
-    <!-- Search Bar -->
+    <!-- Search Bar (now only searches by Fiscal Year) -->
     <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
         <div class="relative">
             <svg class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" id="searchInput" placeholder="Search by project title, end-user unit, or fiscal year..." 
+            <input type="text" id="searchInput" placeholder="Search by fiscal year..." 
                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
         </div>
     </div>
@@ -32,15 +32,12 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Fiscal Year</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Procurement Program/Project</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">End-User Unit</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Mode of Procurement</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Total ABC (₱)</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total ABC (₱)</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
-                    <!-- Rows will be populated dynamically -->
+                    <!-- Rows populated dynamically -->
                 </tbody>
             </table>
         </div>
@@ -77,7 +74,7 @@
     </div>
 </div>
 
-<!-- Modal for viewing details (optional) -->
+<!-- Modal for viewing details (removed unwanted fields) -->
 <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeViewModal()"></div>
@@ -94,7 +91,7 @@
                     </div>
                 </div>
                 <div class="px-6 py-5 space-y-3" id="modalContent">
-                    <!-- Dynamic content will be inserted here -->
+                    <!-- Dynamic content (no title, end-user, mode) -->
                 </div>
                 <div class="flex justify-end px-6 py-4 bg-gray-50 rounded-b-2xl">
                     <button type="button" onclick="closeViewModal()" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Close</button>
@@ -200,9 +197,9 @@
         pageData.forEach(item => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-gray-50 transition';
-            // Build actions with two buttons: view (eye) and edit (pencil)
+            // Actions: view (eye) and edit (pencil)
             const actionsHtml = `
-                <a href="{% url 'ppmp:app_procurement' %}?id=${item.id}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                <a href="{% url 'ppmp:app' %}?id=${item.id}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
                     <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -216,11 +213,8 @@
             `;
             row.innerHTML = `
                 <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.year)}</td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
-                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.end_user)}</td>
-                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.mode)}</td>
-                <td class="px-6 py-4 font-mono text-sm font-semibold text-gray-800 whitespace-nowrap">${formatMoney(item.total_budget)}</td>
-                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">${actionsHtml}</td>
+                <td class="px-6 py-4 font-mono text-sm font-semibold text-gray-800 text-right whitespace-nowrap">${formatMoney(item.total_budget)}</td>
+                <td class="px-6 py-4 text-sm text-gray-500 text-center whitespace-nowrap">${actionsHtml}</td>
             `;
             tableBody.appendChild(row);
         });
@@ -247,26 +241,20 @@
 
     function applySearch() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        // Only filter by fiscal year (since other columns are removed)
         filteredData = appData.filter(item => {
-            return item.title.toLowerCase().includes(searchTerm) ||
-                   item.end_user.toLowerCase().includes(searchTerm) ||
-                   item.year.includes(searchTerm) ||
-                   item.mode.toLowerCase().includes(searchTerm);
+            return item.year.includes(searchTerm);
         });
         currentPage = 1;
         renderTable();
     }
 
-    // Keep the modal for detailed view (used by the eye button? Actually eye button is now a direct link.
-    // We can remove the modal if not needed, but leave it for potential other uses.
+    // Modal view with removed fields (title, end_user, mode)
     function viewDetails(id) {
         const item = appData.find(i => i.id === id);
         if (item) {
             const modalContent = document.getElementById('modalContent');
             modalContent.innerHTML = `
-                <div><strong class="text-gray-700">Project Title:</strong><br>${escapeHtml(item.title)}</div>
-                <div><strong class="text-gray-700">End-User Unit:</strong><br>${escapeHtml(item.end_user)}</div>
-                <div><strong class="text-gray-700">Mode of Procurement:</strong><br>${escapeHtml(item.mode)}</div>
                 <div><strong class="text-gray-700">Fiscal Year:</strong><br>${escapeHtml(item.year)}</div>
                 <div><strong class="text-gray-700">Total ABC:</strong><br>${formatMoney(item.total_budget)}</div>
                 <div><strong class="text-gray-700">Status:</strong><br>${escapeHtml(item.status)}</div>
@@ -302,7 +290,7 @@
     filteredData = [...appData];
     renderTable();
 
-    // Make functions available globally (if needed)
+    // Expose functions globally if needed
     window.viewDetails = viewDetails;
     window.closeViewModal = closeViewModal;
 </script>
