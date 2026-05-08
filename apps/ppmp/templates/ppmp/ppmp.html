@@ -7,240 +7,367 @@
 
 {% block content %}
 <div class="container max-w-5xl px-4 py-8 mx-auto">
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
-            ← Back to List
-        </a>
-        <div class="flex gap-3">
-            <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
-                🖨️ Print / PDF
-            </button>
-            <!-- Request Edit Button (only if PPMP status allows) -->
-            {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
-            <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.project_name|escapejs }}')"
-                    class="flex items-center gap-2 px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Request Edit
-            </button>
-            {% endif %}
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
+      ← Back to List
+    </a>
+    <div class="flex gap-3">
+      <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+        🖨️ Print / PDF
+      </button>
+      {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
+      <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.project_name|escapejs }}')" class="flex items-center gap-2 px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Request Edit
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="printableArea" class="overflow-hidden bg-white border shadow-lg rounded-2xl">
+    <!-- Header -->
+    <div class="px-8 py-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+      <div class="mb-4 text-center">
+        <h1 class="text-2xl font-bold">PROJECT PROCUREMENT MANAGEMENT PLAN</h1>
+        <p class="text-gray-600">Republic of the Philippines</p>
+        <p class="font-medium text-gray-700">WESTERN MINDANAO STATE UNIVERSITY</p>
+      </div>
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p><strong>Fiscal Year:</strong> {{ ppmp.fiscal_year }}</p>
+          <p><strong>End-User Unit:</strong> {{ ppmp.office_profile.office_name|default:"—" }}</p>
         </div>
+        <div>
+          <p><strong>Date Prepared:</strong> {{ ppmp.created_at|date:"F d, Y" }}</p>
+        </div>
+      </div>
     </div>
 
-    <div id="printableArea" class="overflow-hidden bg-white border shadow-lg rounded-2xl">
-        <!-- Header -->
-        <div class="px-8 py-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-            <div class="mb-4 text-center">
-                <h1 class="text-2xl font-bold">PROJECT PROCUREMENT MANAGEMENT PLAN</h1>
-                <p class="text-gray-600">Republic of the Philippines</p>
-                <p class="font-medium text-gray-700">WESTERN MINDANAO STATE UNIVERSITY</p>
+    <!-- Main Content -->
+    <div class="p-8 space-y-6">
+      <!-- Section 1: Basic Information -->
+      <div class="p-5 bg-gray-50 rounded-xl">
+        <h2 class="pb-2 mb-3 text-lg font-bold border-b">I. BASIC INFORMATION</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="md:col-span-2">
+              <p class="text-xs text-gray-500">Name of Procurement Project</p>
+              <p class="text-lg font-bold">{{ ppmp.project_name }}</p>
             </div>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                    <p><strong>Fiscal Year:</strong> {{ ppmp.fiscal_year }}</p>
-                    <p><strong>End-User Unit:</strong> {{ ppmp.office_profile.office_name|default:"—" }}</p>
-                </div>
-                <div>
-                    <p><strong>Date Prepared:</strong> {{ ppmp.created_at|date:"F d, Y" }}</p>
-                </div>
-            </div>
+          <div>
+            <p class="text-xs text-gray-500">Classification</p>
+            <p>{{ ppmp.get_classification_display }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Source of Funds</p>
+            <p>{{ ppmp.get_source_of_funds_display }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Office</p>
+            <p>{{ ppmp.office_profile.office_name }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Ceiling Amount</p>
+            <p class="font-mono">₱ {{ ppmp.ceiling|floatformat:2 }}</p>
+          </div>
+          <div class="md:col-span-2">
+            <p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p>
+            <p>{{ ppmp.get_pap_category_display }}</p>
+            <p>Sample for now</p>
+          </div>
         </div>
+      </div>
 
-        <!-- Main Content -->
-        <div class="p-8 space-y-6">
-            <!-- Section 1: Basic Information (matches the PPMP form) -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">I. BASIC INFORMATION</h2>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div><p class="text-xs text-gray-500">Classification</p><p>{{ ppmp.get_classification_display }}</p></div>
-                    <div><p class="text-xs text-gray-500">Source of Funds</p><p>{{ ppmp.get_source_of_funds_display }}</p></div>
-                    <div><p class="text-xs text-gray-500">Office</p><p>{{ ppmp.office_profile.office_name }}</p></div>
-                    <div><p class="text-xs text-gray-500">Ceiling Amount</p><p class="font-mono">₱ {{ ppmp.ceiling }}</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p><p>{{ ppmp.get_pap_category_display }}</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Name of Procurement Project</p><p class="text-lg font-bold">{{ ppmp.project_name }}</p></div>
-                </div>
-            </div>
+      <!-- ==================== PROCUREMENT LINES ==================== -->
+      <div class="space-y-6">
+        <!-- LINE 1 – ICT EQUIPMENT -->
+        <div class="p-5 bg-gray-50 rounded-xl">
+          <h2 class="pb-2 mb-4 text-lg font-bold border-b">II. PROCUREMENT DETAILS</h2>
 
-            <!-- Section 2: Procurement Details -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">II. PROCUREMENT DETAILS</h2>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div><p class="text-xs text-gray-500">General Description</p><p>{{ ppmp.general_description|default:"—" }}</p></div>
-                    <div><p class="text-xs text-gray-500">Mode of Procurement</p><p>{{ ppmp.mode|default:"—" }}</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Object of Expenditure</p><p>{{ ppmp.object_expenditure|default:"—" }}</p></div>
-                    <div><p class="text-xs text-gray-500">UACS Code</p><p>{{ ppmp.uacs_code|default:"—" }}</p></div>
-                    <div><p class="text-xs text-gray-500">Item Code</p><p>{{ ppmp.item_code|default:"—" }}</p></div>
-                </div>
+          <!-- Procurement Line Title -->
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-gray-800">A. PROCUREMENT LINE 1 – ICT EQUIPMENT</h3>
+          </div>
+          <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+                <p class="text-xs text-gray-500">Mode of Procurement</p>
+                <p class="font-medium">Public Bidding</p>
+              </div>
+            <div>
+              <p class="text-xs text-gray-500">General Description</p>
+              <p class="font-medium">Supply and Delivery of ICT Equipment</p>
             </div>
+            <div>
+              <p class="text-xs text-gray-500">Item Code</p>
+              <p class="font-medium">108</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">UACS / Object Code</p>
+              <p class="font-mono">5020301000</p>
+            </div>
+          </div>
 
-            <!-- Section 3: Schedule & Dates -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">III. SCHEDULE & DATES</h2>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div><p class="text-xs text-gray-500">Start of Implementation</p><p>{{ ppmp.start_date|date:"F d, Y"|default:"—" }}</p></div>
-                    <div><p class="text-xs text-gray-500">Target Delivery Date</p><p>{{ ppmp.delivery_date|date:"F d, Y"|default:"—" }}</p></div>
-                    <div class="md:col-span-2"><p class="text-xs text-gray-500">Location / Delivery Site</p><p>{{ ppmp.location|default:"—" }}</p></div>
-                </div>
-            </div>
+          <h3 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h3>
 
-            <!-- Section 4: Items to be Procured -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">IV. ITEMS TO BE PROCURED</h2>
-                {% if items %}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm border rounded-lg">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-4 py-2 text-left">Item Name</th>
-                                <th class="px-4 py-2 text-left">Unit</th>
-                                <th class="px-4 py-2 text-right">Quantity</th>
-                                <th class="px-4 py-2 text-right">Unit Cost (₱)</th>
-                                <th class="px-4 py-2 text-right">Total (₱)</th>
-                                <th class="px-4 py-2 text-left">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in items %}
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="px-4 py-2">{{ item.name|default:"—" }}</td>
-                                <td class="px-4 py-2">{{ item.unit|default:"—" }}</td>
-                                <td class="px-4 py-2 text-right">{{ item.quantity|default:"0" }}</td>
-                                <td class="px-4 py-2 text-right">₱ {{ item.unit_cost|floatformat:2|default:"0.00" }}</td>
-                                <td class="px-4 py-2 font-semibold text-right">₱ {{ item.total|floatformat:2|default:"0.00" }}</td>
-                                <td class="px-4 py-2 text-gray-500">{{ item.remarks|default:"—" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot class="font-semibold bg-gray-100">
-                            <tr>
-                                <td colspan="4" class="px-4 py-2 text-right">GRAND TOTAL</td>
-                                <td class="px-4 py-2 text-right text-red-700">₱ {{ ppmp.total_cost|floatformat:2|default:"0.00" }}</td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </td>
-                </div>
-                {% else %}
-                <p class="italic text-gray-500">No items added to this PPMP.</p>
-                {% endif %}
-            </div>
+          <div class="overflow-x-auto border border-gray-200 rounded-lg">
+            <table class="min-w-full text-sm divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Quantity</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Unit</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Unit Cost (₱)</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Total (₱)</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Date Needed</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Desktop Computer (i5, 16GB, 512GB SSD)</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">10</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">unit</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 45,000.00</td>
+                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 450,000.00</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">2026-06-30</td>
+                  <td class="px-4 py-3 text-sm text-gray-500">For new computer lab</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Ergonomic Office Chair</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">15</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">unit</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 5,500.00</td>
+                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 82,500.00</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">2026-07-15</td>
+                  <td class="px-4 py-3 text-sm text-gray-500">Faculty rooms upgrade</td>
+                </tr>
+              </tbody>
+              <tfoot class="bg-gray-50">
+                <tr>
+                  <td colspan="6" class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">Line 1 Total</td>
+                  <td class="px-4 py-3 text-sm font-bold text-red-600 text-right">₱ 532,500.00</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
 
-            <!-- Section 5: Budget & Funding Summary -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">V. BUDGET & FUNDING</h2>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div><p class="text-xs text-gray-500">Budget Source</p><p>{{ ppmp.budget_source|default:"—" }}</p></div>
-                    <div><p class="text-xs text-gray-500">Project Recurrence</p><p>{{ ppmp.recurrence|default:"—" }}</p></div>
-                    <div class="p-3 rounded-lg md:col-span-2 bg-green-50">
-                        <p class="text-xs text-green-600">Approved Budget for the Contract (ABC)</p>
-                        <p class="text-2xl font-bold text-green-700">₱ {{ ppmp.ceiling_amount|floatformat:2|default:"0.00" }}</p>
-                        <p class="mt-1 text-xs text-gray-500">Based on Ceiling Amount / Total cost of checked items</p>
-                    </div>
-                </div>
-            </div>
+          <!-- Line breaking -->
+           <br><hr><br>
 
-            <!-- Section 6: Remarks / Attachments -->
-            <div class="p-5 bg-gray-50 rounded-xl">
-                <h2 class="pb-2 mb-3 text-lg font-bold border-b">VI. REMARKS & ATTACHMENTS</h2>
-                <div class="space-y-3">
-                    <div><p class="text-xs text-gray-500">Remarks</p><p>{{ ppmp.remarks|default:"No remarks provided." }}</p></div>
-                    {% if ppmp.attachment %}
-                    <div><p class="text-xs text-gray-500">Attached File</p><a href="{{ ppmp.attachment.url }}" class="text-blue-600 hover:underline" target="_blank">View Attachment</a></div>
-                    {% endif %}
-                </div>
-            </div>
+          <!-- Line 2 - Office Supply -->
 
-            <!-- Signatories (static for now) -->
-            <div class="grid grid-cols-1 gap-6 pt-4 text-center border-t md:grid-cols-3">
-                <div>
-                    <p class="mb-4 text-sm text-gray-500">Prepared by:</p>
-                    <div class="pt-2 mt-8 border-t border-gray-300">
-                        <p class="font-medium">{{ ppmp.prepared_by.get_full_name|default:"[End-User]" }}</p>
-                        <p class="text-xs text-gray-500">End-User</p>
-                    </div>
-                </div>
-                <div>
-                    <p class="mb-4 text-sm text-gray-500">Submitted by:</p>
-                    <div class="pt-2 mt-8 border-t border-gray-300">
-                        <p class="font-medium">{{ ppmp.submitted_by.get_full_name|default:"[Head of Office]" }}</p>
-                        <p class="text-xs text-gray-500">Date: {{ ppmp.submitted_at|date:"F d, Y"|default:"_______________" }}</p>
-                    </div>
-                </div>
-                <div>
-                    <p class="mb-4 text-sm text-gray-500">Received by:</p>
-                    <div class="pt-2 mt-8 border-t border-gray-300">
-                        <p class="font-medium">[BAC Secretariat]</p>
-                        <p class="text-xs text-gray-500">Date: _______________</p>
-                    </div>
-                </div>
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-gray-800">B. PROCUREMENT LINE 2 – OFFICE SUPPLIES</h3>
+          </div>
+          <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <p class="text-xs text-gray-500">General Description</p>
+              <p class="font-medium">Supply and Delivery of Various Office Supplies</p>
             </div>
+            <div>
+              <p class="text-xs text-gray-500">Mode of Procurement</p>
+              <p class="font-medium">Shopping</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Object of Expenditure</p>
+              <p class="font-medium">Office Supplies</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">UACS Code</p>
+              <p class="font-mono">5020301000</p>
+            </div>
+          </div>
+
+          <h3 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h3>
+          <div class="overflow-x-auto border border-gray-200 rounded-lg">
+            <table class="min-w-full text-sm divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Quantity</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Unit</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Unit Cost (₱)</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Total (₱)</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Date Needed</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-medium text-gray-900">A4 Bond Paper (80gsm, 500 sheets/ream)</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">50</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">ream</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 250.00</td>
+                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 12,500.00</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-10</td>
+                  <td class="px-4 py-3 text-sm text-gray-500">One‑year supply</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Ballpen (0.5mm, black, 1 doz/box)</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">20</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">box</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 180.00</td>
+                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 3,600.00</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-15</td>
+                  <td class="px-4 py-3 text-sm text-gray-500">Centralized purchase</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-medium text-gray-900">Folder (L-type, long, green)</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">100</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">piece</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">₱ 8.50</td>
+                  <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">₱ 850.00</td>
+                  <td class="px-4 py-3 text-sm text-gray-700">2026-08-20</td>
+                  <td class="px-4 py-3 text-sm text-gray-500">For all offices</td>
+                </tr>
+              </tbody>
+              <tfoot class="bg-gray-50">
+                <tr>
+                  <td colspan="6" class="px-4 py-3 text-sm font-semibold text-gray-900 text-right">Line 2 Total</td>
+                  <td class="px-4 py-3 text-sm font-bold text-red-600 text-right">₱ 16,950.00</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
+        <hr>
+      </div>
+
+      <!-- GRAND TOTAL -->
+      <div class="p-5 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl border border-red-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-semibold text-gray-800">Grand Total (All Procurement Lines)</span>
+            <p class="text-xs text-gray-500">Sum of Line 1 + Line 2</p>
+          </div>
+          <div class="text-right">
+            <p class="text-3xl font-bold text-red-600">₱ 549,450.00</p>
+            <p class="text-xs text-gray-500">(Line 1: ₱532,500 + Line 2: ₱16,950)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Remarks & Attachments -->
+      <div class="p-5 bg-gray-50 rounded-xl">
+        <h2 class="pb-2 mb-3 text-lg font-bold border-b">IV. REMARKS & ATTACHMENTS</h2>
+        <div class="space-y-3">
+          <div>
+            <p class="text-xs text-gray-500">Remarks</p>
+            <p>{{ ppmp.remarks|default:"PPMP is out for review" }}</p>
+          </div>
+          {% if ppmp.attachment %}
+          <div>
+            <p class="text-xs text-gray-500">Attached File</p>
+            <a href="{{ ppmp.attachment.url }}" class="text-blue-600 hover:underline" target="_blank">View Attachment</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Signatories -->
+      <div class="grid grid-cols-1 gap-6 pt-4 text-center border-t md:grid-cols-3">
+        <div>
+          <p class="mb-4 text-sm text-gray-500">Prepared by:</p>
+          <div class="pt-2 mt-8 border-t border-gray-300">
+            <p class="font-medium">{{ ppmp.prepared_by.get_full_name|default:"[End-User]" }}</p>
+            <p class="text-xs text-gray-500">End-User</p>
+          </div>
+        </div>
+        <div>
+          <p class="mb-4 text-sm text-gray-500">Submitted by:</p>
+          <div class="pt-2 mt-8 border-t border-gray-300">
+            <p class="font-medium">{{ ppmp.submitted_by.get_full_name|default:"[Head of Office]" }}</p>
+            <p class="text-xs text-gray-500">Date: {{ ppmp.submitted_at|date:"F d, Y"|default:"_______________" }}</p>
+          </div>
+        </div>
+        <div>
+          <p class="mb-4 text-sm text-gray-500">Received by:</p>
+          <div class="pt-2 mt-8 border-t border-gray-300">
+            <p class="font-medium">[BAC Secretariat]</p>
+            <p class="text-xs text-gray-500">Date: _______________</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Modal for Edit Request (unchanged but uses dynamic data) -->
+<!-- Modal for Edit Request -->
 <div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeEditRequestModal()"></div>
-        <div class="relative w-full max-w-lg mx-auto my-8 transition-all transform bg-white shadow-xl rounded-2xl">
-            <div class="bg-white">
-                <div class="px-6 py-4 border-b border-red-100 bg-red-50 rounded-t-2xl">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-800">Request PPMP Edit</h3>
-                        <button type="button" onclick="closeEditRequestModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <form id="editRequestForm" method="post" action="#">
-                    {% csrf_token %}
-                    <input type="hidden" name="ppmp_id" id="modal_ppmp_id">
-                    <div class="px-6 py-5 space-y-4">
-                        <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">PPMP Title</label>
-                            <p id="modal_ppmp_title" class="text-sm font-medium text-gray-800"></p>
-                        </div>
-                        <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">Reason for Edit Request <span class="text-red-500">*</span></label>
-                            <textarea name="reason" id="edit_reason" required rows="4"
-                                      class="w-full px-3 py-2 transition border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                                      placeholder="Please describe the changes you need (e.g., update budget, add/remove items, change schedule, etc.)"></textarea>
-                            <p class="mt-1 text-xs text-gray-400">Your request will be reviewed by the BAC secretariat.</p>
-                        </div>
-                        <div class="p-3 border border-blue-100 rounded-lg bg-blue-50">
-                            <div class="flex gap-2">
-                                <svg class="flex-shrink-0 w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <p class="text-xs text-blue-800">Once submitted, the admin will review your request. If approved, you will be able to edit this PPMP.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl">
-                        <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Submit Request</button>
-                    </div>
-                </form>
-            </div>
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeEditRequestModal()"></div>
+    <div class="relative w-full max-w-lg mx-auto my-8 transition-all transform bg-white shadow-xl rounded-2xl">
+      <div class="bg-white">
+        <div class="px-6 py-4 border-b border-red-100 bg-red-50 rounded-t-2xl">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800">Request PPMP Edit</h3>
+            <button type="button" onclick="closeEditRequestModal()" class="text-gray-400 hover:text-gray-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
+        <form id="editRequestForm" method="post" action="#">
+          {% csrf_token %}
+          <input type="hidden" name="ppmp_id" id="modal_ppmp_id" />
+          <div class="px-6 py-5 space-y-4">
+            <div>
+              <label class="block mb-1 text-sm font-medium text-gray-700">PPMP Title</label>
+              <p id="modal_ppmp_title" class="text-sm font-medium text-gray-800"></p>
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-medium text-gray-700">
+                Reason for Edit Request
+                <span class="text-red-500">*</span>
+              </label>
+              <textarea name="reason" id="edit_reason" required rows="4"
+                class="w-full px-3 py-2 transition border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                placeholder="Please describe the changes you need (e.g., update budget, add/remove items, change schedule, etc.)"></textarea>
+              <p class="mt-1 text-xs text-gray-400">Your request will be reviewed by the BAC secretariat.</p>
+            </div>
+            <div class="p-3 border border-blue-100 rounded-lg bg-blue-50">
+              <div class="flex gap-2">
+                <svg class="flex-shrink-0 w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-xs text-blue-800">
+                  Once submitted, the admin will review your request. If approved, you will be able to edit this PPMP.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl">
+            <button type="button" onclick="closeEditRequestModal()"
+              class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+              Cancel
+            </button>
+            <button type="submit"
+              class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">
+              Submit Request
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    function openEditRequestModal(ppmpId, ppmpTitle) {
-        document.getElementById('modal_ppmp_id').value = ppmpId;
-        document.getElementById('modal_ppmp_title').innerText = ppmpTitle;
-        document.getElementById('edit_reason').value = '';
-        document.getElementById('editRequestModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
+  function openEditRequestModal(ppmpId, ppmpTitle) {
+    document.getElementById("modal_ppmp_id").value = ppmpId;
+    document.getElementById("modal_ppmp_title").innerText = ppmpTitle;
+    document.getElementById("edit_reason").value = "";
+    document.getElementById("editRequestModal").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 
-    function closeEditRequestModal() {
-        document.getElementById('editRequestModal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
+  function closeEditRequestModal() {
+    document.getElementById("editRequestModal").classList.add("hidden");
+    document.body.style.overflow = "";
+  }
 </script>
 {% endblock %}
