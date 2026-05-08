@@ -484,8 +484,14 @@ def change_password(request, id):
 def forgot_password(request):
     return render(request, "users/forgot-password.html")
 
+def forgot_password_success(request):
+    return render(request, "users/forgot-password-success.html")
+
 def account_verification(request):
     return render(request, "users/account-verification.html")
 
 def email_sent(request):
     return render(request, "users/email-sent.html")
+
+def password_reset_success(request):
+    return render(request, "users/password-reset-success.html")

@@ -25,4 +25,6 @@ urlpatterns = (
     path("account_verification/", views.account_verification, name="account_verification"),
     path("change-password/<int:id>/", views.change_password, name="change_password"),
     path("email_sent/", views.email_sent, name="email_sent"),
+    path("password_reset_success/", views.password_reset_success, name="password_reset_success"),
+    path("forgot_password_success/", views.forgot_password_success, name="forgot_password_success"),
 )
