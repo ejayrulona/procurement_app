@@ -96,3 +96,12 @@ def get_item_codes(request):
     object_code_id = request.GET.get('object-code')
     item_codes = list(ItemCode.objects.filter(object_code=object_code_id).values("id", "code", "general_description"))
     return JsonResponse({"item_codes": item_codes})
+
+def add_object_expenditure(request):
+    return render(request, "inventory/add-object-expenditure.html")
+
+def add_object_code(request):
+    return render(request, "inventory/add-object-code.html")
+
+def add_item_code(request):
+    return render(request, "inventory/add-item-code.html")

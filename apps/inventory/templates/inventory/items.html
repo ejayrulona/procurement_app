@@ -7,18 +7,42 @@
 
 {% block content %}
 <!-- Header with Add Button - Responsive -->
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-	<div>
-		<h2 class="text-xl sm:text-2xl font-bold text-gray-800">Inventory</h2>
-		<p class="text-xs sm:text-sm text-gray-500 mt-1">Track stock levels of procured items</p>
-	</div>
-	<a href="{% url 'inventory:item_create' %}"
-		class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition shadow-sm flex items-center justify-center gap-2 cursor-pointer">
-		<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<!-- Header with Action Buttons - Improved UI -->
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+    <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Inventory</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-1">Track stock levels of procured items</p>
+    </div>
+    <div class="flex flex-wrap gap-3 w-full lg:w-auto">
+		<a href="{% url 'inventory:add_object_expenditure' %}"
+		class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition shadow-sm text-sm font-medium">
+		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 		</svg>
-		Add Inventory Item
+		Add Object Expenditure
 	</a>
+	<a href="{% url 'inventory:add_object_code' %}"
+	class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-800 text-white rounded-lg hover:from-blue-800 hover:to-blue-900 transition shadow-sm text-sm font-medium">
+	<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+	</svg>
+	Add Object Code
+</a>
+<a href="{% url 'inventory:item_create' %}"
+   class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition shadow-sm text-sm font-medium">
+	<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+		<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+	</svg>
+	Add Item
+</a>
+<a href="{% url 'inventory:add_item_code' %}"
+class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-green-700 to-green-800 text-white rounded-lg hover:from-green-800 hover:to-green-900 transition shadow-sm text-sm font-medium">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+	<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+</svg>
+Add Inventory Item
+</a>
+</div>
 </div>
 
 <!-- Stats Cards - Responsive grid -->
@@ -278,3 +302,9 @@
 	updateStats();
 </script>
 {% endblock %}
+
+
+
+
+
+
