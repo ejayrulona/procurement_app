@@ -1,11 +1,23 @@
+from datetime import date
 from django.core.exceptions import ValidationError
 from apps.inventory.models import Item, ItemCode
+from .models import ModeOfProcurement
 
+def parse_date(value, prefix):
+    try:
+        parsed = date.fromisoformat(value)
+
+        if parsed < date.today():
+            raise ValidationError(f"{prefix}: Date needed cannot be in the past.")
+        return parsed
+    except (ValueError, TypeError):
+        raise ValidationError(f"{prefix}: Invalid date format. Use ")
 
 def validate_procurement_lines(lines, ceiling):
     if not lines:
-        raise ValidationError("At least one procurement line is required.")
+        raise ValidationError("At least one procurement line is required. Use mm/dd/yyyy.")
 
+    valid_modes = [choice[0] for choice in ModeOfProcurement.choices]
     total = 0
     cleaned_lines = []
 
@@ -21,6 +33,9 @@ def validate_procurement_lines(lines, ceiling):
 
         if not mode_of_procurement:
             raise ValidationError(f"{line_prefix}: Mode of procurement is required.")
+        
+        if mode_of_procurement not in valid_modes:
+            raise ValidationError(f"{line_prefix}: Invalid mode of procurement.")
 
         if not entries:
             raise ValidationError(f"{line_prefix}: At least one item entry is required.")
@@ -36,18 +51,28 @@ def validate_procurement_lines(lines, ceiling):
             entry_prefix = f"{line_prefix} - Entry {entry_index}"
 
             item_id = entry.get("item_id")
-            quantity = entry.get("quantity")
             date_needed = entry.get("date_needed")
+            remarks = entry.get("remarks", "").strip()
 
             if not item_id:
                 raise ValidationError(f"{entry_prefix}: Item is required.")
 
-            if not quantity or int(quantity) <= 0:
-                raise ValidationError(f"{entry_prefix}: Quantity must be greater than zero.")
+            try:
+                quantity = int(entry.get("quantity"))
+
+                if quantity <= 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                raise ValidationError(f"{entry_prefix}: Quantity must be a positive integer and greater than zero.")
 
             if not date_needed:
                 raise ValidationError(f"{entry_prefix}: Date needed is required.")
+            
+            parsed_date = parse_date(date_needed, entry_prefix)
 
+            if len(remarks) > 500:
+                raise ValidationError(f"{entry_prefix}: Remarks must not exceed 500 characters.")
+            
             try:
                 item = Item.objects.get(pk=item_id, item_code=item_code)
             except Item.DoesNotExist:
@@ -63,7 +88,7 @@ def validate_procurement_lines(lines, ceiling):
                 "item": item,
                 "quantity": int(quantity),
                 "unit_cost_snapshot": unit_cost_snapshot,
-                "date_needed": date_needed,
+                "date_needed": parsed_date,
                 "remarks": entry.get("remarks", "").strip(),
             })
 

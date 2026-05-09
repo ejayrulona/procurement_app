@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PPMPForm
-from .models import ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry
+from .models import ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry, ModeOfProcurement
 from .validators import validate_procurement_lines
 from apps.users.decorators import admin_required, any_admin_required, office_required
 
@@ -83,6 +83,7 @@ def ppmp_create(request):
     context = {
         "form": form,
         "office_profile": request.user.office_profile,
+        "mode_of_procurement": ModeOfProcurement.choices
     }
 
     return render(request, "ppmp/create-ppmp.html", context)
@@ -139,7 +140,7 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
-def approve_ppmp(request):
+def approve_ppmp(request, id):
     pass
 
 

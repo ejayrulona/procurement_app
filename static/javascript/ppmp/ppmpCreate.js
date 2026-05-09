@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
         activeLineIndex: 0, // Currently visible line tab
     };
 
-    // ─── DOM References ───────────────────────────────────────────────────────
+    // DOM References 
 
     const lineContainer = document.getElementById("lineContainer");
     const lineTabs = document.getElementById("lineTabs");
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseUrl = "/inventory/api";
     const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-    // ─── Line Management ──────────────────────────────────────────────────────
+    // Line Management
 
     function createLine() {
         const lineIndex = state.lines.length;
@@ -35,6 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const panel = linePanelTemplate.content.cloneNode(true).querySelector(".line-panel");
         panel.dataset.lineIndex = lineIndex;
         panel.querySelector(".line-number").textContent = lineIndex + 1;
+
+        const choices = JSON.parse(document.getElementById('procurement-choices').textContent);
+        const select = panel.querySelector('.mode-of-procurement');
+        choices.forEach(([value, label]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            select.appendChild(option);
+        });
 
         // Wire up unique datalist id for this line's general description
         const gdInput = panel.querySelector(".general-description-input");
@@ -363,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.ppmp_id) {
-                    window.location.href = `/ppmp/detailed-view/${data.ppmp_id}/`;
+                    window.location.href = `/ppmp/${data.ppmp_id}/`;
                 } else {
                     alert(data.error || "Submission failed. Please check your inputs.");
                 }
