@@ -180,18 +180,8 @@ class AnnualProcurementPlan(models.Model):
         return f"APP - FY{self.fiscal_year}"
     
     @property
-    def total_amount(self):
-        return sum(entry.total for entry in self.app_entries.all())
-    
-    @property
     def grand_total(self):
-        return sum(
-            line.total_amount
-            for entry in self.app_entries.prefetched_related(
-                "ppmp__procrement_lines__line_entries__item"
-            ).all()
-            for line in entry.ppmp.procurement_lines.all()
-        )
+        return sum(entry.total for entry in self.app_entries.all())
     
     @property
     def grand_total_mooe(self):
