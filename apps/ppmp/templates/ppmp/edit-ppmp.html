@@ -14,398 +14,325 @@
         <div class="w-24 h-1 mx-auto mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
     </div>
 
-    <form id="ppmpForm" method="post" action="#">
-        {% csrf_token %}
+        <form id="ppmpForm" data-action="{% url 'ppmp:ppmp_edit' ppmp.id%}" class="space-y-6">
+            {% csrf_token %}
 
-        <!-- ========== BASIC INFORMATION (prefilled with sample data) ========== -->
-        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
-                        <span class="text-sm font-bold text-red-600">1</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800">Basic Information</h2>
-                        <p class="text-xs text-gray-500">Classification, funding, and office details</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6">
-                <!-- Office Info - read only -->
-                <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
-                    <p class="text-sm text-gray-500">Submitting Office</p>
-                    <p class="font-semibold text-gray-800">College of Science and Mathematics</p>
-                    <p class="text-xs text-gray-400">Academic / Research</p>
-                </div>
-
-                <div class="mb-5">
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                        Project Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="project_name" value="Supply and Delivery of ICT Equipment and Office Supplies" 
-                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500" required>
-                </div>
-
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <!-- Classification -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Classification <span class="text-red-500">*</span>
-                        </label>
-                        <select name="classification" class="w-full border border-gray-300 rounded-lg p-2.5">
-                            <option value="">-- Select --</option>
-                            <option value="goods" selected>Goods</option>
-                            <option value="services">Services</option>
-                            <option value="infra">Infrastructure</option>
-                        </select>
-                    </div>
-
-                    <!-- Source of Funds -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Source of Funds <span class="text-red-500">*</span>
-                        </label>
-                        <select name="source_of_funds" class="w-full border border-gray-300 rounded-lg p-2.5">
-                            <option value="">-- Select --</option>
-                            <option value="gfs">General Fund - Subsidy</option>
-                            <option value="loc" selected>Local College Fund</option>
-                            <option value="trust">Trust Fund</option>
-                            <option value="income">Internally Generated Income</option>
-                        </select>
-                    </div>
-
-                    <!-- Fiscal Year -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Fiscal Year <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="fiscal_year" value="2026" 
-                               class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500" required>
-                    </div>
-
-                    <!-- Ceiling -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Ceiling Amount (₱) <span class="text-red-500">*</span>
-                        </label>
-                        <div class="relative">
-                            <span class="absolute text-gray-500 -translate-y-1/2 pointer-events-none left-3 top-1/2">₱</span>
-                            <input type="number" name="ceiling" step="0.01" value="600000.00" 
-                                   class="w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========== PROCUREMENT LINES ========== -->
-        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <div class="flex items-center justify-between">
+            <!-- ==================== BASIC INFORMATION ==================== -->
+            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center gap-3">
                         <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
-                            <span class="text-sm font-bold text-red-600">2</span>
+                            <span class="text-sm font-bold text-red-600">1</span>
                         </div>
                         <div>
-                            <h2 class="text-lg font-semibold text-gray-800">Procurement Lines</h2>
-                            <p class="text-xs text-gray-500">Add, remove or modify procurement lines</p>
+                            <h2 class="text-lg font-semibold text-gray-800">Basic Information</h2>
+                            <p class="text-xs text-gray-500">Classification, funding, and office details</p>
                         </div>
                     </div>
-                    <button type="button" id="addLineBtn"
-                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Add Procurement Line
-                    </button>
+                </div>
+
+                <div class="p-6">
+                    <!-- Office Info — read only, pulled from profile -->
+                    <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                        <p class="text-sm text-gray-500">Submitting Office</p>
+                        <p class="font-semibold text-gray-800" id="officeNameDisplay">
+                            {{ office_profile.office_name }}
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            {{ office_profile.get_pap_category_display }}
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <!-- Classification -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                                Classification <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.classification }}
+                        </div>
+
+                        <!-- Source of Funds -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                                Source of Funds <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.source_of_funds }}
+                        </div>
+
+                        <!-- Fiscal Year -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                                Fiscal Year <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.fiscal_year }}
+                        </div>
+
+                        <!-- Ceiling -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                                Ceiling Amount (₱) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute text-gray-500 -translate-y-1/2 pointer-events-none left-3 top-1/2">₱</span>
+                                {{ form.ceiling }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="p-6">
-                <!-- Line Tabs -->
-                <div id="lineTabs" class="flex flex-wrap gap-2 pb-3 mb-6 border-b border-gray-200">
-                    <button type="button" class="line-tab px-4 py-2 text-sm font-medium rounded-lg bg-red-600 text-white" data-line-index="0">
-                        Line 1
-                    </button>
-                    <button type="button" class="line-tab px-4 py-2 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200" data-line-index="1">
-                        Line 2
-                    </button>
-                </div>
-
-                <!-- Line Panels Container -->
-                <div id="lineContainer" class="space-y-6">
-                    <!-- LINE 1 – ICT EQUIPMENT -->
-                    <div class="line-panel" data-line-index="0">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-semibold text-gray-700">
-                                Procurement Line <span class="line-number">1</span>
-                            </h3>
-                            <button type="button" class="text-sm text-red-500 remove-line-btn hover:text-red-700">
-                                Remove Line
-                            </button>
-                        </div>
-
-                        <!-- Mode of Procurement -->
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Mode of Procurement <span class="text-red-500">*</span>
-                            </label>
-                            <select name="line_mode_1" class="mode-of-procurement w-full border border-gray-300 rounded-lg p-2.5">
-                                <option value="">-- Select Mode --</option>
-                                <option value="public_bidding" selected>Public Bidding</option>
-                                <option value="limited_source">Limited Source Bidding</option>
-                                <option value="direct_contracting">Direct Contracting</option>
-                                <option value="repeat_order">Repeat Order</option>
-                                <option value="shopping">Shopping</option>
-                                <option value="negotiated_emergency">Negotiated - Emergency Cases</option>
-                                <option value="negotiated_two_failed">Negotiated - Two Failed Biddings</option>
-                                <option value="negotiated_small_value">Negotiated - Small Value Procurement</option>
-                                <option value="negotiated_ngo">Negotiated - NGO Participation</option>
-                                <option value="negotiated_adjacent">Negotiated - Adjacent/Contiguous</option>
-                                <option value="negotiated_agency">Negotiated - Agency to Agency</option>
-                            </select>
-                        </div>
-
-                        <!-- General Description -->
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                General Description <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="line_description_1" value="Supply and Delivery of ICT Equipment"
-                                   class="general-description-input w-full border border-gray-300 rounded-lg p-2.5"
-                                   placeholder="Type to search general description" autocomplete="off">
-                            <datalist class="general-description-list"></datalist>
-                            <input type="hidden" class="item-code-id-input" value="1">
-                        </div>
-
-                        <!-- Auto-generated fields -->
-                        <div class="grid grid-cols-1 gap-5 mt-4 md:grid-cols-2">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Object Code</label>
-                                <input type="text" class="object-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500" 
-                                       readonly value="Supplies and Materials">
+            <!-- ==================== PROCUREMENT LINES ==================== -->
+            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
+                                <span class="text-sm font-bold text-red-600">2</span>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
-                                <input type="text" class="item-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500" 
-                                       readonly value="IT-001">
+                                <h2 class="text-lg font-semibold text-gray-800">Procurement Lines</h2>
+                                <p class="text-xs text-gray-500">Add one or more procurement lines</p>
                             </div>
                         </div>
-
-                        <!-- Added Items Table (prefilled) -->
-                        <div class="added-items-section mt-4">
-                            <label class="block mb-3 text-sm font-semibold text-gray-700">Added Items</label>
-                            <div class="overflow-x-auto">
-                                <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-lg">
-                                    <thead class="text-xs text-gray-600 uppercase bg-gray-50">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left"><input type="checkbox" class="select-all-entries-checkbox" checked></th>
-                                            <th class="px-4 py-3 text-left">Item Name</th>
-                                            <th class="px-4 py-3 text-left">Quantity</th>
-                                            <th class="px-4 py-3 text-left">Unit</th>
-                                            <th class="px-4 py-3 text-left">Unit Cost</th>
-                                            <th class="px-4 py-3 text-left">Total</th>
-                                            <th class="px-4 py-3 text-left">Date Needed</th>
-                                            <th class="px-4 py-3 text-left">Remarks</th>
-                                            <th class="px-4 py-3 text-left">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 added-items-tbody">
-                                        <tr class="added-item-row" data-item-id="101" data-unit-cost="45000.00">
-                                            <td class="px-4 py-3"><input type="checkbox" class="entry-checkbox" checked></td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell">Desktop Computer (i5, 16GB, 512GB SSD)</td>
-                                            <td class="px-4 py-3"><input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input" value="10" min="1"></td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cell">unit</td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cost-cell">₱ 45,000.00</td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 total-cell">₱ 450,000.00</td>
-                                            <td class="px-4 py-3"><input type="date" class="p-1 border border-gray-300 rounded date-needed-input" value="2026-06-30"></td>
-                                            <td class="px-4 py-3"><input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input" value="For new computer lab" placeholder="Optional"></td>
-                                            <td class="px-4 py-3"><button type="button" class="text-xs font-medium text-red-500 remove-entry-btn">Remove</button></td>
-                                        </tr>
-                                        <tr class="added-item-row" data-item-id="102" data-unit-cost="5500.00">
-                                            <td class="px-4 py-3"><input type="checkbox" class="entry-checkbox" checked></td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell">Ergonomic Office Chair</td>
-                                            <td class="px-4 py-3"><input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input" value="15" min="1"></td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cell">unit</td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cost-cell">₱ 5,500.00</td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 total-cell">₱ 82,500.00</td>
-                                            <td class="px-4 py-3"><input type="date" class="p-1 border border-gray-300 rounded date-needed-input" value="2026-07-15"></td>
-                                            <td class="px-4 py-3"><input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input" value="Faculty rooms upgrade" placeholder="Optional"></td>
-                                            <td class="px-4 py-3"><button type="button" class="text-xs font-medium text-red-500 remove-entry-btn">Remove</button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Line Total -->
-                            <div class="flex justify-end mt-3">
-                                <span class="text-sm font-semibold text-gray-700">
-                                    Line Total: <span class="text-red-600 line-total">₱ 532,500.00</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LINE 2 – OFFICE SUPPLIES (hidden initially) -->
-                    <div class="line-panel hidden" data-line-index="1">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-semibold text-gray-700">
-                                Procurement Line <span class="line-number">2</span>
-                            </h3>
-                            <button type="button" class="text-sm text-red-500 remove-line-btn hover:text-red-700">
-                                Remove Line
-                            </button>
-                        </div>
-
-                        <!-- Mode of Procurement -->
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Mode of Procurement <span class="text-red-500">*</span>
-                            </label>
-                            <select name="line_mode_2" class="mode-of-procurement w-full border border-gray-300 rounded-lg p-2.5">
-                                <option value="">-- Select Mode --</option>
-                                <option value="public_bidding">Public Bidding</option>
-                                <option value="limited_source">Limited Source Bidding</option>
-                                <option value="direct_contracting">Direct Contracting</option>
-                                <option value="repeat_order">Repeat Order</option>
-                                <option value="shopping" selected>Shopping</option>
-                                <option value="negotiated_emergency">Negotiated - Emergency Cases</option>
-                                <option value="negotiated_two_failed">Negotiated - Two Failed Biddings</option>
-                                <option value="negotiated_small_value">Negotiated - Small Value Procurement</option>
-                                <option value="negotiated_ngo">Negotiated - NGO Participation</option>
-                                <option value="negotiated_adjacent">Negotiated - Adjacent/Contiguous</option>
-                                <option value="negotiated_agency">Negotiated - Agency to Agency</option>
-                            </select>
-                        </div>
-
-                        <!-- General Description -->
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                General Description <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="line_description_2" value="Supply and Delivery of Various Office Supplies"
-                                   class="general-description-input w-full border border-gray-300 rounded-lg p-2.5"
-                                   placeholder="Type to search general description" autocomplete="off">
-                            <datalist class="general-description-list"></datalist>
-                            <input type="hidden" class="item-code-id-input" value="2">
-                        </div>
-
-                        <!-- Auto-generated fields -->
-                        <div class="grid grid-cols-1 gap-5 mt-4 md:grid-cols-2">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Object Code</label>
-                                <input type="text" class="object-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500" 
-                                       readonly value="Office Supplies">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
-                                <input type="text" class="item-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500" 
-                                       readonly value="OFF-001">
-                            </div>
-                        </div>
-
-                        <!-- Added Items Table (prefilled) -->
-                        <div class="added-items-section mt-4">
-                            <label class="block mb-3 text-sm font-semibold text-gray-700">Added Items</label>
-                            <div class="overflow-x-auto">
-                                <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-lg">
-                                    <thead class="text-xs text-gray-600 uppercase bg-gray-50">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left"><input type="checkbox" class="select-all-entries-checkbox" checked></th>
-                                            <th class="px-4 py-3 text-left">Item Name</th>
-                                            <th class="px-4 py-3 text-left">Quantity</th>
-                                            <th class="px-4 py-3 text-left">Unit</th>
-                                            <th class="px-4 py-3 text-left">Unit Cost</th>
-                                            <th class="px-4 py-3 text-left">Total</th>
-                                            <th class="px-4 py-3 text-left">Date Needed</th>
-                                            <th class="px-4 py-3 text-left">Remarks</th>
-                                            <th class="px-4 py-3 text-left">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 added-items-tbody">
-                                        <tr class="added-item-row" data-item-id="201" data-unit-cost="250.00">
-                                            <td class="px-4 py-3"><input type="checkbox" class="entry-checkbox" checked></td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell">A4 Bond Paper (80gsm, 500 sheets/ream)</td>
-                                            <td class="px-4 py-3"><input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input" value="50" min="1"></td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cell">ream</td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cost-cell">₱ 250.00</td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 total-cell">₱ 12,500.00</td>
-                                            <td class="px-4 py-3"><input type="date" class="p-1 border border-gray-300 rounded date-needed-input" value="2026-08-10"></td>
-                                            <td class="px-4 py-3"><input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input" value="One‑year supply" placeholder="Optional"></td>
-                                            <td class="px-4 py-3"><button type="button" class="text-xs font-medium text-red-500 remove-entry-btn">Remove</button></td>
-                                        </tr>
-                                        <tr class="added-item-row" data-item-id="202" data-unit-cost="180.00">
-                                            <td class="px-4 py-3"><input type="checkbox" class="entry-checkbox" checked></td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell">Ballpen (0.5mm, black, 1 doz/box)</td>
-                                            <td class="px-4 py-3"><input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input" value="20" min="1"></td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cell">box</td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cost-cell">₱ 180.00</td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 total-cell">₱ 3,600.00</td>
-                                            <td class="px-4 py-3"><input type="date" class="p-1 border border-gray-300 rounded date-needed-input" value="2026-08-15"></td>
-                                            <td class="px-4 py-3"><input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input" value="Centralized purchase" placeholder="Optional"></td>
-                                            <td class="px-4 py-3"><button type="button" class="text-xs font-medium text-red-500 remove-entry-btn">Remove</button></td>
-                                        </tr>
-                                        <tr class="added-item-row" data-item-id="203" data-unit-cost="8.50">
-                                            <td class="px-4 py-3"><input type="checkbox" class="entry-checkbox" checked></td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell">Folder (L-type, long, green)</td>
-                                            <td class="px-4 py-3"><input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input" value="100" min="1"></td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cell">piece</td>
-                                            <td class="px-4 py-3 text-gray-500 unit-cost-cell">₱ 8.50</td>
-                                            <td class="px-4 py-3 font-medium text-gray-800 total-cell">₱ 850.00</td>
-                                            <td class="px-4 py-3"><input type="date" class="p-1 border border-gray-300 rounded date-needed-input" value="2026-08-20"></td>
-                                            <td class="px-4 py-3"><input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input" value="For all offices" placeholder="Optional"></td>
-                                            <td class="px-4 py-3"><button type="button" class="text-xs font-medium text-red-500 remove-entry-btn">Remove</button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="flex justify-end mt-3">
-                                <span class="text-sm font-semibold text-gray-700">
-                                    Line Total: <span class="text-red-600 line-total">₱ 16,950.00</span>
-                                </span>
-                            </div>
-                        </div>
+                        <button type="button" id="addLineBtn"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add Procurement Line
+                        </button>
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div id="paginationControls" class="flex items-center justify-center gap-3 pt-4 mt-6 border-t border-gray-200">
-                    <button type="button" id="prevLineBtn" class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>← Previous</button>
-                    <span id="pageIndicator" class="text-sm text-gray-600">Line 1 of 2</span>
-                    <button type="button" id="nextLineBtn" class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Next →</button>
+                <div class="p-6">
+                    <!-- Line Tabs -->
+                    <div id="lineTabs" class="flex flex-wrap gap-2 pb-3 mb-6 border-b border-gray-200">
+                    </div>
+
+                    <!-- Line Panels Container -->
+                    <div id="lineContainer" class="space-y-6">
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="paginationControls" class="flex items-center justify-center gap-3 pt-4 mt-6 border-t border-gray-200">
+                        <button type="button" id="prevLineBtn"
+                            class="px-4 py-2 text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            ← Previous
+                        </button>
+                        <span id="pageIndicator" class="text-sm text-gray-600">Line 1 of 1</span>
+                        <button type="button" id="nextLineBtn"
+                            class="px-4 py-2 text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next →
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ========== TOTALS ========== -->
-        <div class="p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl">
+            <!-- ==================== TOTALS ==================== -->
+            <div class="p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-lg font-semibold text-gray-800">Total Across All Lines</span>
+                        <p class="mt-1 text-xs text-gray-500">Sum of all selected items across all procurement lines</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-3xl font-bold text-red-600" id="totalAllLines">₱ 0.00</p>
+                        <p id="ceilingWarning" class="hidden mt-1 text-xs text-red-500">
+                            ⚠ Total has exceeded the ceiling
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ACTIONS ==================== -->
+            <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
+                <button type="button" id="saveDraftBtn"
+                    class="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
+                    Save as Draft
+                </button>
+                <button type="button" id="submitBtn"
+                    class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
+                    Submit PPMP
+                </button>
+            </div>
+        </form>
+
+
+    <!-- ==================== LINE PANEL TEMPLATE ==================== -->
+    <!--
+        This template is cloned by JavaScript for each new procurement line.
+        It is hidden from the UI — JS fills in the data-line-index and renders it.
+    -->
+    {{ mode_of_procurement|json_script:"procurement-choices" }}
+    
+    <template id="linePanelTemplate">
+        <div class="space-y-5 line-panel" data-line-index="">
+
+            <!-- Line Header -->
             <div class="flex items-center justify-between">
+                <h3 class="text-base font-semibold text-gray-700">
+                    Procurement Line <span class="line-number"></span>
+                </h3>
+                <button type="button" class="text-sm text-red-500 remove-line-btn hover:text-red-700">
+                    Remove Line
+                </button>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Project Name <span class="text-red-500">*</span>
+                </label>
+                <input type="text"
+                    class="project-name-input w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition"
+                    placeholder="Auto-generated — you may edit this">
+                <p class="mt-1 text-xs text-gray-400">Auto-generated from your office and selected description</p>
+            </div>
+
+            <!-- Mode of Procurement -->
+            <div>
+                <label for="id-mode-of-procurement" class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Mode of Procurement <span class="text-red-500">*</span>
+                </label>
+                <select id="id-mode-of-procurement" class="mode-of-procurement w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition bg-white">
+                    <option value selected>---------</option> <!-- Might be removed in the future -->
+                </select>
+            </div>
+
+            <!-- General Description (ItemCode datalist) -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    General Description <span class="text-red-500">*</span>
+                </label>
+                <input type="text" class="general-description-input w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition"
+                    list="" placeholder="Type to search general description" autocomplete="off">
+                <datalist class="general-description-list"></datalist>
+                <input type="hidden" class="item-code-id-input">
+            </div>
+
+            <!-- Auto-generated fields -->
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
-                    <span class="text-lg font-semibold text-gray-800">Total Across All Lines</span>
-                    <p class="mt-1 text-xs text-gray-500">Sum of all selected items across all procurement lines</p>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Object Code</label>
+                    <input type="text" class="object-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" readonly>
                 </div>
-                <div class="text-right">
-                    <p class="text-3xl font-bold text-red-600" id="totalAllLines">₱ 549,450.00</p>
-                    <p id="ceilingWarning" class="hidden mt-1 text-xs text-red-500">⚠ Total has exceeded the ceiling</p>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
+                    <input type="text" class="item-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" readonly>
                 </div>
             </div>
-        </div>
 
-        <!-- ========== ACTIONS ========== -->
-        <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
-            <button type="submit" name="action" value="draft" class="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
-                Save as Draft
-            </button>
-            <button type="submit" name="action" value="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
-                Update PPMP
-            </button>
-        </div>
-    </form>
+            <!-- Available Items (populated after general description selected) -->
+            <div class="hidden available-items-section">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="block text-sm font-semibold text-gray-700">
+                        Available Items
+                    </label>
+                    <button type="button" class="add-selected-items-btn px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition">
+                        Add Selected Items
+                    </button>
+                </div>
+                <div class="p-3 space-y-2 border border-gray-200 rounded-lg available-items-list bg-gray-50">
+                    <!-- Items rendered here by JS -->
+                </div>
+            </div>
 
-    <!-- JavaScript templates (same as create page) -->
-    <template id="linePanelTemplate">...</template>
-    <template id="addedItemRowTemplate">...</template>
+            <!-- Added Items Table -->
+            <div class="hidden added-items-section">
+                <label class="block mb-3 text-sm font-semibold text-gray-700">Added Items</label>
+                <div class="overflow-x-auto">
+                    <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-lg">
+                        <thead class="text-xs text-gray-600 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left">
+                                    <input type="checkbox" class="select-all-entries-checkbox">
+                                </th>
+                                <th class="px-4 py-3 text-left">Item Name</th>
+                                <th class="px-4 py-3 text-left">Quantity</th>
+                                <th class="px-4 py-3 text-left">Unit</th>
+                                <th class="px-4 py-3 text-left">Unit Cost</th>
+                                <th class="px-4 py-3 text-left">Total</th>
+                                <th class="px-4 py-3 text-left">Date Needed</th>
+                                <th class="px-4 py-3 text-left">Remarks</th>
+                                <th class="px-4 py-3 text-left">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 added-items-tbody">
+                            <!-- Rows rendered here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Line Total -->
+                <div class="flex justify-end mt-3">
+                    <span class="text-sm font-semibold text-gray-700">
+                        Line Total: <span class="text-red-600 line-total">₱ 0.00</span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+
+    <!-- ==================== ADDED ITEM ROW TEMPLATE ==================== -->
+    <template id="addedItemRowTemplate">
+        <tr class="added-item-row" data-item-id="" data-unit-cost="">
+            <td class="px-4 py-3">
+                <input type="checkbox" class="entry-checkbox" checked>
+            </td>
+            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell"></td>
+            <td class="px-4 py-3">
+                <input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input focus:ring-2 focus:ring-red-500"
+                    min="1" value="1">
+            </td>
+            <td class="px-4 py-3 text-gray-500 unit-cell"></td>
+            <td class="px-4 py-3 text-gray-500 unit-cost-cell"></td>
+            <td class="px-4 py-3 font-medium text-gray-800 total-cell"></td>
+            <td class="px-4 py-3">
+                <input type="date" class="p-1 border border-gray-300 rounded date-needed-input focus:ring-2 focus:ring-red-500">
+            </td>
+            <td class="px-4 py-3">
+                <input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input focus:ring-2 focus:ring-red-500"
+                    placeholder="Optional">
+            </td>
+            <td class="px-4 py-3">
+                <button type="button" class="text-xs font-medium text-red-500 remove-entry-btn hover:text-red-700">
+                    Remove
+                </button>
+            </td>
+        </tr>
+    </template>
 </div>
 
-<script src="{% static 'javascript/ppmp/ppmpEdit.js' %}"></script>
+<script id="existing-lines-data" type="application/json">
+    [
+        {% for line in existing_lines %}
+        {
+            "item_code_id": {{ line.item_code.id }},
+            "item_code_code": "{{ line.item_code.code }}",
+            "object_code": "{{ line.item_code.object_code.code }}",
+            "general_description": "{{ line.item_code.general_description }}",
+            "mode_of_procurement": "{{ line.mode_of_procurement }}",
+            "project_name": "{{ line.project_name }}",
+            "order": {{ line.order }},
+            "entries": [
+                {% for entry in line.line_entries.all %}
+                {
+                    "item_id": {{ entry.item.id }},
+                    "item_name": "{{ entry.item.name }}",
+                    "unit": "{{ entry.item.unit }}",
+                    "unit_cost": "{{ entry.unit_cost_snapshot }}",
+                    "quantity": {{ entry.quantity }},
+                    "date_needed": "{{ entry.date_needed|date:'Y-m-d' }}",
+                    "remarks": "{{ entry.remarks }}"
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+</script>
+
+<script src="{% static 'javascript/ppmp/createPPMP.js' %}"></script>
 {% endblock %}

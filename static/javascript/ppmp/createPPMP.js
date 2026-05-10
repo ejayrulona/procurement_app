@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // DOM References 
 
+    const formAction = document.getElementById('ppmpForm').dataset.action;
+    console.log(formAction);
     const lineContainer = document.getElementById("lineContainer");
     const lineTabs = document.getElementById("lineTabs");
     const addLineBtn = document.getElementById("addLineBtn");
@@ -142,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${baseUrl}/get-all-item-codes/`)
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 datalist.innerHTML = "";
                 data.item_codes.forEach(itemCode => {
                     const option = document.createElement("option");
@@ -179,9 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ─── Items Fetch ──────────────────────────────────────────────────────────
 
-    function fetchItemsByItemCode(itemCodeId, panel) {
+    function fetchItemsByItemCode(itemCodeId, panel, callback = null) {
         fetch(`${baseUrl}/get-items-by-item-code/?item_code_id=${itemCodeId}`)
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 const section = panel.querySelector(".available-items-section");
                 const list = panel.querySelector(".available-items-list");
@@ -207,6 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 panel.querySelector(".add-selected-items-btn")
                     .addEventListener("click", () => addSelectedItems(panel));
+
+                if (callback) callback(); // Run after items are loaded
             });
     }
 
@@ -331,16 +334,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
             fiscal_year: getFiscalYear(),
             classification: classificationInput.value,
-            project_name: document.getElementById("id_project_name").value,
             source_of_funds: document.getElementById("id_source_of_funds").value,
             ceiling: ceilingInput.value,
             procurement_lines: state.lines.map((line, i) => {
                 const panel = line.panel;
                 const rows = panel.querySelectorAll(".added-item-row");
-
+                
                 return {
                     item_code_id: line.itemCodeId,
                     mode_of_procurement: panel.querySelector(".mode-of-procurement").value,
+                    project_name: panel.querySelector(".project-name-input").value,
                     order: i + 1,
                     entries: Array.from(rows)
                         .filter(row => row.querySelector(".entry-checkbox").checked)
@@ -361,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const payload = buildPayload();
 
-        fetch("/ppmp/create/", {
+        fetch(formAction, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -372,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.ppmp_id) {
-                    window.location.href = `/ppmp/${data.ppmp_id}/`;
+                    window.location.href = `/ppmp/ppmp/${data.ppmp_id}/`;
                 } else {
                     alert(data.error || "Submission failed. Please check your inputs.");
                 }
@@ -389,6 +392,111 @@ document.addEventListener("DOMContentLoaded", () => {
     addLineBtn.addEventListener("click", createLine);
     ceilingInput.addEventListener("input", checkCeilingExceeded);
 
-    // ─── Initialize with one line ─────────────────────────────────────────────
-    createLine();
+    // Edit Mode Initialization
+
+    function initializeFromExistingData() {
+        const dataScript = document.getElementById("existing-lines-data");
+        if (!dataScript) return; // Skip if not edit mode
+
+        const existingLines = JSON.parse(dataScript.textContent);
+        if (!existingLines.length) return;
+
+        existingLines.forEach((lineData, index) => {
+            createLine();
+
+            const line = state.lines[index];
+            const panel = line.panel;
+
+            // Wait for datalist to populate then restore values
+            // Poll until options are ready
+            const restoreInterval = setInterval(() => {
+                const datalist = panel.querySelector(".general-description-list");
+                const options = Array.from(datalist.options);
+
+                if (!options.length) return; // Mot loaded yet
+
+                clearInterval(restoreInterval);
+
+                // Match and select the general description
+                const match = options.find(
+                    option => option.dataset.id == lineData.item_code_id
+                );
+
+                if (match) {
+                    const gdInput = panel.querySelector(".general-description-input");
+                    gdInput.value = match.value;
+
+                    panel.querySelector(".item-code-id-input").value = lineData.item_code_id;
+                    panel.querySelector(".item-code-display").value = lineData.item_code_code;
+                    panel.querySelector(".object-code-display").value = lineData.object_code;
+
+                    line.itemCodeId = lineData.item_code_id;
+
+                    panel.querySelector(".mode-of-procurement").value = lineData.mode_of_procurement;
+                    panel.querySelector(".project-name-input").value = lineData.project_name;
+
+                    // Fetch items then restore entries
+                    fetchItemsByItemCode(lineData.item_code_id, panel, () => {
+                        restoreEntries(panel, lineData.entries, index);
+                    });
+                }
+            }, 100);
+        });
+    }
+
+    function restoreEntries(panel, entries, lineIndex) {
+        entries.forEach(entryData => {
+            const row = addedItemRowTemplate.content.cloneNode(true).querySelector(".added-item-row");
+            row.dataset.itemId = entryData.item_id;
+            row.dataset.unitCost = entryData.unit_cost;
+
+            row.querySelector(".item-name-cell").textContent = entryData.item_name;
+            row.querySelector(".unit-cell").textContent = entryData.unit;
+            row.querySelector(".unit-cost-cell").textContent =
+                `₱${parseFloat(entryData.unit_cost).toLocaleString()}`;
+
+            row.querySelector(".quantity-input").value = entryData.quantity;
+            row.querySelector(".date-needed-input").value = entryData.date_needed;
+            row.querySelector(".remarks-input").value = entryData.remarks;
+
+            updateRowTotal(row);
+
+            row.querySelector(".quantity-input").addEventListener("input", () => {
+                updateRowTotal(row);
+                recalculateLineTotal(panel);
+                recalculateGrandTotal();
+                checkCeilingExceeded();
+            });
+
+            row.querySelector(".remove-entry-btn").addEventListener("click", () => {
+                const entryIndex = state.lines[lineIndex].entries
+                    .findIndex(e => e.itemId == entryData.item_id);
+                if (entryIndex !== -1) state.lines[lineIndex].entries.splice(entryIndex, 1);
+
+                panel.querySelector(".added-items-tbody").removeChild(row);
+                recalculateLineTotal(panel);
+                recalculateGrandTotal();
+                checkCeilingExceeded();
+            });
+
+            panel.querySelector(".added-items-tbody").appendChild(row);
+            panel.querySelector(".added-items-section").classList.remove("hidden");
+
+            state.lines[lineIndex].entries.push({ itemId: String(entryData.item_id) });
+        });
+
+        recalculateLineTotal(panel);
+        recalculateGrandTotal();
+        checkCeilingExceeded();
+    }
+
+    // Initialize
+
+    const isEditMode = !!document.getElementById("existing-lines-data");
+
+    if (isEditMode) {
+        initializeFromExistingData();
+    } else {
+        createLine();
+    }
 });

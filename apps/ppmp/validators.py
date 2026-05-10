@@ -26,6 +26,7 @@ def validate_procurement_lines(lines, ceiling):
 
         item_code_id = line.get("item_code_id")
         mode_of_procurement = line.get("mode_of_procurement")
+        project_name = line.get("project_name", "").strip()
         entries = line.get("entries", [])
 
         if not item_code_id:
@@ -36,6 +37,12 @@ def validate_procurement_lines(lines, ceiling):
         
         if mode_of_procurement not in valid_modes:
             raise ValidationError(f"{line_prefix}: Invalid mode of procurement.")
+        
+        if not project_name:
+            raise ValidationError(f"{line_prefix}: Project name is required.")
+        
+        if len(project_name) > 200:
+            raise ValidationError(f"{line_prefix}: Project name must not exceed 200 characters.")
 
         if not entries:
             raise ValidationError(f"{line_prefix}: At least one item entry is required.")
@@ -95,6 +102,7 @@ def validate_procurement_lines(lines, ceiling):
         cleaned_lines.append({
             "item_code": item_code,
             "mode_of_procurement": mode_of_procurement,
+            "project_name": project_name,
             "order": line_index,
             "entries": cleaned_entries,
         })

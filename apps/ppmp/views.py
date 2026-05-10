@@ -52,6 +52,7 @@ def ppmp_create(request):
                         ppmp=ppmp,
                         item_code=line_data["item_code"],
                         mode_of_procurement=line_data["mode_of_procurement"],
+                        project_name=line_data["project_name"],
                         order=line_data["order"],
                     )
 
@@ -69,7 +70,7 @@ def ppmp_create(request):
 
         except Exception as error:
             return JsonResponse(
-                {"error": error},
+                {"error": "An error occurred while saving. Please try again."},
                 status=500
             )
 
@@ -140,6 +141,88 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
+def ppmp_edit(request, id):
+    ppmp = get_object_or_404(
+        ProcurementProjectManagementPlan.objects.select_related("office_profile"),
+        pk=id
+    )
+
+    if request.method == "POST":
+        try:
+            payload = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON payload"}, status=400)
+        
+        form = PPMPForm(payload, instance=ppmp)
+
+        if not form.is_valid():
+            return JsonResponse({"errors": form.errors}, status=400)
+        
+        ceiling = form.cleaned_data["ceiling"]
+        raw_lines = payload.get("procurement_lines", [])
+
+        try:
+            cleaned_lines = validate_procurement_lines(raw_lines, ceiling)
+        except ValidationError as error:
+            return JsonResponse({"error": error.message}, status=400)
+        
+        try:
+            with transaction.atomic():
+                ppmp = form.save(commit=False)
+                ppmp.save()
+
+                # Delete existing lines — entries cascade automatically
+                ppmp.procurement_lines.all().delete()
+
+                # Recreate lines and entries fresh
+                for line_data in cleaned_lines:
+                    line = ProcurementLine.objects.create(
+                        ppmp=ppmp,
+                        item_code=line_data["item_code"],
+                        mode_of_procurement=line_data["mode_of_procurement"],
+                        project_name=line_data["project_name"],
+                        order=line_data["order"],
+                    )
+                    ProcurementLineEntry.objects.bulk_create([
+                        ProcurementLineEntry(
+                            procurement_line=line,
+                            item=entry["item"],
+                            quantity=entry["quantity"],
+                            unit_cost_snapshot=entry["unit_cost_snapshot"],
+                            date_needed=entry["date_needed"],
+                            remarks=entry["remarks"],
+                        )
+                        for entry in line_data["entries"]
+                    ])
+
+        except Exception as error:
+            return JsonResponse(
+                {"error": "An error occurred while saving. Please try again."},
+                status=500
+            )
+
+        return JsonResponse({
+            "message": "PPMP updated successfully.",
+            "ppmp_id": ppmp.pk,
+        }, status=200)
+
+    existing_lines = ppmp.procurement_lines.prefetch_related(
+        "line_entries__item__item_code__object_code"
+    ).all()
+
+    form = PPMPForm(instance=ppmp)
+
+    context = {
+        "form": form,
+        "ppmp": ppmp,
+        "office_profile": ppmp.office_profile,
+        "mode_of_procurement": ModeOfProcurement.choices,
+        "existing_lines": existing_lines,
+    }
+
+    return render(request, "ppmp/edit-ppmp.html", context)
+
+
 def approve_ppmp(request, id):
     pass
 
@@ -155,9 +238,3 @@ def app_list(request):
 
 def app(request):
     return render(request, "ppmp/app.html")
-
-def create_ppmp(request):
-    return render(request, "ppmp/create-ppmp.html")
-
-def edit_ppmp(request):
-    return render(request, "ppmp/edit-ppmp.html")

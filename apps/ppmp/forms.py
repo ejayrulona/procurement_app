@@ -4,7 +4,7 @@ from .models import ProcurementProjectManagementPlan
 class PPMPForm(forms.ModelForm):
     class Meta:
         model = ProcurementProjectManagementPlan
-        fields = ("classification", "source_of_funds", "fiscal_year", "project_name", "ceiling")
+        fields = ("classification", "source_of_funds", "fiscal_year", "ceiling")
         widgets = {
             "classification": forms.Select(
                 attrs={
@@ -20,11 +20,6 @@ class PPMPForm(forms.ModelForm):
                 attrs={
                     "class": "w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
                     "readonly": True
-                }
-            ),
-            "project_name": forms.TextInput(
-                attrs={
-                    "class": "w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white"
                 }
             ),
             "ceiling": forms.NumberInput(
