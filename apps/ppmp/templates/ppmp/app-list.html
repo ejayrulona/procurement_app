@@ -7,11 +7,22 @@
 
 {% block content %}
 <div class="container px-4 py-6 mx-auto max-w-7xl">
-    <!-- Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
-        <p class="mt-1 text-sm text-gray-500">View and manage all consolidated Annual Procurement Plans</p>
-        <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
+    <!-- Header with Create APP Button -->
+    <div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
+            <p class="mt-1 text-sm text-gray-500">View and manage all consolidated Annual Procurement Plans</p>
+            <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="window.location.href='#'" 
+                    class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Create APP
+            </button>
+        </div>
     </div>
 
     <!-- Search Bar (now only searches by Fiscal Year) -->
