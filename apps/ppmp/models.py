@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 
 class ModeOfProcurement(models.TextChoices):
-    COMPETETIVE_BIDDING = "competetive_bidding", "Competetive Bidding"
+    COMPETETIVE_BIDDING = "competitive_bidding", "Competitive Bidding"
     LIMITED_SOURCE_BIDDING = "limited_source_bidding", "Limited Source Bidding"
     DIRECT_CONTRACTING = "direct_contracting", "Direct Contracting"
     REPEAT_ORDER = "repeat_order", "Repeat Order"
@@ -38,12 +38,11 @@ class ProcurementProjectManagementPlan(models.Model):
     office_profile = models.ForeignKey("users.OfficeProfile", on_delete=models.PROTECT, related_name="ppmps")
     fiscal_year = models.PositiveIntegerField()
     classification = models.CharField(max_length=30, choices=Classification.choices)
-    project_name = models.CharField(max_length=200)
     source_of_funds = models.CharField(max_length=30, choices=SourceOfFunds.choices)
     ceiling = models.DecimalField(max_digits=14, decimal_places=2)
     submitted_by = models.ForeignKey("users.User", on_delete=models.PROTECT, related_name="submitted_ppmps")
-    reviewed_by = models.ForeignKey("users.User", on_delete=models.PROTECT, null=True, blank=True, related_name="reviewed_ppmps")
-    status = models.CharField(max_length=15, choices=Status.choices)
+    reviewed_by = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_ppmps")
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
     remarks = models.TextField(blank=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -95,6 +94,7 @@ class ProcurementLine(models.Model):
     ppmp = models.ForeignKey(ProcurementProjectManagementPlan, on_delete=models.CASCADE, related_name="procurement_lines")
     item_code = models.ForeignKey("inventory.ItemCode", on_delete=models.PROTECT, related_name="procurement_lines")
     mode_of_procurement = models.CharField(max_length=30, choices=ModeOfProcurement.choices)
+    project_name = models.CharField(max_length=200)
     order = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -150,3 +150,92 @@ class ProcurementLineEntry(models.Model):
         if not self.unit_cost_snapshot:
             self.unit_cost_snapshot = self.item.unit_cost
         super().save(*args, **kwargs)
+
+
+class AnnualProcurementPlan(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        PUBLISHED = "published", "Published"
+
+    fiscal_year = models.PositiveIntegerField()
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.DRAFT)
+    prepared_by = models.ForeignKey("users.User", on_delete=models.PROTECT, related_name="prepared_apps")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Annual Project Plan"
+        verbose_name_plural = "Annual Project Plans"
+        ordering = ["-fiscal_year"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["fiscal_year"],
+                name="unique_app_per_fiscal_year"
+            )
+        ]
+
+    
+    def __str__(self):
+        return f"APP - FY{self.fiscal_year}"
+    
+    @property
+    def total_amount(self):
+        return sum(entry.total for entry in self.app_entries.all())
+    
+    @property
+    def grand_total(self):
+        return sum(
+            line.total_amount
+            for entry in self.app_entries.prefetched_related(
+                "ppmp__procrement_lines__line_entries__item"
+            ).all()
+            for line in entry.ppmp.procurement_lines.all()
+        )
+    
+    @property
+    def grand_total_mooe(self):
+        return sum(entry.mooe for entry in self.app_entries.all())
+    
+    @property
+    def grand_total_co(self):
+        return sum(entry.co for entry in self.app_entries.all())
+    
+
+class AnnualProcurementPlanEntry(models.Model):
+    app = models.ForeignKey(AnnualProcurementPlan, on_delete=models.CASCADE, related_name="app_entries")
+    ppmp = models.OneToOneField(ProcurementProjectManagementPlan, on_delete=models.PROTECT, related_name="app_entry")
+
+    # Schedule for Each Procurement Activity
+    advertisement_date = models.DateField(null=True, blank=True, verbose_name="Advertisement/Posting of IB/REI")
+    submission_date = models.DateField(null=True, blank=True, verbose_name="Submission/Opening of Bids")
+    notice_of_award_date = models.DateField(null=True, blank=True, verbose_name="Notice of Award")
+    contract_signing_date = models.DateField(null=True, blank=True, verbose_name="Contract Signing")
+
+    # Estimated Budget Breakdown
+    mooe = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="MOOE")
+    co = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="CO")
+
+    remarks = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "APP Entry"
+        verbose_name_plural = "APP Entries"
+        ordering = ["created_at"]
+
+
+    def __str__(self):
+        return f"{self.app} | {self.ppmp.office_profile.office_name}"
+    
+    @property
+    def total(self):
+        return self.mooe + self.co
+    
+    @property
+    def pmo_end_user(self):
+        return self.ppmp.office_profile.office_name
+    
+    @property
+    def source_of_funds(self):
+        return self.ppmp.get_source_of_funds.display()
