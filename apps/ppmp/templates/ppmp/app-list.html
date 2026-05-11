@@ -48,25 +48,50 @@
                     </tr>
                 </thead>
                 <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
-                    <!-- Rows populated dynamically -->
+                    <!-- SAMPLE DATA IN HTML - STATIC ROWS -->
+                    <tr class="hover:bg-gray-50 transition" data-year="2026" data-id="1">
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">2026</td>
+                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">₱ 47,000,000.00</td>
+                        <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                            <a href="{% url 'ppmp:app' 1 %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP" onclick="editApp(1); return false;">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition" data-year="2025" data-id="2">
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">2025</td>
+                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">₱ 96,000,000.00</td>
+                        <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                            <a href="{% url 'ppmp:app' 2 %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP" onclick="editApp(2); return false;">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden py-12 text-center">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="mb-2 text-lg font-medium text-gray-900">No APP records found</h3>
-            <p class="text-gray-500">APP entries are generated from approved PPMPs.</p>
         </div>
 
         <!-- Pagination -->
         <div class="px-6 py-4 bg-white border-t border-gray-200">
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium" id="showingStart">0</span> to <span class="font-medium" id="showingEnd">0</span> of <span class="font-medium" id="totalCount">0</span> results
+                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">5</span> of <span class="font-medium" id="totalCount">5</span> results
                 </div>
                 <div class="flex gap-2">
                     <button id="prevPage"
@@ -98,7 +123,7 @@
             
             <div class="p-4 mb-4 border border-blue-200 bg-blue-50 rounded-xl">
                 <p class="text-sm text-blue-800">
-                    Create APP for <strong>FY: {{ fiscal_year }} </strong> ?.
+                    Create APP for <strong>FY: {{ fiscal_year }} </strong>.
                 </p>
             </div>
             
@@ -119,37 +144,9 @@
     </div>
 </div>
 
-<!-- Modal for viewing details (removed unwanted fields) -->
-<div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeViewModal()"></div>
-        <div class="relative w-full max-w-lg mx-auto my-8 transition-all transform bg-white shadow-xl rounded-2xl">
-            <div class="bg-white">
-                <div class="px-6 py-4 border-b border-red-100 bg-red-50 rounded-t-2xl">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-800">APP Details</h3>
-                        <button type="button" onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="px-6 py-5 space-y-3" id="modalContent">
-                    <!-- Dynamic content (no title, end-user, mode) -->
-                </div>
-                <div class="flex justify-end px-6 py-4 bg-gray-50 rounded-b-2xl">
-                    <button type="button" onclick="closeViewModal()" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     const createAPPBtn = document.getElementById('create-app-btn');
     const createAPPModal = document.getElementById('create-app-modal');
-    const createAPPModalContent = document.getElementById('create-app-modal-content');
     const cancelCreateAPPBtn = document.getElementById('cancel-create-app-btn');
 
     function openCreateModal() {
@@ -168,197 +165,89 @@
             closeCreateModal();
         }
     });
-
-    // Sample APP Data (static for admin preview)
-    let appData = [
-        {
-            id: "APP-2026-001",
-            year: "2026",
-            title: "Construction of the College of Science and Mathematics Laboratory",
-            end_user: "ADMIN",
-            mode: "Competitive Bidding",
-            total_budget: 47000000,
-            status: "Approved",
-            remarks: "Major infrastructure project under GOP"
-        },
-        {
-            id: "APP-2026-002",
-            year: "2025",
-            title: "Construction of the College of Liberal Arts School Infrastructure",
-            end_user: "ADMIN",
-            mode: "Competitive Bidding",
-            total_budget: 96000000,
-            status: "Approved",
-            remarks: "New building construction"
-        },
-        {
-            id: "APP-2026-003",
-            year: "2024",
-            title: "Construction of the College of Engineering School Infrastructure",
-            end_user: "ADMIN",
-            mode: "Competitive Bidding",
-            total_budget: 82000000,
-            status: "Approved",
-            remarks: "Engineering complex"
-        },
-        {
-            id: "APP-2026-004",
-            year: "2023",
-            title: "Procurement of SECURITY SERVICES for the University",
-            end_user: "ADMIN",
-            mode: "Competitive Bidding",
-            total_budget: 17300000,
-            status: "Approved",
-            remarks: "Annual security services"
-        },
-        {
-            id: "APP-2026-005",
-            year: "2022",
-            title: "Supply and Delivery of Various IT Equipment (MISTO)",
-            end_user: "MISTO",
-            mode: "Competitive Bidding",
-            total_budget: 1272200,
-            status: "Approved",
-            remarks: "Digital learning platform"
-        }
-    ];
-
-    function getStatusBadge(status) {
-        const badges = {
-            'Approved': 'bg-green-100 text-green-800',
-            'Pending': 'bg-yellow-100 text-yellow-800',
-            'Draft': 'bg-gray-100 text-gray-800'
-        };
-        const badgeClass = badges[status] || 'bg-gray-100 text-gray-800';
-        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span>`;
+    
+    // Edit function - redirects to Django edit URL with the id parameter
+    function editApp(id) {
+        window.location.href = "#;
     }
 
-    function formatMoney(amount) {
-        return '₱ ' + amount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
-
+    // Pagination and search functionality on HTML table rows
     let currentPage = 1;
     const rowsPerPage = 5;
-    let filteredData = [];
+    let allRows = [];
+    let filteredRows = [];
 
-    function renderTable() {
-        const tableBody = document.getElementById('appTableBody');
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageData = filteredData.slice(start, end);
-
-        if (filteredData.length === 0) {
-            tableBody.innerHTML = '';
-            document.getElementById('emptyState').classList.remove('hidden');
-            document.querySelector('table').classList.add('hidden');
-            document.getElementById('showingStart').textContent = 0;
-            document.getElementById('showingEnd').textContent = 0;
-            document.getElementById('totalCount').textContent = 0;
-            return;
-        }
-
-        document.getElementById('emptyState').classList.add('hidden');
-        document.querySelector('table').classList.remove('hidden');
-
-        tableBody.innerHTML = '';
-        pageData.forEach(item => {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50 transition';
-            // Actions: view (eye) and edit (pencil)
-            const actionsHtml = `
-                <a href="#" class="text-blue-600 transition hover:text-blue-800" title="View Details">
-                    <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </a>
-                <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP">
-                    <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </a>
-            `;
-            row.innerHTML = `
-                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.year)}</td>
-                <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">${formatMoney(item.total_budget)}</td>
-                <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">${actionsHtml}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-
-        document.getElementById('showingStart').textContent = filteredData.length > 0 ? start + 1 : 0;
-        document.getElementById('showingEnd').textContent = Math.min(end, filteredData.length);
-        document.getElementById('totalCount').textContent = filteredData.length;
-
-        const prevBtn = document.getElementById('prevPage');
-        const nextBtn = document.getElementById('nextPage');
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = end >= filteredData.length;
+    // Get all data rows from the table
+    function getAllRows() {
+        const tbody = document.getElementById('appTableBody');
+        return Array.from(tbody.querySelectorAll('tr'));
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function applySearch() {
+    // Filter rows based on search input
+    function filterRows() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        // Only filter by fiscal year (since other columns are removed)
-        filteredData = appData.filter(item => {
-            return item.year.includes(searchTerm);
+        filteredRows = allRows.filter(row => {
+            const yearCell = row.querySelector('td:first-child');
+            return yearCell && yearCell.textContent.toLowerCase().includes(searchTerm);
         });
         currentPage = 1;
         renderTable();
     }
 
-    // Modal view with removed fields (title, end_user, mode)
-    function viewDetails(id) {
-        const item = appData.find(i => i.id === id);
-        if (item) {
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = `
-                <div><strong class="text-gray-700">Fiscal Year:</strong><br>${escapeHtml(item.year)}</div>
-                <div><strong class="text-gray-700">Total ABC:</strong><br>${formatMoney(item.total_budget)}</div>
-                <div><strong class="text-gray-700">Status:</strong><br>${escapeHtml(item.status)}</div>
-                <div><strong class="text-gray-700">Remarks:</strong><br>${escapeHtml(item.remarks) || '—'}</div>
-            `;
-            document.getElementById('viewModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        } else {
-            alert('APP details not found.');
-        }
+    // Render the current page
+    function renderTable() {
+        const tbody = document.getElementById('appTableBody');
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+
+        // Clear and re-append rows
+        tbody.innerHTML = '';
+        pageRows.forEach(row => {
+            tbody.appendChild(row.cloneNode(true));
+        });
+
+        // Update pagination info
+        const totalCount = filteredRows.length;
+        const showingStart = totalCount > 0 ? start + 1 : 0;
+        const showingEnd = Math.min(end, totalCount);
+
+        document.getElementById('showingStart').textContent = showingStart;
+        document.getElementById('showingEnd').textContent = showingEnd;
+        document.getElementById('totalCount').textContent = totalCount;
+
+        // Update pagination buttons
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = end >= totalCount;
     }
 
-    function closeViewModal() {
-        document.getElementById('viewModal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
+    // Event listeners for pagination
     document.getElementById('prevPage').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
             renderTable();
         }
     });
+
     document.getElementById('nextPage').addEventListener('click', () => {
-        const maxPage = Math.ceil(filteredData.length / rowsPerPage);
+        const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
         if (currentPage < maxPage) {
             currentPage++;
             renderTable();
         }
     });
-    document.getElementById('searchInput').addEventListener('input', applySearch);
 
-    filteredData = [...appData];
+    // Search input listener
+    document.getElementById('searchInput').addEventListener('input', filterRows);
+
+    // Initialize
+    allRows = getAllRows();
+    filteredRows = [...allRows];
     renderTable();
 
-    // Expose functions globally if needed
-    window.viewDetails = viewDetails;
-    window.closeViewModal = closeViewModal;
+    // Expose functions globally
+    window.editApp = editApp;
 </script>
 {% endblock %}
