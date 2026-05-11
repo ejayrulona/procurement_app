@@ -146,7 +146,7 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
-@any_admin_required
+@admin_required
 def ppmp_edit(request, id):
     ppmp = get_object_or_404(
         ProcurementProjectManagementPlan.objects.select_related("office_profile"),
@@ -375,10 +375,10 @@ def app_list(request):
 @any_admin_required
 def app(request, id):
     app = get_object_or_404(
-        AnnualProcurementPlanEntry.objects.select_related(
+        AnnualProcurementPlan.objects.select_related(
             "prepared_by"
         ).prefetch_related(
-            "app_entries"
+            "app_entries",
             "app_entries__ppmp__office_profile",
             "app_entries__ppmp__procurement_lines__item_code__object_code",
             "app_entries__ppmp__procurement_lines__line_entries__item"
