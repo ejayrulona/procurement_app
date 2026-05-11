@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.activity_logs",
     "apps.ppmp",
+    "apps.notification"
 ]
 
 MIDDLEWARE = [
