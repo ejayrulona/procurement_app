@@ -75,7 +75,7 @@
                             {% for line in entry.ppmp.procurement_lines.all  %}
                             <tr class="transition hover:bg-gray-50">
                                 <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">{{ line.item_code.object_code.code }}</td>
-                                <td class="px-3 py-3 font-medium text-gray-800 border-r">{{ line.project_name }}</td>
+                                <td class="px-3 py-3 font-medium text-gray-800 border-r">{{ line.procurement_program }}</td>
                                 <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">{{ line.item_code.object_code.code }}</td>
                                 <td class="px-3 py-3 text-gray-600 border-r">{{ entry.pmo_end_user }}</td>
                                 <td class="px-3 py-3 text-gray-600 border-r">{{ line.get_mode_of_procurement_display }}</td>

@@ -57,7 +57,7 @@ def ppmp_create(request):
                         ppmp=ppmp,
                         item_code=line_data["item_code"],
                         mode_of_procurement=line_data["mode_of_procurement"],
-                        project_name=line_data["project_name"],
+                        procurement_program=line_data["procurement_program"],
                         order=line_data["order"],
                     )
 
@@ -146,7 +146,7 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
-@admin_required
+@any_admin_required
 def ppmp_edit(request, id):
     ppmp = get_object_or_404(
         ProcurementProjectManagementPlan.objects.select_related("office_profile"),
@@ -186,7 +186,7 @@ def ppmp_edit(request, id):
                         ppmp=ppmp,
                         item_code=line_data["item_code"],
                         mode_of_procurement=line_data["mode_of_procurement"],
-                        project_name=line_data["project_name"],
+                        procurement_program=line_data["procurement_program"],
                         order=line_data["order"],
                     )
                     ProcurementLineEntry.objects.bulk_create([

@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // DOM References 
 
     const formAction = document.getElementById('ppmpForm').dataset.action;
-    console.log(formAction);
     const lineContainer = document.getElementById("lineContainer");
     const lineTabs = document.getElementById("lineTabs");
     const addLineBtn = document.getElementById("addLineBtn");
@@ -138,8 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
         nextLineBtn.disabled = current === total - 1;
     }
 
-    // ─── General Description Fetch ────────────────────────────────────────────
-
     function fetchGeneralDescriptions(input, datalist, panel, lineIndex) {
         fetch(`${baseUrl}/get-all-item-codes/`)
             .then(res => res.json())
@@ -172,6 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
         panel.querySelector(".item-code-id-input").value = itemCodeId;
         panel.querySelector(".item-code-display").value = match.dataset.code;
         panel.querySelector(".object-code-display").value = match.dataset.objectCode;
+
+        const generalDescription = panel.querySelector(".general-description-input").value;
+        panel.querySelector(".procurement-program-input").value = `Procurement of various ${generalDescription} for ${officeNameDisplay}`;
 
         state.lines[lineIndex].itemCodeId = itemCodeId;
 
@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return {
                     item_code_id: line.itemCodeId,
                     mode_of_procurement: panel.querySelector(".mode-of-procurement").value,
-                    project_name: panel.querySelector(".project-name-input").value,
+                    procurement_program: panel.querySelector(".procurement-program-input").value,
                     order: i + 1,
                     entries: Array.from(rows)
                         .filter(row => row.querySelector(".entry-checkbox").checked)
@@ -433,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     line.itemCodeId = lineData.item_code_id;
 
                     panel.querySelector(".mode-of-procurement").value = lineData.mode_of_procurement;
-                    panel.querySelector(".project-name-input").value = lineData.project_name;
+                    panel.querySelector(".procurement-program-input").value = lineData.procurement_program;
 
                     // Fetch items then restore entries
                     fetchItemsByItemCode(lineData.item_code_id, panel, () => {

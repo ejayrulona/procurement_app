@@ -19,7 +19,6 @@ class PPMPForm(forms.ModelForm):
             "fiscal_year": forms.NumberInput(
                 attrs={
                     "class": "w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
-                    "readonly": True
                 }
             ),
             "ceiling": forms.NumberInput(

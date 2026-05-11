@@ -26,6 +26,7 @@ class ProcurementProjectManagementPlan(models.Model):
         FAP = "fap", "Foreign Assisted Project (FAP)"
         SPECIAL_ACCOUNT = "special_account", "Special Account"
         LOCAL_FUNDS = "local_funds", "Local Funds"
+        SPECIAL_TRUST_FUND = "special_trust_fund", "STF/101"
 
 
     class Status(models.TextChoices):
@@ -35,8 +36,14 @@ class ProcurementProjectManagementPlan(models.Model):
         FOR_REVISION = "for_revision", "For Revision"
 
 
+    class SubmissionType(models.TextChoices):
+        INDICATIVE = "indicative", "Indicative"
+        FINAL = "final", "Final"
+
+
     office_profile = models.ForeignKey("users.OfficeProfile", on_delete=models.PROTECT, related_name="ppmps")
     fiscal_year = models.PositiveIntegerField()
+    submission_type = models.CharField(max_length=15, choices=SubmissionType.choices, default=SubmissionType.INDICATIVE)
     classification = models.CharField(max_length=30, choices=Classification.choices)
     source_of_funds = models.CharField(max_length=30, choices=SourceOfFunds.choices)
     ceiling = models.DecimalField(max_digits=14, decimal_places=2)
@@ -94,7 +101,7 @@ class ProcurementLine(models.Model):
     ppmp = models.ForeignKey(ProcurementProjectManagementPlan, on_delete=models.CASCADE, related_name="procurement_lines")
     item_code = models.ForeignKey("inventory.ItemCode", on_delete=models.PROTECT, related_name="procurement_lines")
     mode_of_procurement = models.CharField(max_length=30, choices=ModeOfProcurement.choices)
-    project_name = models.CharField(max_length=200)
+    procurement_program = models.CharField(max_length=200)
     order = models.PositiveIntegerField(default=1)
 
     class Meta:
