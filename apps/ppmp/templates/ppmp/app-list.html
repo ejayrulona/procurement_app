@@ -15,7 +15,7 @@
             <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
         </div>
         <div class="flex gap-3">
-            <button onclick="window.location.href='#'" 
+            <button id="create-app-btn" 
                     class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition duration-200">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -85,6 +85,40 @@
     </div>
 </div>
 
+<div id="create-app-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden transition-all duration-300 bg-black/50">
+    <div class="w-full max-w-md p-6 mx-4 transition-all transform bg-white shadow-2xl rounded-2xl" id="create-app-modal-content">
+        <div class="text-center">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
+                <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            
+            <h3 class="mb-3 text-2xl font-bold text-gray-800">Create Annual Procurement Plan</h3>
+            
+            <div class="p-4 mb-4 border border-blue-200 bg-blue-50 rounded-xl">
+                <p class="text-sm text-blue-800">
+                    Create APP for <strong>FY: {{ fiscal_year }} </strong> ?.
+                </p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="cancel-create-app-btn" 
+                        class="flex-1 px-4 py-2 font-semibold text-gray-700 transition bg-gray-200 hover:bg-gray-300 rounded-xl">
+                    Cancel
+                </button>
+                <form method="post" action="{% url 'ppmp:app_create' %}">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl">
+                        Proceed to Registration
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for viewing details (removed unwanted fields) -->
 <div id="viewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4">
@@ -113,6 +147,28 @@
 </div>
 
 <script>
+    const createAPPBtn = document.getElementById('create-app-btn');
+    const createAPPModal = document.getElementById('create-app-modal');
+    const createAPPModalContent = document.getElementById('create-app-modal-content');
+    const cancelCreateAPPBtn = document.getElementById('cancel-create-app-btn');
+
+    function openCreateModal() {
+        createAPPModal.classList.remove('hidden');
+    }
+    
+    function closeCreateModal() {
+        createAPPModal.classList.add('hidden');
+    }
+    
+    createAPPBtn.addEventListener('click', openCreateModal);
+    cancelCreateAPPBtn.addEventListener('click', closeCreateModal);
+    
+    createAPPModal.addEventListener('click', event => {
+        if (event.target === createAPPModal) {
+            closeCreateModal();
+        }
+    });
+
     // Sample APP Data (static for admin preview)
     let appData = [
         {
@@ -210,7 +266,7 @@
             row.className = 'hover:bg-gray-50 transition';
             // Actions: view (eye) and edit (pencil)
             const actionsHtml = `
-                <a href="{% url 'ppmp:app' %}?id=${item.id}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                <a href="#" class="text-blue-600 transition hover:text-blue-800" title="View Details">
                     <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -224,8 +280,8 @@
             `;
             row.innerHTML = `
                 <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">${escapeHtml(item.year)}</td>
-                <td class="px-6 py-4 font-mono text-sm font-semibold text-gray-800 text-right whitespace-nowrap">${formatMoney(item.total_budget)}</td>
-                <td class="px-6 py-4 text-sm text-gray-500 text-center whitespace-nowrap">${actionsHtml}</td>
+                <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">${formatMoney(item.total_budget)}</td>
+                <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">${actionsHtml}</td>
             `;
             tableBody.appendChild(row);
         });

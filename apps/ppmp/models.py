@@ -228,4 +228,4 @@ class AnnualProcurementPlanEntry(models.Model):
     
     @property
     def source_of_funds(self):
-        return self.ppmp.get_source_of_funds.display()
+        return self.ppmp.get_source_of_funds_display()

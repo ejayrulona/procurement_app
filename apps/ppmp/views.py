@@ -2,11 +2,16 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PPMPForm
-from .models import ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry, ModeOfProcurement
+from .models import (
+    ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry, ModeOfProcurement,
+    AnnualProcurementPlan, AnnualProcurementPlanEntry    
+)
+from . utils import get_allowed_fiscal_years, get_default_fiscal_year
 from .validators import validate_procurement_lines
 from apps.users.decorators import admin_required, any_admin_required, office_required
 
@@ -141,6 +146,7 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
+@any_admin_required
 def ppmp_edit(request, id):
     ppmp = get_object_or_404(
         ProcurementProjectManagementPlan.objects.select_related("office_profile"),
@@ -223,18 +229,165 @@ def ppmp_edit(request, id):
     return render(request, "ppmp/edit-ppmp.html", context)
 
 
-def approve_ppmp(request, id):
-    pass
+@any_admin_required
+def ppmp_approve(request, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    ppmp = get_object_or_404(ProcurementProjectManagementPlan, pk=id)
+
+    if ppmp.status != ProcurementProjectManagementPlan.Status.PENDING:
+        return JsonResponse(
+            {"error": "Only pending PPMPs can be approved."},
+            status=400
+        )
+
+    # Check APP exists for this fiscal year
+    try:
+        app = AnnualProcurementPlan.objects.get(fiscal_year=ppmp.fiscal_year)
+    except AnnualProcurementPlan.DoesNotExist:
+        return JsonResponse(
+            {
+                "error": (
+                    f"No APP exists for FY: {ppmp.fiscal_year}. "
+                    "Please create an APP for this fiscal year before approving PPMPs."
+                )
+            },
+            status=400
+        )
+
+    try:
+        with transaction.atomic():
+            ppmp.status = ProcurementProjectManagementPlan.Status.APPROVED
+            ppmp.reviewed_by = request.user
+            ppmp.reviewed_at = timezone.now()
+            ppmp.save()
+
+            AnnualProcurementPlanEntry.objects.create(
+                app=app,
+                ppmp=ppmp,
+            )
+
+    except Exception:
+        return JsonResponse(
+            {"error": "An error occurred during approval."},
+            status=500
+        )
+
+    return JsonResponse({
+        "message": "PPMP approved and added to the Annual Procurement Plan.",
+        "ppmp_id": ppmp.id,
+        "app_id": app.id,
+    }, status=200)
 
 
 # could be revise_ppmp
-def decline_ppmp(request):
-    pass
+@any_admin_required
+def ppmp_decline(request, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    ppmp = get_object_or_404(
+        ProcurementProjectManagementPlan, pk=id
+    )
+
+    if ppmp.status != ProcurementProjectManagementPlan.Status.PENDING:
+        return JsonResponse(
+            {"error": "Only pending PPMPs can be declined."},
+            status=400
+        )
+
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    remarks = payload.get("remarks", "").strip()
+
+    if not remarks:
+        return JsonResponse(
+            {"error": "Remarks are required when declining a PPMP."},
+            status=400
+        )
+
+    ppmp.status = ProcurementProjectManagementPlan.Status.DECLINED
+    ppmp.reviewed_by = request.user
+    ppmp.reviewed_at = timezone.now()
+    ppmp.remarks = remarks
+    ppmp.save()
+
+    return JsonResponse({
+        "message": "PPMP declined.",
+        "ppmp_id": ppmp.id,
+    }, status=200)
+
+@admin_required
+def app_create(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    fiscal_year = get_default_fiscal_year()
+
+    allowed_years = get_allowed_fiscal_years()
+    if fiscal_year not in allowed_years:
+        return JsonResponse(
+            {"error": f"APP cannot be created for FY{fiscal_year} at this time."},
+            status=400
+        )
+
+    if AnnualProcurementPlan.objects.filter(fiscal_year=fiscal_year).exists():
+        return JsonResponse(
+            {"error": f"An APP for FY: {fiscal_year} already exists."},
+            status=400
+        )
+
+    app = AnnualProcurementPlan.objects.create(
+        fiscal_year=fiscal_year,
+        prepared_by=request.user,
+    )
+
+    return JsonResponse({
+        "message": f"APP for FY: {fiscal_year} created successfully.",
+        "app_id": app.pk,
+    }, status=201)
 
 
+@any_admin_required
 def app_list(request):
-    return render(request, "ppmp/app-list.html")
+    apps = AnnualProcurementPlan.objects.select_related(
+        "prepared_by"
+    ).prefetch_related(
+        "app_entries"
+    ).annotate(
+        annotated_grand_total=Sum("app_entries__mooe") + Sum("app_entries__co"),
+        annotated_grand_total_mooe=Sum("app_entries__mooe"),
+        annotated_grand_total_co=Sum("app_entries__co"),
+    ).all()
+
+    context = {
+        "apps": apps,
+        "fiscal_year": get_default_fiscal_year
+    }
+
+    return render(request, "ppmp/app-list.html", context)
 
 
-def app(request):
-    return render(request, "ppmp/app.html")
+@any_admin_required
+def app(request, id):
+    app = get_object_or_404(
+        AnnualProcurementPlanEntry.objects.select_related(
+            "prepared_by"
+        ).prefetch_related(
+            "app_entries"
+            "app_entries__ppmp__office_profile",
+            "app_entries__ppmp__procurement_lines__item_code__object_code",
+            "app_entries__ppmp__procurement_lines__line_entries__item"
+        ),
+        pk=id
+    )
+
+    context = {
+        "app": app
+    }
+
+    return render(request, "ppmp/app.html", context)
