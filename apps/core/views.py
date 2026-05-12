@@ -14,6 +14,9 @@ class HomeLoginView(LoginView):
         
         return reverse_lazy("core:college_dashboard")
 
+def about(request):
+    return render(request, 'core/about.html')
+
 @any_admin_required
 def admin_dashboard(request):
     return render(request, "core/admin_dashboard.html")
