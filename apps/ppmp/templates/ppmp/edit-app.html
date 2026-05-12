@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Annual Procurement Plan | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Edit APP FY {{ fiscal_year|default:"2026" }} – Procurement Schedule Management{% endblock %}
+
+{% block content %}
+<div class="w-full px-4 py-6 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{% url 'ppmp:app_list' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="font-medium">Back to APP List</span>
+        </a>
+    </div>
+
+    <div class="max-w-full mx-auto">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Edit Procurement Schedules</h1>
+            <p class="text-sm text-gray-500 mt-1">Update the schedule dates for each procurement activity in this Annual Procurement Plan</p>
+            <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
+        </div>
+
+        <!-- Agency Header -->
+        <div class="mb-6 overflow-hidden bg-white border border-gray-100 shadow-sm rounded-2xl">
+            <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-red-50 to-gray-50">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center justify-center w-12 h-12 overflow-hidden bg-white border border-gray-200 rounded-full shadow-sm">
+                            <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="object-contain w-9 h-9">
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">WESTERN MINDANAO STATE UNIVERSITY</h2>
+                            <p class="text-sm text-gray-500">Annual Procurement Plan for FY 2026 — <span class="font-semibold text-red-600 uppercase">FINAL</span></p>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2 text-sm text-gray-500 rounded-lg bg-white/80">
+                        <span class="font-medium">Generated on: March 15, 2026</span> 
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-4 px-6 py-4 text-sm bg-white md:grid-cols-4">
+                <div><span class="font-semibold text-gray-600">Complete Address:</span> Normal Rd., Baliwasan, Zamboanga City</div>
+                <div><span class="font-semibold text-gray-600">Contact Person:</span> BAC Secretariat Office</div>
+                <div><span class="font-semibold text-gray-600">Agency Email:</span> procurement@wmsu.edu.ph</div>
+                <div><span class="font-semibold text-gray-600">Total APP Budget:</span> <span class="font-bold text-red-700">₱ 12,450,000.00</span></div>
+            </div>
+        </div>
+
+        <!-- Main APP Table with Editable Schedule Fields -->
+        <form id="scheduleEditForm" method="post" action="#">
+            {% csrf_token %}
+            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
+                <div class="overflow-x-auto">
+                    <table id="appTable" class="min-w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="text-white bg-red-700">
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">Code (PAP)</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">Procurement Program/Project</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">Object Code</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">PMO/End-User</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">Mode of Procurement</th>
+                                <th colspan="4" class="px-3 py-3 text-xs font-semibold tracking-wider text-center uppercase border-r border-red-600">Schedule for Each Procurement Activity</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle border-r border-red-600">Source of Funds</th>
+                                <th colspan="3" class="px-3 py-3 text-xs font-semibold tracking-wider text-center uppercase border-r border-red-600">Estimated Budget (PhP)</th>
+                                <th rowspan="2" class="px-3 py-3 text-xs font-semibold tracking-wider text-left uppercase align-middle">Remarks</th>
+                            </tr>
+                            <tr class="text-white bg-red-600">
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">Advertisement/ Posting of IB/REI</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">Submission/ Opening of Bids</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">Notice of Award</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">Contract Signing</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">Total</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">MOOE</th>
+                                <th class="px-3 py-2 text-xs font-medium border-r border-red-500">CO</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Sample Row 1 - ICT Equipment -->
+                            <tr class="transition hover:bg-gray-50" data-entry-id="1">
+                                <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">PAP-2026-001</td>
+                                <td class="px-3 py-3 font-medium text-gray-800 border-r">Procurement of ICT Equipment for College of Engineering</td>
+                                <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">50101001</td>
+                                <td class="px-3 py-3 text-gray-600 border-r">College of Engineering</td>
+                                <td class="px-3 py-3 text-gray-600 border-r">Public Bidding</td>
+                                
+                                <!-- Editable Schedule Fields with Calendar -->
+                                <td class="px-3 py-2 border-r">
+                                    <input type="date" 
+                                           name="advertisement_date_1" 
+                                           value="2026-04-01"
+                                           class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                 </td>
+                                <td class="px-3 py-2 border-r">
+                                    <input type="date" 
+                                           name="submission_date_1" 
+                                           value="2026-04-15"
+                                           class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                 </td>
+                                <td class="px-3 py-2 border-r">
+                                    <input type="date" 
+                                           name="notice_of_award_1" 
+                                           value="2026-04-30"
+                                           class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                 </td>
+                                <td class="px-3 py-2 border-r">
+                                    <input type="date" 
+                                           name="contract_signing_date_1" 
+                                           value="2026-05-15"
+                                           class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                 </td>
+                                
+                                <td class="px-3 py-3 text-gray-600 border-r">GAA Fund</td>
+                                <td class="px-3 py-3 font-mono text-right border-r">₱ 0.00</td>
+                                <td class="px-3 py-3 font-mono text-right border-r">₱ 3,500,000.00</td>
+                                <td class="px-3 py-3 text-xs text-gray-500">For new computer laboratory</td>
+                             </tr>
+                        </tbody>
+                        <tfoot class="font-semibold bg-gray-100">
+                            <tr>
+                                <td colspan="10" class="px-3 py-3 text-right text-gray-700 border-r">TOTAL:</td>
+                                <td class="px-3 py-3 text-right text-red-700 border-r">₱ 950,000.00</td>
+                                <td class="px-3 py-3 text-right text-red-700 border-r">₱ 11,500,000.00</td>
+                                <td class="px-3 py-3 text-right text-red-700 border-r">₱ 12,450,000.00</td>
+                                <td class="px-3 py-3"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hidden field to track entries -->
+            <input type="hidden" name="entry_ids" value="1,2,3,4,5">
+        </form>
+
+        <!-- Signature Lines -->
+        <div class="grid grid-cols-1 gap-6 mt-8 text-sm text-center md:grid-cols-3">
+            <div class="pt-3 border-t border-gray-300">
+                <p class="font-semibold text-gray-700">Prepared by:</p>
+                <p class="mt-4">_________________________</p>
+                <p class="text-xs text-gray-500">BAC Secretariat</p>
+                <p class="text-xs text-gray-400">Date: ______________</p>
+            </div>
+            <div class="pt-3 border-t border-gray-300">
+                <p class="font-semibold text-gray-700">Recommended by:</p>
+                <p class="mt-4">_________________________</p>
+                <p class="text-xs text-gray-500">BAC Chairperson</p>
+                <p class="text-xs text-gray-400">Date: ______________</p>
+            </div>
+            <div class="pt-3 border-t border-gray-300">
+                <p class="font-semibold text-gray-700">Approved by:</p>
+                <p class="mt-4">_________________________</p>
+                <p class="text-xs text-gray-500">Head of Procuring Entity</p>
+                <p class="text-xs text-gray-400">Date: ______________</p>
+            </div>
+        </div>
+
+        <div class="pt-5 mt-6 text-xs text-center text-gray-400 border-t border-gray-200">
+            This APP is prepared in accordance with the IRR of RA 12009 (New Government Procurement Act) and DBM-DOE-GPPB Joint Circular. 
+            The information above is based on approved PPMP submissions for FY 2026.
+        </div>
+
+        <!-- Form Actions -->
+        <div class="sticky bottom-0 mt-6 flex justify-end gap-3 rounded-lg border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-sm">
+            <a href="{% url 'ppmp:app_list' %}" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 rounded-lg hover:bg-gray-200">
+                Cancel
+            </a>
+            <button type="submit" form="scheduleEditForm" class="px-6 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg shadow-sm hover:bg-green-700">
+                Save All Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation before submission
+    document.getElementById('scheduleEditForm')?.addEventListener('submit', function(e) {
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        let hasErrors = false;
+        
+        dateInputs.forEach(input => {
+            if (input.value) {
+                const date = new Date(input.value);
+                if (isNaN(date.getTime())) {
+                    hasErrors = true;
+                    input.classList.add('border-red-500');
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            }
+        });
+        
+        if (hasErrors) {
+            e.preventDefault();
+            alert('Please enter valid dates for all fields. Invalid dates are highlighted in red.');
+        } else {
+            if (confirm('Are you sure you want to save all schedule changes?')) {
+                // Show loading state
+                const submitBtn = document.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Saving...';
+                submitBtn.disabled = true;
+                return true;
+            } else {
+                e.preventDefault();
+            }
+        }
+    });
+    
+    // Add visual feedback when inputs are changed
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.addEventListener('change', function() {
+            this.classList.add('bg-yellow-50');
+            setTimeout(() => {
+                this.classList.remove('bg-yellow-50');
+            }, 1000);
+        });
+    });
+</script>
+
+<style>
+    input[type="date"] {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        background-color: #e5e7eb;
+    }
+    
+    input[type="date"]:hover {
+        background-color: #f9fafb;
+        border-color: #3b82f6;
+    }
+    
+    input[type="date"]:focus {
+        outline: none;
+        border-color: #3b82f6;
+        ring: 2px solid #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+    
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+</style>
+{% endblock %}

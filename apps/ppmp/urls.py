@@ -15,4 +15,5 @@ urlpatterns = (
     path("app/create/", views.app_create, name="app_create"),
     path("apps/", views.app_list, name="app_list"),
     path("app/<int:id>/", views.app, name="app"),
+    path("edit_app", views.edit_app, name="edit_app"),
 )

@@ -510,3 +510,6 @@ def app(request, id):
     }
 
     return render(request, "ppmp/app.html", context)
+
+def edit_app(request):
+    return render(request, "ppmp/edit-app.html")
