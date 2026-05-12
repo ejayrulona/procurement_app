@@ -25,7 +25,20 @@
         </div>
     </div>
 
-    <!-- Search Bar (now only searches by Fiscal Year) -->
+    <!-- Filter Tabs -->
+    <div class="flex gap-2 mb-6 overflow-x-auto">
+        <button class="status-filter-btn active px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg transition" data-status="all">
+            All
+        </button>
+        <button class="status-filter-btn px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition" data-status="indicative">
+            Indicative
+        </button>
+        <button class="status-filter-btn px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition" data-status="final">
+            Final
+        </button>
+    </div>
+
+    <!-- Search Bar -->
     <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
         <div class="relative">
             <svg class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,29 +56,92 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Fiscal Year</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total(₱)</th>
-                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Prepared by</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Prepared by</th>
                         <th class="px-6 py-4 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
-                    {% for app in apps  %}
-                    <tr class="transition hover:bg-gray-50" data-year="2026" data-id="1">
-                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.fiscal_year }}</td>
-                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">₱ {{ app.annotated_grand_total}}</td>
-                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-800 whitespace-nowrap">{{ app.prepared_by.full_name }}</td>
-                        <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                    {% for app in apps %}
+                    <tr class="transition hover:bg-gray-50" data-year="{{ app.fiscal_year }}" data-id="{{ app.id }}" data-status="{{ app.status|default:'indicative' }}">
+                        <td class="px-6 py-4 text-sm text-gray-900 font-medium whitespace-nowrap">{{ app.fiscal_year }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if app.ppmp_type == 'indicative' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1.5"></span>
+                                    Indicative PPMP
+                                </span>
+                            {% elif app.ppmp_type == 'final' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full mr-1.5"></span>
+                                    Final PPMP
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                    {{ app.ppmp_type|default:'Not Specified'|title }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if app.status == 'draft' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                    Draft
+                                </span>
+                            {% elif app.status == 'for_review' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <span class="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-1.5"></span>
+                                    For Review
+                                </span>
+                            {% elif app.status == 'approved' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <span class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></span>
+                                    Approved
+                                </span>
+                            {% elif app.status == 'rejected' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <span class="w-1.5 h-1.5 bg-red-400 rounded-full mr-1.5"></span>
+                                    Rejected
+                                </span>
+                            {% elif app.status == 'completed' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-1.5"></span>
+                                    Completed
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                    {{ app.status|default:'Pending'|title }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.annotated_grand_total|default:"0.00"|floatformat:2 }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.prepared_by.get_full_name|default:app.prepared_by.full_name }}</td>
+                        <td class="px-6 py-4 text-sm text-center whitespace-nowrap">
                             <a href="{% url 'ppmp:app' app.id %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
                                 <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </a>
-                            <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP" onclick="editApp(1); return false;">
+                            <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP" onclick="editApp({{ app.id }}); return false;">
                                 <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-2">No APP records found</p>
+                            <p class="text-sm">Click "Create APP" to get started</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -77,7 +153,7 @@
         <div class="px-6 py-4 bg-white border-t border-gray-200">
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">5</span> of <span class="font-medium" id="totalCount">5</span> results
+                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">5</span> of <span class="font-medium" id="totalCount">0</span> results
                 </div>
                 <div class="flex gap-2">
                     <button id="prevPage"
@@ -96,6 +172,7 @@
     </div>
 </div>
 
+<!-- Create APP Modal -->
 <div id="create-app-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden transition-all duration-300 bg-black/50">
     <div class="w-full max-w-md p-6 mx-4 transition-all transform bg-white shadow-2xl rounded-2xl" id="create-app-modal-content">
         <div class="text-center">
@@ -152,16 +229,42 @@
         }
     });
     
-    // Edit function - redirects to Django edit URL with the id parameter
+    // Edit function - redirects to Django edit URL
     function editApp(id) {
-        window.location.href = "#;
+        window.location.href = `/ppmp/app/${id}/edit/`;
     }
 
-    // Pagination and search functionality on HTML table rows
+    // Submit for review function
+    function submitForReview(id) {
+        if (confirm('Are you sure you want to submit this APP for review?')) {
+            fetch(`/ppmp/app/${id}/submit-review/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to submit for review'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    }
+
+    // Pagination and search functionality
     let currentPage = 1;
     const rowsPerPage = 5;
     let allRows = [];
     let filteredRows = [];
+    let currentStatusFilter = 'all';
 
     // Get all data rows from the table
     function getAllRows() {
@@ -169,13 +272,27 @@
         return Array.from(tbody.querySelectorAll('tr'));
     }
 
-    // Filter rows based on search input
+    // Filter rows based on search input and status
     function filterRows() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
         filteredRows = allRows.filter(row => {
+            // Skip empty rows (no data message)
+            if (row.querySelector('td[colspan]')) return false;
+            
             const yearCell = row.querySelector('td:first-child');
-            return yearCell && yearCell.textContent.toLowerCase().includes(searchTerm);
+            const yearMatch = yearCell && yearCell.textContent.toLowerCase().includes(searchTerm);
+            
+            // Status filter
+            let statusMatch = true;
+            if (currentStatusFilter !== 'all') {
+                const statusAttr = row.getAttribute('data-status');
+                statusMatch = statusAttr === currentStatusFilter;
+            }
+            
+            return yearMatch && statusMatch;
         });
+        
         currentPage = 1;
         renderTable();
     }
@@ -189,9 +306,25 @@
 
         // Clear and re-append rows
         tbody.innerHTML = '';
-        pageRows.forEach(row => {
-            tbody.appendChild(row.cloneNode(true));
-        });
+        
+        if (pageRows.length === 0) {
+            // Show empty state
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `
+                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                    <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p class="mt-2">No APP records found</p>
+                    <p class="text-sm">Try adjusting your search or filter criteria</p>
+                </td>
+            `;
+            tbody.appendChild(emptyRow);
+        } else {
+            pageRows.forEach(row => {
+                tbody.appendChild(row.cloneNode(true));
+            });
+        }
 
         // Update pagination info
         const totalCount = filteredRows.length;
@@ -228,12 +361,61 @@
     // Search input listener
     document.getElementById('searchInput').addEventListener('input', filterRows);
 
+    // Status filter buttons
+    document.querySelectorAll('.status-filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active state
+            document.querySelectorAll('.status-filter-btn').forEach(b => {
+                b.classList.remove('active', 'text-red-600', 'bg-red-50');
+                b.classList.add('text-gray-600');
+            });
+            this.classList.add('active', 'text-red-600', 'bg-red-50');
+            this.classList.remove('text-gray-600');
+            
+            // Update filter
+            currentStatusFilter = this.getAttribute('data-status');
+            filterRows();
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     // Initialize
-    allRows = getAllRows();
-    filteredRows = [...allRows];
-    renderTable();
+    function initialize() {
+        allRows = getAllRows();
+        filteredRows = [...allRows];
+        renderTable();
+    }
+    
+    initialize();
 
     // Expose functions globally
     window.editApp = editApp;
+    window.submitForReview = submitForReview;
 </script>
+
+<style>
+    .status-filter-btn.active {
+        background-color: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .status-filter-btn {
+        transition: all 0.2s ease;
+    }
+</style>
 {% endblock %}
