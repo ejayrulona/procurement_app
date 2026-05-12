@@ -32,6 +32,26 @@
                 </div>
 
                 <div class="p-6">
+                    <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                        <p class="text-sm text-gray-500">Submission Type</p>
+                        <p class="font-semibold text-gray-800">
+                            {% if is_final %}
+                                Final
+                            {% else %}
+                                Indicative
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            {% if is_final %}
+                                This is a final submission based on your approved indicative PPMP.
+                            {% else %}
+                                This is an indicative submission based on projected needs.
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <br><hr><br>
+
                     <!-- Office Info — read only, pulled from profile -->
                     <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
                         <p class="text-sm text-gray-500">Submitting Office</p>
@@ -147,10 +167,6 @@
 
             <!-- ==================== ACTIONS ==================== -->
             <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
-                <button type="button" id="saveDraftBtn"
-                    class="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
-                    Save as Draft
-                </button>
                 <button type="button" id="submitBtn"
                     class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
                     Submit PPMP
@@ -305,7 +321,7 @@
     </template>
 </div>
 
-<script id="existing-lines-data" type="application/json">
+<script id="existing-lines-data" type="application/json" data-mode="prefill">
     [
         {% for line in existing_lines %}
         {

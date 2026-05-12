@@ -4,8 +4,9 @@ from .models import ProcurementProjectManagementPlan
 class PPMPForm(forms.ModelForm):
     class Meta:
         model = ProcurementProjectManagementPlan
-        fields = ("classification", "source_of_funds", "fiscal_year", "ceiling")
+        fields = ("submission_type", "classification", "source_of_funds", "fiscal_year", "ceiling")
         widgets = {
+            "classification": forms.HiddenInput(),
             "classification": forms.Select(
                 attrs={
                     "class": "w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition bg-white"

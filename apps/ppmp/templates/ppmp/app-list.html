@@ -27,13 +27,13 @@
 
     <!-- Filter Tabs -->
     <div class="flex gap-2 mb-6 overflow-x-auto">
-        <button class="status-filter-btn active px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg transition" data-status="all">
+        <button class="px-4 py-2 text-sm font-medium text-red-600 transition rounded-lg status-filter-btn active bg-red-50" data-status="all">
             All
         </button>
-        <button class="status-filter-btn px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition" data-status="indicative">
+        <button class="px-4 py-2 text-sm font-medium text-gray-600 transition rounded-lg status-filter-btn hover:bg-gray-100" data-status="indicative">
             Indicative
         </button>
-        <button class="status-filter-btn px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition" data-status="final">
+        <button class="px-4 py-2 text-sm font-medium text-gray-600 transition rounded-lg status-filter-btn hover:bg-gray-100" data-status="final">
             Final
         </button>
     </div>
@@ -66,57 +66,18 @@
                 <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
                     {% for app in apps %}
                     <tr class="transition hover:bg-gray-50" data-year="{{ app.fiscal_year }}" data-id="{{ app.id }}" data-status="{{ app.status|default:'indicative' }}">
-                        <td class="px-6 py-4 text-sm text-gray-900 font-medium whitespace-nowrap">{{ app.fiscal_year }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">{{ app.fiscal_year }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {% if app.ppmp_type == 'indicative' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1.5"></span>
-                                    Indicative PPMP
-                                </span>
-                            {% elif app.ppmp_type == 'final' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                    <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full mr-1.5"></span>
-                                    Final PPMP
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
-                                    {{ app.ppmp_type|default:'Not Specified'|title }}
-                                </span>
-                            {% endif %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1.5"></span>
+                                {{ app.get_submission_type_display }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {% if app.status == 'draft' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
-                                    Draft
-                                </span>
-                            {% elif app.status == 'for_review' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <span class="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-1.5"></span>
-                                    For Review
-                                </span>
-                            {% elif app.status == 'approved' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <span class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></span>
-                                    Approved
-                                </span>
-                            {% elif app.status == 'rejected' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <span class="w-1.5 h-1.5 bg-red-400 rounded-full mr-1.5"></span>
-                                    Rejected
-                                </span>
-                            {% elif app.status == 'completed' %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-1.5"></span>
-                                    Completed
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
-                                    {{ app.status|default:'Pending'|title }}
-                                </span>
-                            {% endif %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                {{ app.get_status_display }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.annotated_grand_total|default:"0.00"|floatformat:2 }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.prepared_by.get_full_name|default:app.prepared_by.full_name }}</td>

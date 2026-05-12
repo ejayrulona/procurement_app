@@ -75,7 +75,7 @@ def ppmp_create(request):
 
         except Exception as error:
             return JsonResponse(
-                {"error": "An error occurred while saving. Please try again."},
+                {"error": str(error)},
                 status=500
             )
 
@@ -84,12 +84,69 @@ def ppmp_create(request):
             "ppmp_id": ppmp.pk,
         }, status=201)
 
-    form = PPMPForm(initial={"fiscal_year": timezone.now().year})
+    form = PPMPForm(
+        initial={
+            "fiscal_year": timezone.now().year, 
+            "submission_type": ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
+        }
+    )
 
     context = {
         "form": form,
         "office_profile": request.user.office_profile,
         "mode_of_procurement": ModeOfProcurement.choices
+    }
+
+    return render(request, "ppmp/create-ppmp.html", context)
+
+
+@office_required
+def ppmp_create_final(request, id):
+    # Pre-populate the PPMP create final form with data from an approved indicative PPMP
+    indicative_ppmp = get_object_or_404(
+        ProcurementProjectManagementPlan.objects.prefetch_related(
+            "procurement_lines__line_entries__item"
+        ),
+        pk=id,
+        submitted_by=request.user,
+        submission_type=ProcurementProjectManagementPlan.SubmissionType.INDICATIVE,
+        status=ProcurementProjectManagementPlan.Status.APPROVED
+    )
+
+    already_exists = ProcurementProjectManagementPlan.objects.filter(
+        office_profile=indicative_ppmp.office_profile,
+        fiscal_year=indicative_ppmp.fiscal_year,
+        classification=indicative_ppmp.classification,
+        submission_type=ProcurementProjectManagementPlan.SubmissionType.FINAL
+    ).exists()
+
+    if already_exists:
+        return JsonResponse(
+            {"error": "A final PPMP already exists for this classification and fiscal year."},
+            status=400
+        )
+    
+    existing_lines = indicative_ppmp.procurement_lines.prefetch_related(
+        "line_entries__item__item_code__object_code"
+    ).all()
+
+    form = PPMPForm(
+        initial={
+            "fiscal_year": indicative_ppmp.fiscal_year,
+            "classification": indicative_ppmp.classification,
+            "source_of_funds": indicative_ppmp.source_of_funds,
+            "ceiling": indicative_ppmp.ceiling,
+            "submission_type": ProcurementProjectManagementPlan.SubmissionType.FINAL
+        }
+    )
+
+    context = {
+        "form": form,
+        "office_profile": request.user.office_profile,
+        "mode_of_procurement": ModeOfProcurement.choices,
+        "existing_lines": existing_lines,
+        "is_final": True,
+        "indicative_ppmp": indicative_ppmp,
     }
 
     return render(request, "ppmp/create-ppmp.html", context)
@@ -146,12 +203,29 @@ def ppmps(request):
     return render(request, "ppmp/ppmps.html", context)
 
 
-@any_admin_required
+@login_required
 def ppmp_edit(request, id):
     ppmp = get_object_or_404(
         ProcurementProjectManagementPlan.objects.select_related("office_profile"),
         pk=id
     )
+
+    # Add guard rail to not allow admin aid to edit PPMPs
+    if request.user.is_adminaid:
+        return JsonResponse(
+            {"error": "Only administrators are allowed to edit PPMPs."},
+            status=403
+        )
+
+    if request.user.is_office:
+        if ppmp.submission_type != ProcurementProjectManagementPlan.SubmissionType.INDICATIVE:
+            return JsonResponse(
+                {"error": "Office users can only edit indicative PPMPs."},
+                status=403
+            )
+        
+        if ppmp.submitted_by != request.user:
+            return JsonResponse({"error": "Unauthorized."}, status=403)
 
     if request.method == "POST":
         try:
@@ -175,6 +249,10 @@ def ppmp_edit(request, id):
         try:
             with transaction.atomic():
                 ppmp = form.save(commit=False)
+                ppmp.status = ProcurementProjectManagementPlan.Status.PENDING  
+                ppmp.remarks = ""                                               
+                ppmp.reviewed_by = None                                         
+                ppmp.reviewed_at = None
                 ppmp.save()
 
                 # Delete existing lines — entries cascade automatically
@@ -242,15 +320,18 @@ def ppmp_approve(request, id):
             status=400
         )
 
-    # Check APP exists for this fiscal year
+    # Check if APP exists and if APP matches the PPMP
     try:
-        app = AnnualProcurementPlan.objects.get(fiscal_year=ppmp.fiscal_year)
+        app = AnnualProcurementPlan.objects.get(
+            fiscal_year=ppmp.fiscal_year,
+            submission_type=ppmp.submission_type
+        )
     except AnnualProcurementPlan.DoesNotExist:
         return JsonResponse(
             {
                 "error": (
-                    f"No APP exists for FY: {ppmp.fiscal_year}. "
-                    "Please create an APP for this fiscal year before approving PPMPs."
+                    f"No { ppmp.get_submission_type_display() } APP exists for"
+                    f"FY: { ppmp.fiscal_year }. Please create one before approving."
                 )
             },
             status=400
@@ -281,7 +362,6 @@ def ppmp_approve(request, id):
     }, status=200)
 
 
-# could be revise_ppmp
 @any_admin_required
 def ppmp_decline(request, id):
     if request.method != "POST":
@@ -320,6 +400,45 @@ def ppmp_decline(request, id):
         "message": "PPMP declined.",
         "ppmp_id": ppmp.id,
     }, status=200)
+
+
+@any_admin_required
+def ppmp_revise(request, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    ppmp = get_object_or_404(ProcurementProjectManagementPlan, pk=id)
+
+    if ppmp.status != ProcurementProjectManagementPlan.Status.PENDING:
+        return JsonResponse(
+            {"error": "Only pending PPMPs can be returned for revision."},
+            status=400
+        )
+
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    remarks = payload.get("remarks", "").strip()
+
+    if not remarks:
+        return JsonResponse(
+            {"error": "Remarks are required when returning a PPMP for revision."},
+            status=400
+        )
+
+    ppmp.status = ProcurementProjectManagementPlan.Status.FOR_REVISION
+    ppmp.reviewed_by = request.user
+    ppmp.reviewed_at = timezone.now()
+    ppmp.remarks = remarks
+    ppmp.save()
+
+    return JsonResponse({
+        "message": "PPMP returned for revision.",
+        "ppmp_id": ppmp.id,
+    }, status=200)
+
 
 @admin_required
 def app_create(request):

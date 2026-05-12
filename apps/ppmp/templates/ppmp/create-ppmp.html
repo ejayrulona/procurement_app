@@ -8,14 +8,14 @@
 {% block content %}
 <div class="max-w-6xl px-4 py-8 mx-auto">
     <!-- Back Button -->
-      <div class="mb-6">
+    <div class="mb-6">
         <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          <span class="font-medium">Back to PPMPs</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="font-medium">Back to PPMPs</span>
         </a>
-      </div>
+    </div>
     <!-- Page Title -->
     <div class="mb-8 text-center">
         <h1 class="mb-2 text-3xl font-bold text-gray-800">Create Project Procurement Management Plan</h1>
@@ -43,6 +43,7 @@
                 <div class="p-6">
                     <!-- Submission Type -->
                     <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                        {{ form.submission_type.as_hidden }}
                         <p class="text-sm text-gray-500">Submission Type</p>
                         <p class="font-semibold text-gray-800">
                             {% if is_final %}
@@ -177,10 +178,6 @@
 
             <!-- ==================== ACTIONS ==================== -->
             <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
-                <button type="button" id="saveDraftBtn"
-                    class="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
-                    Save as Draft
-                </button>
                 <button type="button" id="submitBtn"
                     class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
                     Submit PPMP
@@ -335,7 +332,11 @@
     </template>
 </div>
 
-<script id="existing-lines-data" type="application/json">
+{% if existing_lines %}
+<script id="existing-lines-data" type="application/json" data-mode="prefill">
+{% else %}
+<script id="existing-lines-data" type="application/json" data-mode="create">
+{% endif %}
     [
         {% for line in existing_lines %}
         {

@@ -332,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function buildPayload() {
         return {
+            submission_type: document.getElementById("id_submission_type").value,
             fiscal_year: getFiscalYear(),
             classification: classificationInput.value,
             source_of_funds: document.getElementById("id_source_of_funds").value,
@@ -492,7 +493,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize
 
-    const isEditMode = !!document.getElementById("existing-lines-data");
+    const existingLinesScript = document.getElementById("existing-lines-data");
+    const isEditMode = existingLinesScript?.dataset.mode === "prefill"
 
     if (isEditMode) {
         initializeFromExistingData();
