@@ -9,7 +9,7 @@
 <div class="max-w-6xl px-4 py-8 mx-auto">
     <!-- Back Button -->
       <div class="mb-6">
-        <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+        <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -41,48 +41,27 @@
                 </div>
 
                 <div class="p-6">
-                    <!-- Indicative and Final Checklists -->
-                    <div class="">
-                        <!-- Classification Label -->
-                        <label class="block mb-3 ml-1 text-sm text-gray-700">
-                            PPMP Status <span class="text-red-500">*</span>
-                        </label>
+                    <!-- Submission Type -->
+                    <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                        <p class="text-sm text-gray-500">Submission Type</p>
+                        <p class="font-semibold text-gray-800">
+                            {% if is_final %}
+                                Final
+                            {% else %}
+                                Indicative
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            {% if is_final %}
+                                This is a final submission based on your approved indicative PPMP.
+                            {% else %}
+                                This is an indicative submission based on projected needs.
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <br><hr><br>
 
-                        <!-- Checklists -->
-                        <div class="grid gap-5 md:grid-cols-2">
-
-                            <!-- Indicative Checklist -->
-                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                                <div class="flex items-center justify-between">
-                                    <label for="indicativeChecklist" class="text-sm font-semibold text-gray-700">
-                                        Indicative Checklist
-                                    </label>
-
-                                    <input
-                                        type="checkbox"
-                                        id="indicativeChecklist"
-                                        class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Final Checklist -->
-                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                                <div class="flex items-center justify-between">
-                                    <label for="finalChecklist" class="text-sm font-semibold text-gray-700">
-                                        Final Checklist
-                                    </label>
-
-                                    <input
-                                        type="checkbox"
-                                        id="finalChecklist"
-                                        class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                                    >
-                                </div>
-                            </div>
-
-                        </div>
-                    </div><br><hr><br>
                     <!-- Office Info — read only, pulled from profile -->
                     <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
                         <p class="text-sm text-gray-500">Submitting Office</p>
@@ -355,6 +334,35 @@
         </tr>
     </template>
 </div>
+
+<script id="existing-lines-data" type="application/json">
+    [
+        {% for line in existing_lines %}
+        {
+            "item_code_id": {{ line.item_code.id }},
+            "item_code_code": "{{ line.item_code.code }}",
+            "object_code": "{{ line.item_code.object_code.code }}",
+            "general_description": "{{ line.item_code.general_description }}",
+            "mode_of_procurement": "{{ line.mode_of_procurement }}",
+            "procurement_program": "{{ line.procurement_program }}",
+            "order": {{ line.order }},
+            "entries": [
+                {% for entry in line.line_entries.all %}
+                {
+                    "item_id": {{ entry.item.id }},
+                    "item_name": "{{ entry.item.name }}",
+                    "unit": "{{ entry.item.unit }}",
+                    "unit_cost": "{{ entry.unit_cost_snapshot }}",
+                    "quantity": {{ entry.quantity }},
+                    "date_needed": "{{ entry.date_needed|date:'Y-m-d' }}",
+                    "remarks": "{{ entry.remarks }}"
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+</script>
 
 <script type="module" src="{% static 'javascript/ppmp/createPPMP.js' %}"></script>
 {% endblock %}

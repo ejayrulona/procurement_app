@@ -63,8 +63,8 @@ class ProcurementProjectManagementPlan(models.Model):
         # One PPMP per office per fiscal year per classification
         constraints = [
             models.UniqueConstraint(
-                fields=["office_profile", "fiscal_year", "classification"],
-                name="unique_ppmp_per_office_per_year_per_classification"
+                fields=["office_profile", "fiscal_year", "classification", "submission_type"],
+                name="unique_ppmp_per_office_per_fiscal_year_per_classification_per_submission_type"
             )
         ]
 
@@ -164,7 +164,12 @@ class AnnualProcurementPlan(models.Model):
         DRAFT = "draft", "Draft"
         PUBLISHED = "published", "Published"
 
+    class SubmissionType(models.TextChoices):
+        INDICATIVE = "indicative", "Indicative"
+        FINAL = "final", "Final"
+
     fiscal_year = models.PositiveIntegerField()
+    submission_type = models.CharField(max_length=15, choices=SubmissionType.choices, default=SubmissionType.INDICATIVE)
     status = models.CharField(max_length=15, choices=Status.choices, default=Status.DRAFT)
     prepared_by = models.ForeignKey("users.User", on_delete=models.PROTECT, related_name="prepared_apps")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -177,8 +182,8 @@ class AnnualProcurementPlan(models.Model):
 
         constraints = [
             models.UniqueConstraint(
-                fields=["fiscal_year"],
-                name="unique_app_per_fiscal_year"
+                fields=["fiscal_year", "submission_type"],
+                name="unique_app_per_fiscal_year_per_submission_type"
             )
         ]
 
