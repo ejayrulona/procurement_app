@@ -13,11 +13,11 @@
     </a>
     <div class="flex gap-3">
       {% if request.user.is_office %}
-          <a href="{% url '' %}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+          <a href="{% url 'ppmp:ppmp_create_final' ppmp.id %}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
             Create Final PPMP
           </a>
       {% endif %}
-      <button id="export-excel-btn" data-fiscal-year="{{ ppmp.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+      <button id="export-excel-btn" data-ppmp-id="{{ ppmp.id }}" data-fiscal-year="{{ ppmp.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
         Export as Excel
       </button>
       {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
@@ -54,7 +54,7 @@
           </div>
           <div class="flex">
             <p class="w-40 font-semibold">End-User Unit:</p>
-            <p>{{ ppmp.office_profile.office_name|default:"—" }}</p>
+            <p>{{ ppmp.office_profile.office_name }}</p>
           </div>
         </div>
         <div class="space-y-2">
@@ -232,7 +232,7 @@
 
         <!-- Action Buttons -->
         {% if request.user.is_any_admin %}
-          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-200">
+          <div class="flex justify-end gap-3 pt-4 mt-8 border-t border-gray-200">
             <button id="revision-btn" data-id="{{ ppmp.id }}" class="group inline-flex items-center gap-2 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-2.5 text-sm font-semibold text-yellow-700 transition-all duration-200 hover:bg-yellow-100">
               Revision
             </button>
@@ -279,7 +279,7 @@
           </span>
           <h2 id="remarks-modal-title" class="text-base font-semibold text-white"></h2>
         </div>
-        <button type="button" id="close-remarks-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+        <button type="button" id="close-remarks-modal-btn" class="flex items-center justify-center text-white transition rounded-md w-7 h-7 hover:bg-white/20">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -322,7 +322,7 @@
           </svg>
           <h2 class="text-base font-semibold text-white">Approve PPMP</h2>
         </div>
-        <button type="button" id="close-approve-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+        <button type="button" id="close-approve-modal-btn" class="flex items-center justify-center text-white transition rounded-md w-7 h-7 hover:bg-white/20">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -337,28 +337,28 @@
         </div>
       </div>
       <div class="px-5 pt-4 pb-2">
-        <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-2 text-sm">
+        <div class="p-4 space-y-2 text-sm border border-gray-200 rounded-lg bg-gray-50">
           <div class="flex items-start gap-2">
-            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">End-User</span>
+            <span class="flex-shrink-0 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">End-User</span>
             <span class="font-medium text-gray-800">{{ ppmp.office_profile.office_name|default:"—" }}</span>
           </div>
           <div class="flex items-start gap-2">
-            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Fiscal Year</span>
+            <span class="flex-shrink-0 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">Fiscal Year</span>
             <span class="font-medium text-gray-800">{{ ppmp.fiscal_year }}</span>
           </div>
           <div class="flex items-start gap-2">
-            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Total Amount</span>
+            <span class="flex-shrink-0 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">Total Amount</span>
             <span class="font-semibold text-green-700">₱ {{ ppmp.total_amount }}</span>
           </div>
           <div class="flex items-start gap-2">
-            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Submission</span>
+            <span class="flex-shrink-0 text-xs font-semibold tracking-wide text-gray-400 uppercase w-28">Submission</span>
             <span class="font-medium text-gray-800 uppercase">{{ ppmp.get_submission_type_display }}</span>
           </div>
         </div>
       </div>
       <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
         <button type="button" id="cancel-approve-btn" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Cancel</button>
-        <button type="button" id="confirm-approve-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg bg-green-700 hover:bg-green-800">
+        <button type="button" id="confirm-approve-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition bg-green-700 rounded-lg hover:bg-green-800">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
           </svg>
@@ -411,6 +411,7 @@
   </div>
 </div>
 
+<script type="module" src="{% static 'javascript/ppmp/ppmp.js' %}"></script>
 <script>
   // ==================== REVISION/DECLINE MODAL ====================
   (function () {

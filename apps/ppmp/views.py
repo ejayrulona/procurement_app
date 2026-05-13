@@ -446,7 +446,7 @@ PPMP_TEMPLATE_PATH = str(settings.PPMP_TEMPLATE_PATH)
 @any_admin_required
 def export_ppmp_excel(request, id):
     """
-    GET /ppmp/<pk>/export/
+    GET /ppmp/<id>/export/
     Exports a PPMP as an .xlsx file using the official RA 12009 template.
     """
 
@@ -462,39 +462,30 @@ def export_ppmp_excel(request, id):
     records = []
 
     for line in ppmp.procurement_lines.all():
+
         # Build a consolidated specification from all line entries
-        spec_parts = []
-        total_budget = 0
-
         for entry in line.line_entries.select_related("item").all():
-            spec_parts.append(
-                f"{entry.item.name} — Qty: {entry.quantity} {entry.item.unit_of_measure or ''} "
-                f"@ PhP {entry.unit_cost_snapshot:,.2f}"
+
+            # Use the earliest date_needed across entries as the delivery date
+            delivery_date = min(
+                (e.date_needed for e in line.line_entries.all()),
+                default=None,
             )
-            total_budget += float(entry.total_amount)
 
-        specification = "\n".join(spec_parts)
-
-        # Use the earliest date_needed across entries as the delivery date
-        delivery_date = min(
-            (e.date_needed for e in line.line_entries.all()),
-            default=None,
-        )
-
-        records.append({
-            "general_description": line.procurement_program,
-            "classification": ppmp.get_classification_display(),
-            "quantity": line.line_entries.count(),  # number of line items
-            "unit": "lot",
-            "specification": specification,
-            "mode_of_procurement": line.get_mode_of_procurement_display(),
-            "start_of_procurement": None,   
-            "end_of_procurement": None,     
-            "delivery_date": delivery_date,
-            "source_of_funds": ppmp.get_source_of_funds_display(),
-            "estimated_budget": total_budget,
-            "remarks": "",
-        })
+            records.append({
+                "general_description": line.item_code.general_description,
+                "classification": ppmp.get_classification_display(),
+                "quantity": entry.quantity,  
+                "unit": entry.item.unit,
+                "specification": entry.item.specification,
+                "mode_of_procurement": line.get_mode_of_procurement_display(),
+                "start_of_procurement": None,   
+                "end_of_procurement": None,     
+                "delivery_date": delivery_date,
+                "source_of_funds": ppmp.get_source_of_funds_display(),
+                "estimated_budget": entry.total_amount,
+                "remarks": "",
+            })
 
     excel_bytes = generate_ppmp_excel(
         records=records,
@@ -507,7 +498,7 @@ def export_ppmp_excel(request, id):
 
     filename = (
         f"PPMP_{ppmp.office_profile.office_name}_"
-        f"{ppmp.get_classification_display()}_"
+        f"{ppmp.get_submission_type_display()}_"
         f"FY{ppmp.fiscal_year}.xlsx"
     )
 
