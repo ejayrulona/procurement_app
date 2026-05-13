@@ -13,6 +13,7 @@ urlpatterns = (
     path("<int:id>/decline/", views.ppmp_decline, name="ppmp_decline"),
     path("<int:id>/revise/", views.ppmp_revise, name="ppmp_revise"),
     path("app/create/", views.app_create, name="app_create"),
+    path("app/create-final/", views.app_create_final, name="app_create_final"),
     path("apps/", views.app_list, name="app_list"),
     path("app/<int:id>/", views.app, name="app"),
     path("app/<int:id>/add-schedule/", views.app_add_schedule, name="app_add_schedule"),

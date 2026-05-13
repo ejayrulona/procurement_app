@@ -1,4 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Create Final PPMP Button Modal
+    const createFinalAPPBtn = document.getElementById('create-final-app-btn');
+    const createFinalAPPModal = document.getElementById('create-final-app-modal');
+    const cancelCreateFinalAPPBtn = document.getElementById('cancel-create-final-app-btn');
+
+    function openCreatePpmpModal() {
+        createFinalAPPModal.classList.remove('hidden');
+    }
+    
+    function closeCreatePpmpModal() {
+        createFinalAPPModal.classList.add('hidden');
+    }
+    
+    if (createFinalAPPBtn) {
+        createFinalAPPBtn.addEventListener('click', openCreatePpmpModal);
+    }
+    
+    if (cancelCreateFinalAPPBtn) {
+        cancelCreateFinalAPPBtn.addEventListener('click', closeCreatePpmpModal);
+    }
+    
+    if (createFinalAPPModal) {
+        createFinalAPPModal.addEventListener('click', event => {
+            if (event.target === createFinalAPPModal) {
+                closeCreatePpmpModal();
+            }
+        });
+    }
+
     const modal = document.getElementById("scheduleModal");
     const openBtn = document.getElementById("add-schedule-btn");
     const closeBtn = document.getElementById("closeScheduleModal");

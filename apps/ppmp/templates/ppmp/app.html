@@ -53,7 +53,7 @@
             </button>
             
             <!-- Create Final PPMP Button -->
-            <button id="createFinalPpmpBtn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700">
+            <button id="create-final-app-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
@@ -161,7 +161,7 @@
 </div>
 
 <!-- Create Final PPMP Modal -->
-<div id="createFinalPpmpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden transition-all duration-300 bg-black/50">
+<div id="create-final-app-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden transition-all duration-300 bg-black/50">
     <div class="w-full max-w-md p-6 mx-4 transition-all transform bg-white shadow-2xl rounded-2xl">
         <div class="text-center">
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
@@ -174,15 +174,15 @@
             
             <div class="p-4 mb-4 border border-blue-200 bg-blue-50 rounded-xl">
                 <p class="text-sm text-blue-800">
-                    This will create a Final PPMP based on the current APP for <strong>FY {{ fiscal_year|default:"2026" }}</strong>.
+                    This will create a Final PPMP based on the current APP for <strong>FY {{ app.fiscal_year }}</strong>.
                 </p>
             </div>
             
             <div class="flex gap-3">
-                <button id="cancelCreatePpmpBtn" class="flex-1 px-4 py-2 font-semibold text-gray-700 transition bg-gray-200 hover:bg-gray-300 rounded-xl">
+                <button id="cancel-create-final-app-btn" class="flex-1 px-4 py-2 font-semibold text-gray-700 transition bg-gray-200 hover:bg-gray-300 rounded-xl">
                     Cancel
                 </button>
-                <form method="post" action="#">
+                <form method="post" action="{% url 'ppmp:app_create_final' %}">
                     {% csrf_token %}
                     <button type="submit" class="flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 rounded-xl">
                         Create Final PPMP
@@ -265,37 +265,8 @@
     </div>
 </div>
 
-<script type="module" src="{% static 'javascript/ppmp/addSchedule.js' %}"></script>
+<script type="module" src="{% static 'javascript/ppmp/app.js' %}"></script>
 <script>
-    // Create Final PPMP Button Modal
-    const createFinalPpmpBtn = document.getElementById('createFinalPpmpBtn');
-    const createFinalPpmpModal = document.getElementById('createFinalPpmpModal');
-    const cancelCreatePpmpBtn = document.getElementById('cancelCreatePpmpBtn');
-
-    function openCreatePpmpModal() {
-        createFinalPpmpModal.classList.remove('hidden');
-    }
-    
-    function closeCreatePpmpModal() {
-        createFinalPpmpModal.classList.add('hidden');
-    }
-    
-    if (createFinalPpmpBtn) {
-        createFinalPpmpBtn.addEventListener('click', openCreatePpmpModal);
-    }
-    
-    if (cancelCreatePpmpBtn) {
-        cancelCreatePpmpBtn.addEventListener('click', closeCreatePpmpModal);
-    }
-    
-    if (createFinalPpmpModal) {
-        createFinalPpmpModal.addEventListener('click', event => {
-            if (event.target === createFinalPpmpModal) {
-                closeCreatePpmpModal();
-            }
-        });
-    }
-    
     // Export table to Excel (XLS format)
     const exportExcelBtn = document.getElementById('exportExcelBtn');
     if (exportExcelBtn) {

@@ -464,11 +464,63 @@ def app_create(request):
     app = AnnualProcurementPlan.objects.create(
         fiscal_year=fiscal_year,
         prepared_by=request.user,
+        submission_type=ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
     )
 
     return JsonResponse({
         "message": f"APP for FY: {fiscal_year} created successfully.",
         "app_id": app.pk,
+    }, status=201)
+
+
+@admin_required
+def app_create_final(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    fiscal_year = get_default_fiscal_year()
+    allowed_years = get_allowed_fiscal_years()
+
+    if fiscal_year not in allowed_years:
+        return JsonResponse(
+            {"error": f"APP cannot be created for FY{fiscal_year} at this time."},
+            status=400
+        )
+
+    # Final APP requires an existing indicative APP for the same year
+    if not AnnualProcurementPlan.objects.filter(
+        fiscal_year=fiscal_year,
+        submission_type=AnnualProcurementPlan.SubmissionType.INDICATIVE
+    ).exists():
+        return JsonResponse(
+            {
+                "error": (
+                    f"No Indicative APP exists for FY{fiscal_year}. "
+                    "Please create an indicative APP first before creating a final APP."
+                )
+            },
+            status=400
+        )
+
+    # Check a final APP doesn't already exist
+    if AnnualProcurementPlan.objects.filter(
+        fiscal_year=fiscal_year,
+        submission_type=AnnualProcurementPlan.SubmissionType.FINAL
+    ).exists():
+        return JsonResponse(
+            {"error": f"A final APP for FY{fiscal_year} already exists."},
+            status=400
+        )
+
+    app = AnnualProcurementPlan.objects.create(
+        fiscal_year=fiscal_year,
+        submission_type=AnnualProcurementPlan.SubmissionType.FINAL,
+        prepared_by=request.user,
+    )
+
+    return JsonResponse({
+        "message": f"Final APP for FY{fiscal_year} created successfully.",
+        "app_id": app.id,
     }, status=201)
 
 
