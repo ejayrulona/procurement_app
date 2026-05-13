@@ -102,7 +102,11 @@
                             {% for line in entry.ppmp.procurement_lines.all  %}
                             <tr class="transition hover:bg-gray-50">
                                 <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">{{ line.item_code.object_code.code }}</td>
-                                <td class="px-3 py-3 font-medium text-gray-800 border-r">{{ line.procurement_program }}</td>
+                                <td class="px-3 py-3 font-medium text-gray-800 border-r">
+                                    <a href="{% url 'ppmp:ppmp' line.ppmp.id %}" class="text-gray-800 hover:text-red-600 hover:underline">
+                                        {{ line.procurement_program }}
+                                    </a>
+                                </td>
                                 <td class="px-3 py-3 font-mono text-xs text-gray-600 border-r">{{ line.item_code.object_code.code }}</td>
                                 <td class="px-3 py-3 text-gray-600 border-r">{{ entry.pmo_end_user }}</td>
                                 <td class="px-3 py-3 text-gray-600 border-r">{{ line.get_mode_of_procurement_display }}</td>
@@ -194,75 +198,130 @@
 </div>
 
 <!-- Add Schedule Modal -->
-<div id="scheduleModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black/50">
-    <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-xl">
+<div
+  id="scheduleModal"
+  class="fixed inset-0 z-50 hidden bg-black/50"
+  style="align-items:center; justify-content:center;"
+  aria-modal="true"
+  role="dialog"
+  aria-labelledby="scheduleModalTitle"
+>
+  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-6 sm:items-center sm:p-0">
+    <div class="w-full max-w-md bg-white shadow-xl rounded-xl overflow-hidden">
 
-        <div class="flex items-center justify-between mb-5">
-            <h2 class="text-lg font-semibold text-gray-800">Add Schedule</h2>
-            <button type="button" id="closeScheduleModal"
-                class="text-gray-400 transition hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4"
+           style="background: linear-gradient(to right, #991b1b, #b91c1c);">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <h2 id="scheduleModalTitle" class="text-base font-semibold text-white">Add Schedule</h2>
         </div>
+        <button
+          type="button"
+          id="closeScheduleModal"
+          class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20"
+          aria-label="Close modal"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
 
-        <p class="mb-5 text-xs text-gray-500">
+      <!-- Info banner -->
+      <div class="px-5 pt-4">
+        <div class="flex gap-2.5 px-3 py-2.5 text-xs leading-relaxed text-red-800 border rounded-lg bg-red-50 border-red-200">
+          <svg class="flex-shrink-0 w-4 h-4 mt-0.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>
             The schedule will be applied to all entries in this APP.
             Fields marked as optional may be left blank.
-        </p>
+          </span>
+        </div>
+      </div>
 
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Advertisement / Posting of IB/REI
-                </label>
-                <input type="date" id="scheduleAdvertisementDate"
-                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
-            </div>
+      <!-- Form fields -->
+      <div class="px-5 pt-4 pb-2 space-y-4">
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Submission / Opening of Bids
-                    <span class="text-xs font-normal text-gray-400">(Optional)</span>
-                </label>
-                <input type="date" id="scheduleSubmissionDate"
-                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Notice of Award
-                    <span class="text-xs font-normal text-gray-400">(Optional)</span>
-                </label>
-                <input type="date" id="scheduleNoticeOfAwardDate"
-                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Contract Signing
-                </label>
-                <input type="date" id="scheduleContractSigningDate"
-                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
-            </div>
-
-            <p id="scheduleError" class="hidden text-xs text-red-500"></p>
+        <!-- Advertisement — full width, required -->
+        <div>
+          <label for="scheduleAdvertisementDate"
+            class="block mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            Advertisement / Posting of IB/REI
+          </label>
+          <input
+            type="date"
+            id="scheduleAdvertisementDate"
+            class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          >
         </div>
 
-        <div class="flex justify-end gap-3 mt-6">
-            <button type="button" id="cancelScheduleBtn"
-                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 rounded-lg hover:bg-gray-200">
-                Cancel
-            </button>
-            <button type="button" id="saveScheduleBtn"
-                class="px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
-                Save Schedule
-            </button>
+        <!-- Two optional fields side-by-side on sm+ -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label for="scheduleSubmissionDate"
+              class="flex items-center gap-1.5 mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+              Submission / Opening
+            </label>
+            <input
+              type="date"
+              id="scheduleSubmissionDate"
+              class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+          </div>
+          <div>
+            <label for="scheduleNoticeOfAwardDate"
+              class="flex items-center gap-1.5 mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+              Notice of Award
+            </label>
+            <input
+              type="date"
+              id="scheduleNoticeOfAwardDate"
+              class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+          </div>
         </div>
 
+        <!-- Contract Signing — full width, required -->
+        <div>
+          <label for="scheduleContractSigningDate"
+            class="block mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            Contract Signing
+          </label>
+          <input
+            type="date"
+            id="scheduleContractSigningDate"
+            class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+        </div>
+        <!-- Error message -->
+        <p id="scheduleError" class="hidden text-xs text-red-600"></p>
+      </div>
+      <!-- Footer actions -->
+      <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
+        <button
+          type="button"
+          id="cancelScheduleBtn"
+          class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300">
+          Cancel
+        </button>
+        <button
+          type="button"
+          id="saveScheduleBtn"
+          class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+          </svg>
+          Save Schedule
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script type="module" src="{% static 'javascript/ppmp/app.js' %}"></script>

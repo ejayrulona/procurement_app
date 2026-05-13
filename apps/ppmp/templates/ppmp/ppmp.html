@@ -37,42 +37,40 @@
   <div id="printableArea" class="overflow-hidden bg-white border shadow-lg rounded-2xl">
     <!-- Header -->
     <div class="px-8 py-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-        <!-- Status Bar -->
-        <div class="mb-6">
-          <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium {% if ppmp.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif ppmp.status == 'approved'%}bg-green-100 text-green-800{% elif ppmp.status == 'for_revision'%}bg-blue-100 text-blue-800{% else %}bg-orange-100 text-orange-800{% endif %} rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full {% if ppmp.status == 'pending' %}bg-yellow-500{% elif ppmp.status == 'approved'%}bg-green-500{% elif ppmp.status == 'for_revision'%}bg-blue-500{% else %}bg-orange-500{% endif %}"></span>
-            {{ ppmp.get_status_display }}
-          </div>
+      <!-- Status Bar -->
+      <div class="mb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium {% if ppmp.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif ppmp.status == 'approved'%}bg-green-100 text-green-800{% elif ppmp.status == 'for_revision'%}bg-blue-100 text-blue-800{% else %}bg-orange-100 text-orange-800{% endif %} rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full {% if ppmp.status == 'pending' %}bg-yellow-500{% elif ppmp.status == 'approved'%}bg-green-500{% elif ppmp.status == 'for_revision'%}bg-blue-500{% else %}bg-orange-500{% endif %}"></span>
+          {{ ppmp.get_status_display }}
         </div>
+      </div>
       <div class="mb-4 text-center">
         <h1 class="text-2xl font-bold">PROJECT PROCUREMENT MANAGEMENT PLAN</h1>
         <p class="text-gray-600">Republic of the Philippines</p>
         <p class="font-medium text-gray-700">WESTERN MINDANAO STATE UNIVERSITY</p>
       </div>
       <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-      <!-- Left Column -->
-      <div class="space-y-2">
-        <div class="flex">
-          <p class="w-40 font-semibold">Fiscal Year:</p>
-          <p>{{ ppmp.fiscal_year }}</p>
+        <div class="space-y-2">
+          <div class="flex">
+            <p class="w-40 font-semibold">Fiscal Year:</p>
+            <p>{{ ppmp.fiscal_year }}</p>
+          </div>
+          <div class="flex">
+            <p class="w-40 font-semibold">End-User Unit:</p>
+            <p>{{ ppmp.office_profile.office_name|default:"—" }}</p>
+          </div>
         </div>
-        <div class="flex">
-          <p class="w-40 font-semibold">End-User Unit:</p>
-          <p>{{ ppmp.office_profile.office_name|default:"—" }}</p>
+        <div class="space-y-2">
+          <div class="flex">
+            <p class="w-40 font-semibold">Date Prepared:</p>
+            <p>{{ ppmp.created_at|date:"F d, Y" }}</p>
+          </div>
+          <div class="flex">
+            <p class="w-40 font-semibold">Submission Type:</p>
+            <p class="uppercase">{{ ppmp.get_submission_type_display}}</p>
+          </div>
         </div>
       </div>
-      <!-- Right Column -->
-      <div class="space-y-2">
-        <div class="flex">
-          <p class="w-40 font-semibold">Date Prepared:</p>
-          <p>{{ ppmp.created_at|date:"F d, Y" }}</p>
-        </div>
-        <div class="flex">
-          <p class="w-40 font-semibold">Submission Type:</p>
-          <p class="uppercase">{{ ppmp.get_submission_type_display}}</p>
-        </div>
-      </div>
-    </div>
     </div>
 
     <!-- Main Content -->
@@ -117,119 +115,77 @@
                 <h3 class="text-lg font-bold text-gray-800">PROCUREMENT LINE {{ procurement_line.order }} – {{ procurement_line.item_code.object_code.expenditure.name }}</h3>
               </div>
               
-              <!-- Procurement Details Grid - Properly Aligned -->
+              <!-- Procurement Details Grid -->
               <div class="grid grid-cols-1 p-5 mb-4 bg-white border border-gray-200 gap-x-8 gap-y-5 rounded-xl md:grid-cols-2 lg:grid-cols-3">
-
-              <!-- Procurement Program -->
-              <div class="lg:col-span-2">
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  Procurement Program/Project
-                </p>
-                <p class="text-sm font-medium leading-relaxed text-gray-800">
-                  {{ procurement_line.procurement_program }}
-                </p>
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Procurement Program/Project</p>
+                  <p class="text-sm font-medium leading-relaxed text-gray-800">{{ procurement_line.procurement_program }}</p>
+                </div>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Mode of Procurement</p>
+                  <p class="text-sm font-medium text-gray-800">{{ procurement_line.get_mode_of_procurement_display }}</p>
+                </div>
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">General Description</p>
+                  <p class="text-sm leading-relaxed text-gray-800">{{ procurement_line.item_code.general_description }}</p>
+                </div>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Item Code</p>
+                  <p class="font-mono text-sm text-gray-800">{{ procurement_line.item_code.code }}</p>
+                </div>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">UACS / Object Code</p>
+                  <p class="font-mono text-sm text-gray-800">{{ procurement_line.item_code.object_code.code }}</p>
+                </div>
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Object of Expenditure</p>
+                  <p class="text-sm font-medium leading-relaxed text-gray-800">{{ procurement_line.item_code.object_code.expenditure.name }}</p>
+                </div>
               </div>
 
-              <!-- Mode of Procurement -->
               <div>
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  Mode of Procurement
-                </p>
-                <p class="text-sm font-medium text-gray-800">
-                  {{ procurement_line.get_mode_of_procurement_display }}
-                </p>
-              </div>
-
-              <!-- General Description -->
-              <div class="lg:col-span-2">
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  General Description
-                </p>
-                <p class="text-sm leading-relaxed text-gray-800">
-                  {{ procurement_line.item_code.general_description }}
-                </p>
-              </div>
-
-              <!-- Item Code -->
-              <div>
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  Item Code
-                </p>
-                <p class="font-mono text-sm text-gray-800">
-                  {{ procurement_line.item_code.code }}
-                </p>
-              </div>
-
-              <!-- UACS / Object Code -->
-              <div>
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  UACS / Object Code
-                </p>
-                <p class="font-mono text-sm text-gray-800">
-                  {{ procurement_line.item_code.object_code.code }}
-                </p>
-              </div>
-
-              <!-- Object of Expenditure -->
-              <div class="lg:col-span-2">
-                <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  Object of Expenditure
-                </p>
-                <p class="text-sm font-medium leading-relaxed text-gray-800">
-                  {{ procurement_line.item_code.object_code.expenditure.name }}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <!-- Items to be Procured -->
-              <h4 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h4>
-
-              <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                <table class="min-w-full text-sm divide-y divide-gray-200">
-                  <thead class="bg-gray-100">
-                    <tr>
-                      <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Item Name</th>
-                      <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Quantity</th>
-                      <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Unit</th>
-                      <th class="px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase w-28">Unit Cost (₱)</th>
-                      <th class="w-32 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
-                      <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase w-28">Date Needed</th>
-                      <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    {% for entry in procurement_line.line_entries.all %}
-                      <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ entry.item.name }}</td>
-                        <td class="px-4 py-3 text-sm text-right text-gray-700">{{ entry.quantity }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ entry.item.get_unit_display }}</td>
-                        <td class="px-4 py-3 text-sm text-right text-gray-700">₱ {{ entry.unit_cost_snapshot }}</td>
-                        <td class="px-4 py-3 text-sm font-semibold text-right text-gray-900">₱ {{ entry.total_amount }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-700">{{ entry.date_needed|date:"F d, Y" }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500">
-                          {{ entry.remarks|default:"No remarks." }}
-                        </td>
-                      </tr>
-                    {% empty %}
+                <h4 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h4>
+                <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                  <table class="min-w-full text-sm divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
                       <tr>
-                        <td colspan="7" class="px-4 py-3 text-center text-gray-500">No items found.</td>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Item Name</th>
+                        <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Quantity</th>
+                        <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Unit</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase w-28">Unit Cost (₱)</th>
+                        <th class="w-32 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase w-28">Date Needed</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remarks</th>
                       </tr>
-                    {% endfor %}
-                  </tbody>
-                  <tfoot class="bg-gray-50">
-                    <tr>
-                      <td colspan="5" class="px-4 py-3 text-sm font-semibold text-right text-gray-900">Line {{ procurement_line.order }} Total</td>
-                      <td class="px-4 py-3 text-sm font-bold text-right text-red-600">₱ {{ procurement_line.total_amount }}</td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      {% for entry in procurement_line.line_entries.all %}
+                        <tr class="hover:bg-gray-50">
+                          <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ entry.item.name }}</td>
+                          <td class="px-4 py-3 text-sm text-right text-gray-700">{{ entry.quantity }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-700">{{ entry.item.get_unit_display }}</td>
+                          <td class="px-4 py-3 text-sm text-right text-gray-700">₱ {{ entry.unit_cost_snapshot }}</td>
+                          <td class="px-4 py-3 text-sm font-semibold text-right text-gray-900">₱ {{ entry.total_amount }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-700">{{ entry.date_needed|date:"F d, Y" }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-500">{{ entry.remarks|default:"No remarks." }}</td>
+                        </tr>
+                      {% empty %}
+                        <tr><td colspan="7" class="px-4 py-3 text-center text-gray-500">No items found.</tr>
+                      {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                      <tr>
+                        <td colspan="5" class="px-4 py-3 text-sm font-semibold text-right text-gray-900">Line {{ procurement_line.order }} Total</td>
+                        <td class="px-4 py-3 text-sm font-bold text-right text-red-600">₱ {{ procurement_line.total_amount }}</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                {% if not forloop.last %}
+                  <div class="my-4 border-t border-gray-200"></div>
+                {% endif %}
               </div>
-
-              {% if not forloop.last %}
-                <div class="my-4 border-t border-gray-200"></div>
-              {% endif %}
             </div>
           {% empty %}
             <p class="text-center text-gray-500">No procurement lines found.</p>
@@ -276,59 +232,147 @@
             </div>
           </div>
         </div>
+
+        <!-- Action Buttons -->
+        {% if request.user.is_any_admin %}
+          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-200">
+            <button id="revision-btn" data-id="{{ ppmp.id }}" class="group inline-flex items-center gap-2 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-2.5 text-sm font-semibold text-yellow-700 transition-all duration-200 hover:bg-yellow-100">
+              Revision
+            </button>
+            <button id="decline-btn" class="group inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700 transition-all duration-200 hover:bg-red-100">
+              Decline
+            </button>
+            <button
+              type="button"
+              id="approve-btn"
+              class="group inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Approve
+            </button>
+            <form id="approve-form" method="post" action="{% url 'ppmp:ppmp_approve' ppmp.id %}">
+              {% csrf_token %}
+            </form>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
-
-  <!-- Action Buttons -->
-  {% if request.user.is_any_admin %}
-    <div class="sticky flex justify-end gap-3 p-4 mt-6 border border-gray-200 shadow-xl bottom-4 rounded-2xl bg-white/95 backdrop-blur-md">
-      <button id="revision-btn" data-id="{{ ppmp.id }}" class="group inline-flex items-center gap-2 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-2.5 text-sm font-semibold text-yellow-700 transition-all duration-200 hover:bg-yellow-100">
-        Revision
-      </button>
-      <button id="decline-btn" class="group inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700 transition-all duration-200 hover:bg-red-100">
-        Decline
-      </button>
-      <form method="post" action="{% url 'ppmp:ppmp_approve' ppmp.id %}" class="inline">
-        {% csrf_token %}
-        <button type="submit" class="group inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700">
-          Approve
-        </button>
-      </form>
-    </div>
-  {% endif %}
 </div>
 
-<!-- Decline/Revise Modal -->
-<div id="remarks-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black/50">
+<!-- ==================== REVISION/DECLINE MODAL ==================== -->
+<div
+  id="remarks-modal"
+  class="fixed inset-0 z-50 bg-black/50"
+  style="display:none; align-items:center; justify-content:center;"
+  aria-modal="true"
+  role="dialog"
+>
   <div id="ppmp-data" data-ppmp-id="{{ ppmp.id }}"></div>
-  <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-xl">
-      <h2 class="mb-1 text-lg font-semibold text-gray-800" id="remarks-modal-title">
-      </h2>
-      <p class="mb-4 text-sm text-gray-500" id="remarks-modal-description">
-      </p>
-
-      <textarea
-          id="remarks-input"
-          rows="4"
-          class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-          placeholder="Enter remarks here...">
-      </textarea>
-
-      <div class="flex justify-end gap-3 mt-5">
-          <button type="button" id="cancel-remarks-btn"
-              class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 rounded-lg hover:bg-gray-200">
-              Cancel
-          </button>
-          <button type="button" id="confirm-remarks-btn"
-              class="px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
-              Confirm
-          </button>
+  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-6 sm:items-center sm:p-0">
+    <div class="w-full max-w-md overflow-hidden bg-white shadow-xl rounded-xl">
+      <div id="remarks-modal-header" class="flex items-center justify-between px-5 py-4" style="background: linear-gradient(to right, #991b1b, #b91c1c);">
+        <div class="flex items-center gap-2.5">
+          <span id="remarks-modal-icon">
+            <svg class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+          </span>
+          <h2 id="remarks-modal-title" class="text-base font-semibold text-white"></h2>
+        </div>
+        <button type="button" id="close-remarks-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
+      <div class="px-5 pt-4">
+        <div id="remarks-modal-banner" class="flex gap-2.5 px-3 py-2.5 text-xs leading-relaxed rounded-lg border">
+          <svg class="flex-shrink-0 w-4 h-4 mt-0.5" id="remarks-banner-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="remarks-modal-description"></span>
+        </div>
+      </div>
+      <div class="px-5 pt-4 pb-2">
+        <label class="block mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">Remarks / Reason <span class="text-red-500">*</span></label>
+        <textarea id="remarks-input" rows="4" class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter your remarks here..."></textarea>
+        <p id="remarks-error" class="hidden mt-1.5 text-xs text-red-600 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Remarks are required before confirming.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
+        <button type="button" id="cancel-remarks-btn" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Cancel</button>
+        <button type="button" id="confirm-remarks-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg">Confirm</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Edit Request Modal -->
+<!-- ==================== APPROVE MODAL ==================== -->
+<div id="approve-modal" class="fixed inset-0 z-50 bg-black/50" style="display:none; align-items:center; justify-content:center;" aria-modal="true" role="dialog">
+  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-6 sm:items-center sm:p-0">
+    <div class="w-full max-w-md overflow-hidden bg-white shadow-xl rounded-xl">
+      <div class="flex items-center justify-between px-5 py-4" style="background: linear-gradient(to right, #14532d, #15803d);">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h2 class="text-base font-semibold text-white">Approve PPMP</h2>
+        </div>
+        <button type="button" id="close-approve-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-5 pt-4">
+        <div class="flex gap-2.5 px-3 py-2.5 text-xs leading-relaxed rounded-lg border" style="background:#f0fdf4; border-color:#86efac; color:#14532d;">
+          <svg class="flex-shrink-0 w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>Once approved, the end-user unit will be notified and the PPMP status will be updated to <strong>Approved</strong>. This action cannot be undone.</span>
+        </div>
+      </div>
+      <div class="px-5 pt-4 pb-2">
+        <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">End-User</span>
+            <span class="font-medium text-gray-800">{{ ppmp.office_profile.office_name|default:"—" }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Fiscal Year</span>
+            <span class="font-medium text-gray-800">{{ ppmp.fiscal_year }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Total Amount</span>
+            <span class="font-semibold text-green-700">₱ {{ ppmp.total_amount }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Submission</span>
+            <span class="font-medium text-gray-800 uppercase">{{ ppmp.get_submission_type_display }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
+        <button type="button" id="cancel-approve-btn" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Cancel</button>
+        <button type="button" id="confirm-approve-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg bg-green-700 hover:bg-green-800">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Yes, Approve PPMP
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EDIT REQUEST MODAL ==================== -->
 <div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="flex items-center justify-center min-h-screen px-4">
     <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeEditRequestModal()"></div>
@@ -357,18 +401,12 @@
                 Reason for Edit Request
                 <span class="text-red-500">*</span>
               </label>
-              <textarea name="reason" id="edit_reason" required rows="4"
-                class="w-full px-3 py-2 transition border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                placeholder="Please describe the changes you need..."></textarea>
+              <textarea name="reason" id="edit_reason" required rows="4" class="w-full px-3 py-2 transition border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" placeholder="Please describe the changes you need..."></textarea>
             </div>
           </div>
           <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl">
-            <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-              Cancel
-            </button>
-            <button type="submit" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">
-              Submit
-            </button>
+            <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Submit</button>
           </div>
         </form>
       </div>
@@ -376,8 +414,162 @@
   </div>
 </div>
 
-<script type="module" src="{% static 'javascript/ppmp/ppmp.js' %}"></script>
 <script>
+  // ==================== REVISION/DECLINE MODAL ====================
+  (function () {
+    const modal        = document.getElementById('remarks-modal');
+    const header       = document.getElementById('remarks-modal-header');
+    const iconWrap     = document.getElementById('remarks-modal-icon');
+    const titleEl      = document.getElementById('remarks-modal-title');
+    const banner       = document.getElementById('remarks-modal-banner');
+    const bannerIcon   = document.getElementById('remarks-banner-icon');
+    const descEl       = document.getElementById('remarks-modal-description');
+    const textarea     = document.getElementById('remarks-input');
+    const errorEl      = document.getElementById('remarks-error');
+    const confirmBtn   = document.getElementById('confirm-remarks-btn');
+    const cancelBtn    = document.getElementById('cancel-remarks-btn');
+    const closeBtn     = document.getElementById('close-remarks-modal-btn');
+    const ppmpId       = document.getElementById('ppmp-data').dataset.ppmpId;
+    let currentAction = null;
+
+    const ICONS = {
+      revision: `<svg class="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>`,
+      decline: `<svg class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+      </svg>`,
+    };
+
+    const THEMES = {
+      revision: {
+        headerGradient: 'linear-gradient(to right, #92400e, #b45309)',
+        bannerBg: '#fffbeb',
+        bannerBorder: '#fde68a',
+        bannerText: '#78350f',
+        bannerIconColor: '#d97706',
+        confirmBg: '#b45309',
+        confirmHover: '#92400e',
+        label: 'Send for Revision',
+        description: 'Please provide a clear reason so the end-user unit can correct the PPMP accordingly.',
+      },
+      decline: {
+        headerGradient: 'linear-gradient(to right, #991b1b, #b91c1c)',
+        bannerBg: '#fef2f2',
+        bannerBorder: '#fca5a5',
+        bannerText: '#7f1d1d',
+        bannerIconColor: '#dc2626',
+        confirmBg: '#b91c1c',
+        confirmHover: '#991b1b',
+        label: 'Decline PPMP',
+        description: 'This PPMP will be declined and the end-user unit will be notified. This action cannot be undone.',
+      },
+    };
+
+    function openModal(action) {
+      const t = THEMES[action];
+      currentAction = action;
+      header.style.background = t.headerGradient;
+      iconWrap.innerHTML = ICONS[action];
+      titleEl.textContent = action === 'revision' ? 'Request Revision' : 'Decline PPMP';
+      banner.style.cssText = `background:${t.bannerBg}; border-color:${t.bannerBorder}; color:${t.bannerText};`;
+      bannerIcon.style.color = t.bannerIconColor;
+      descEl.textContent = t.description;
+      confirmBtn.textContent = t.label;
+      confirmBtn.style.background = t.confirmBg;
+      confirmBtn.onmouseover = () => confirmBtn.style.background = t.confirmHover;
+      confirmBtn.onmouseout = () => confirmBtn.style.background = t.confirmBg;
+      textarea.value = '';
+      errorEl.classList.add('hidden');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => textarea.focus(), 80);
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+      currentAction = null;
+    }
+
+    function submitModal() {
+      const remarks = textarea.value.trim();
+      if (!remarks) {
+        errorEl.classList.remove('hidden');
+        textarea.focus();
+        return;
+      }
+      errorEl.classList.add('hidden');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Submitting…';
+      fetch(`/ppmp/${ppmpId}/${currentAction}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ remarks }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) location.reload();
+          else alert('Error: ' + (data.error || 'Unknown error'));
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = THEMES[currentAction].label;
+        })
+        .catch(() => {
+          alert('Request failed. Please try again.');
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = THEMES[currentAction].label;
+        })
+        .finally(() => closeModal());
+    }
+
+    document.getElementById('revision-btn')?.addEventListener('click', () => openModal('revision'));
+    document.getElementById('decline-btn')?.addEventListener('click', () => openModal('decline'));
+    cancelBtn?.addEventListener('click', closeModal);
+    closeBtn?.addEventListener('click', closeModal);
+    confirmBtn?.addEventListener('click', submitModal);
+    modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+  })();
+
+  // ==================== APPROVE MODAL ====================
+  (function () {
+    const modal = document.getElementById('approve-modal');
+    const approveBtn = document.getElementById('approve-btn');
+    const confirmBtn = document.getElementById('confirm-approve-btn');
+    const cancelBtn = document.getElementById('cancel-approve-btn');
+    const closeBtn = document.getElementById('close-approve-modal-btn');
+    const form = document.getElementById('approve-form');
+
+    if (!modal || !approveBtn || !confirmBtn || !cancelBtn || !closeBtn || !form) return;
+
+    function openModal() {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function submitApproval() {
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Approving…`;
+      form.submit();
+    }
+
+    approveBtn.addEventListener('click', openModal);
+    cancelBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    confirmBtn.addEventListener('click', submitApproval);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+  })();
+
+  // ==================== EDIT REQUEST MODAL ====================
   function openEditRequestModal(ppmpId, ppmpTitle) {
     document.getElementById("modal_ppmp_id").value = ppmpId;
     document.getElementById("modal_ppmp_title").innerText = ppmpTitle;
