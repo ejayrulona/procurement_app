@@ -17,4 +17,5 @@ urlpatterns = (
     path("apps/", views.app_list, name="app_list"),
     path("app/<int:id>/", views.app, name="app"),
     path("app/<int:id>/add-schedule/", views.app_add_schedule, name="app_add_schedule"),
+    path("app/<int:id>/export/", views.export_app_excel, name="export_app_excel"),
 )

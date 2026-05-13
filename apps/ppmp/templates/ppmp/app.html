@@ -3,7 +3,7 @@
 
 {% block title %}Annual Procurement Plan | Procurement Office{% endblock %}
 
-{% block header_subtitle %}APP FY {{ fiscal_year|default:"2026" }} – Approved PPMPs{% endblock %}
+{% block header_subtitle %}APP FY {{ app.fiscal_year }} – Approved PPMPs{% endblock %}
 
 {% block content %}
 <div class="w-full px-4 py-6 sm:px-6 lg:px-8">
@@ -61,7 +61,7 @@
             </button>
             
             <!-- Export to Excel Button -->
-            <button id="exportExcelBtn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg shadow-sm hover:bg-green-700">
+            <button id="export-excel-btn" data-fiscal-year="{{ app.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-green-600 rounded-lg shadow-sm hover:bg-green-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
@@ -155,7 +155,7 @@
 
         <div class="pt-5 mt-6 text-xs text-center text-gray-400 border-t border-gray-200">
             This APP is prepared in accordance with the IRR of RA 12009 (New Government Procurement Act) and DBM-DOE-GPPB Joint Circular. 
-            The information above is based on approved PPMP submissions for FY {{ fiscal_year|default:"2026" }}.
+            The information above is based on approved PPMP submissions for FY {{ app.fiscal_year }}.
         </div>
     </div>
 </div>
@@ -266,23 +266,4 @@
 </div>
 
 <script type="module" src="{% static 'javascript/ppmp/app.js' %}"></script>
-<script>
-    // Export table to Excel (XLS format)
-    const exportExcelBtn = document.getElementById('exportExcelBtn');
-    if (exportExcelBtn) {
-        exportExcelBtn.addEventListener('click', function() {
-            let table = document.getElementById('appTable');
-            let html = table.outerHTML;
-            let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-            let link = document.createElement('a');
-            let url = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = 'APP_FY_{{ fiscal_year|default:"2026" }}.xls';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        });
-    }
-</script>
 {% endblock %}

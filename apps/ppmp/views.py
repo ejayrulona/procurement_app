@@ -1,12 +1,14 @@
 import json
 from datetime import date
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from .export_service import generate_app_excel
 from .forms import PPMPForm
 from .models import (
     ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry, ModeOfProcurement,
@@ -637,3 +639,60 @@ def app_add_schedule(request, id):
         "message": "Schedule updated successfully for all entries.",
         "app_id": app.id,
     }, status=200)
+
+
+APP_TEMPLATE_PATH = str(settings.APP_TEMPLATE_PATH)
+
+@login_required
+def export_app_excel(request, id):
+    """
+    GET /ppmp/app/<pk>/export/
+    Exports the APP as an .xlsx file using the official template.
+    """
+
+    app = get_object_or_404(
+        AnnualProcurementPlan.objects.prefetch_related(
+            "app_entries__ppmp__office_profile",
+            "app_entries__ppmp__procurement_lines__item_code__object_code",
+            "app_entries__ppmp__procurement_lines__line_entries__item",
+        ),
+        pk=id
+    )
+
+    # Fetch and serialize records from DB
+    records = []
+
+    for entry in app.app_entries.all():
+        for line in entry.ppmp.procurement_lines.all():
+            records.append({
+                "code_pap": line.item_code.code,
+                "program_project": line.procurement_program,
+                "object_code": line.item_code.object_code.code,
+                "pmo_end_user": entry.pmo_end_user,
+                "mode_of_procurement": line.get_mode_of_procurement_display(),
+                "advertisement_date": entry.advertisement_date,
+                "submission_date": entry.submission_date,
+                "notice_of_award_date": entry.notice_of_award_date,
+                "contract_signing_date": entry.contract_signing_date,
+                "source_of_funds": entry.source_of_funds,
+                "total": float(entry.total),
+                "mooe": float(entry.mooe),
+                "co": float(entry.co),
+                "remarks": entry.remarks or "",
+            })
+
+    # Populate template and get bytes
+    excel_bytes = generate_app_excel(
+        records=records,
+        template_path=APP_TEMPLATE_PATH,
+    )
+
+    filename = f"APP_{app.get_submission_type_display()}_FY{app.fiscal_year}.xlsx"
+
+    # Return as file download
+    response = HttpResponse(
+        content=excel_bytes,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
