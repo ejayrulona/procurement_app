@@ -26,6 +26,7 @@ urlpatterns = [
     path("activity_logs/", include("apps.activity_logs.urls", namespace="activity_logs")),
     path("inventory/", include("apps.inventory.urls", namespace="inventory")),
     path("users/", include("apps.users.urls", namespace="users")),
+    path("notification/", include("apps.notification.urls", namespace="notification")),
     path("ppmp/", include("apps.ppmp.urls", namespace="ppmp")),
     path("app/", include("apps.app.urls", namespace="app")),
 ]

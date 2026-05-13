@@ -12,4 +12,7 @@ urlpatterns = [
     path("api/get-item-codes/", views.get_item_codes, name="get_item_codes"),
     path("api/get-all-item-codes/", views.get_all_item_codes, name="get_items_by_item_code"),
     path("api/get-items-by-item-code/", views.get_items_by_item_code, name="get_items_by_item_code"),
+    path("add_object_expenditure/", views.add_object_expenditure, name="add_object_expenditure"),
+    path("add_object_code/", views.add_object_code, name="add_object_code"),
+    path("add_item_code/", views.add_item_code, name="add_item_code"),
 ]

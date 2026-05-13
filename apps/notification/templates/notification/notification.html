@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Manage your notifications{% endblock %}
+
+{% block content %}
+<!-- Back Button -->
+<div class="mb-6">
+  <a href="{% url 'core:admin_dashboard' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+    </svg>
+    <span class="font-medium">Back to Dashboard</span>
+  </a>
+</div>
+
+<!-- Header with Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+  <div class="flex items-center gap-3">
+    <div class="relative">
+      <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Notifications</h1>
+      <p class="text-sm text-gray-500">Stay updated with your latest activities</p>
+    </div>
+  </div>
+  
+  <div class="flex gap-2">
+    <button onclick="markAllAsRead()" class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+      Mark all as read
+    </button>
+    <button onclick="clearAllNotifications()" class="px-4 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition">
+      Clear all
+    </button>
+  </div>
+</div>
+
+<!-- Tabs for Notification Types -->
+<div class="flex gap-2 border-b border-gray-200 mb-6">
+  <button class="tab-btn active px-4 py-2 text-sm font-medium text-red-600 border-b-2 border-red-600 transition" data-tab="all">
+    All
+  </button>
+  <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition" data-tab="unread">
+    Unread
+  </button>
+  <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition" data-tab="read">
+    Read
+  </button>
+</div>
+
+<!-- Notifications List - Static HTML Table -->
+<div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+  <!-- Notification 1 - Success (Unread) -->
+  <div class="notification-item unread bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200" data-id="1" data-read="false">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-md font-bold text-red-600">PPMP Approved</h3>
+            <p class="text-sm text-gray-600 mt-1">Your PPMP for ICT Equipment has been approved by the BAC Secretariat.</p>
+            <p class="text-xs text-gray-400 mt-2">2 hours ago</p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button onclick="markAsRead(1)" class="p-1 text-blue-600 hover:text-blue-800 transition" title="Mark as read">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </button>
+            <button onclick="deleteNotification(1)" class="p-1 text-gray-400 hover:text-red-600 transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification 2 - Warning (Unread) -->
+  <div class="notification-item unread bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200" data-id="2" data-read="false">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-md font-bold text-red-600">Budget Review Required</h3>
+            <p class="text-sm text-gray-600 mt-1">The submitted budget for FY 2026 exceeds the allocated ceiling amount.</p>
+            <p class="text-xs text-gray-400 mt-2">5 hours ago</p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button onclick="markAsRead(2)" class="p-1 text-blue-600 hover:text-blue-800 transition" title="Mark as read">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </button>
+            <button onclick="deleteNotification(2)" class="p-1 text-gray-400 hover:text-red-600 transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification 3 - Info (Read) -->
+  <div class="notification-item bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200" data-id="3" data-read="true">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-md font-semibold text-gray-800">New PPMP Submission</h3>
+            <p class="text-sm text-gray-600 mt-1">College of Engineering has submitted a new PPMP for review.</p>
+            <p class="text-xs text-gray-400 mt-2">1 day ago</p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button onclick="deleteNotification(3)" class="p-1 text-gray-400 hover:text-red-600 transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification 4 - Error (Unread) -->
+  <div class="notification-item unread bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200" data-id="4" data-read="false">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-md font-bold text-red-600">Submission Failed</h3>
+            <p class="text-sm text-gray-600 mt-1">Failed to submit APP for FY 2026. Please check your connection and try again.</p>
+            <p class="text-xs text-gray-400 mt-2">2 days ago</p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button onclick="markAsRead(4)" class="p-1 text-blue-600 hover:text-blue-800 transition" title="Mark as read">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </button>
+            <button onclick="deleteNotification(4)" class="p-1 text-gray-400 hover:text-red-600 transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification 5 - Success (Read) -->
+  <div class="notification-item bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200" data-id="5" data-read="true">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <h3 class="text-md font-semibold text-gray-800">Account Created</h3>
+            <p class="text-sm text-gray-600 mt-1">New admin account has been successfully created.</p>
+            <p class="text-xs text-gray-400 mt-2">3 days ago</p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button onclick="deleteNotification(5)" class="p-1 text-gray-400 hover:text-red-600 transition" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .notification-item {
+    transition: all 0.2s ease;
+  }
+  
+  .notification-item.unread {
+    background: linear-gradient(90deg, #fef2f2 0%, #ffffff 5%);
+    border-left: 3px solid #dc2626;
+  }
+  
+  .notification-item:hover {
+    transform: translateX(4px);
+  }
+  
+  .tab-btn.active {
+    color: #dc2626;
+    border-bottom-color: #dc2626;
+  }
+  
+  /* Custom scrollbar */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+</style>
+
+<script>
+  // Tab switching functionality
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.classList.add('text-gray-600');
+      });
+      this.classList.add('active');
+      this.classList.remove('text-gray-600');
+      
+      const tab = this.dataset.tab;
+      filterNotifications(tab);
+    });
+  });
+  
+  function filterNotifications(tab) {
+    const notifications = document.querySelectorAll('.notification-item');
+    
+    notifications.forEach(notification => {
+      const isRead = notification.getAttribute('data-read') === 'true';
+      
+      if (tab === 'all') {
+        notification.style.display = 'flex';
+      } else if (tab === 'unread') {
+        notification.style.display = !isRead ? 'flex' : 'none';
+      } else if (tab === 'read') {
+        notification.style.display = isRead ? 'flex' : 'none';
+      }
+    });
+  }
+  
+  function markAsRead(notificationId) {
+    const notification = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+    notification.classList.remove('unread');
+    notification.setAttribute('data-read', 'true');
+    
+    const titleElement = notification.querySelector('h3');
+    titleElement.classList.remove('font-bold', 'text-red-600');
+    titleElement.classList.add('font-semibold', 'text-gray-800');
+    
+    const markButton = notification.querySelector('button[title="Mark as read"]');
+    if (markButton) {
+      markButton.remove();
+    }
+    
+    updateNotificationCount();
+    showToast('Notification marked as read', 'success');
+  }
+  
+  function markAllAsRead() {
+    document.querySelectorAll('.notification-item.unread').forEach(notification => {
+      notification.classList.remove('unread');
+      notification.setAttribute('data-read', 'true');
+      
+      const titleElement = notification.querySelector('h3');
+      titleElement.classList.remove('font-bold', 'text-red-600');
+      titleElement.classList.add('font-semibold', 'text-gray-800');
+      
+      const markButton = notification.querySelector('button[title="Mark as read"]');
+      if (markButton) {
+        markButton.remove();
+      }
+    });
+    updateNotificationCount();
+    showToast('All notifications marked as read', 'success');
+  }
+  
+  function deleteNotification(notificationId) {
+    if (confirm('Are you sure you want to delete this notification?')) {
+      const notification = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+      notification.remove();
+      updateNotificationCount();
+      showToast('Notification deleted', 'info');
+    }
+  }
+  
+  function clearAllNotifications() {
+    const notifications = document.querySelectorAll('.notification-item');
+    notifications.forEach(notification => {
+      notification.remove();
+    });
+    updateNotificationCount();
+    showToast('All notifications cleared', 'info');
+  }
+  
+  function updateNotificationCount() {
+    const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+    const badge = document.querySelector('.absolute.-top-1.-right-1');
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+  
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg text-white z-50 ${
+      type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+    }`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+  
+  // Initialize notification count on page load
+  updateNotificationCount();
+</script>
+{% endblock %}

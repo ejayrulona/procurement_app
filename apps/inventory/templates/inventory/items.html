@@ -2,279 +2,251 @@
 {% load static %}
 
 {% block title %}Inventory | Procurement Office{% endblock %}
-
 {% block header_subtitle %}Manage and track procured items stock{% endblock %}
 
 {% block content %}
-<!-- Header with Add Button - Responsive -->
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-	<div>
-		<h2 class="text-xl sm:text-2xl font-bold text-gray-800">Inventory</h2>
-		<p class="text-xs sm:text-sm text-gray-500 mt-1">Track stock levels of procured items</p>
-	</div>
-	<a href="{% url 'inventory:item_create' %}"
-		class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition shadow-sm flex items-center justify-center gap-2 cursor-pointer">
-		<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-		</svg>
-		Add Inventory Item
-	</a>
+
+<!-- ==================== PAGE HEADER ==================== -->
+<div class="flex flex-col gap-5 mb-6 lg:flex-row lg:items-center lg:justify-between">
+
+    <!-- Left -->
+    <div>
+        <h2 class="text-2xl font-bold tracking-tight text-gray-800">
+            Inventory
+        </h2>
+        <p class="mt-1 text-sm text-gray-500">
+            Track stock levels of procured items
+        </p>
+    </div>
+
+    <!-- Right Action Buttons -->
+    <div class="flex flex-wrap items-center justify-end gap-3">
+
+        <a href="{% url 'inventory:add_object_expenditure' %}"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-red-700 to-red-800 hover:shadow-md hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v16m8-8H4" />
+            </svg>
+            Add Object Expenditure
+        </a>
+
+        <a href="{% url 'inventory:add_object_code' %}"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 hover:shadow-md hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Add Object Code
+        </a>
+
+        <a href="{% url 'inventory:item_create' %}"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-rose-700 to-rose-800 hover:shadow-md hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v16m8-8H4" />
+            </svg>
+            Add Item
+        </a>
+
+        <a href="{% url 'inventory:add_item_code' %}"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-green-700 to-green-800 hover:shadow-md hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            Add Inventory Item
+        </a>
+
+    </div>
 </div>
 
-<!-- Stats Cards - Responsive grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-	<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-		<div class="flex items-center justify-between">
-			<div>
-				<p class="text-xs sm:text-sm text-gray-500">Total Items</p>
-				<p class="text-xl sm:text-2xl font-bold text-gray-800" id="totalItems">5</p>
-			</div>
-			<div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-				<svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-				</svg>
-			</div>
-		</div>
-	</div>
-	<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-		<div class="flex items-center justify-between">
-			<div>
-				<p class="text-xs sm:text-sm text-gray-500">In Stock</p>
-				<p class="text-xl sm:text-2xl font-bold text-green-600" id="inStockCount">3</p>
-			</div>
-			<div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
-				<svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-				</svg>
-			</div>
-		</div>
-	</div>
-	<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-		<div class="flex items-center justify-between">
-			<div>
-				<p class="text-xs sm:text-sm text-gray-500">Low Stock</p>
-				<p class="text-xl sm:text-2xl font-bold text-yellow-600" id="lowStockCount">1</p>
-			</div>
-			<div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-				<svg class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-				</svg>
-			</div>
-		</div>
-	</div>
-	<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-		<div class="flex items-center justify-between">
-			<div>
-				<p class="text-xs sm:text-sm text-gray-500">Out of Stock</p>
-				<p class="text-xl sm:text-2xl font-bold text-red-600" id="outOfStockCount">1</p>
-			</div>
-			<div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center">
-				<svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-				</svg>
-			</div>
-		</div>
-	</div>
+<!-- ==================== FILTER SECTION ==================== -->
+<div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-2xl">
+
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+        <!-- Search -->
+        <div class="relative flex-1">
+            <svg class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+
+            <input type="text"
+                id="searchInput"
+                placeholder="Search by item name, code, or description..."
+                class="w-full py-2.5 pl-10 pr-4 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500">
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-col gap-3 sm:flex-row">
+
+            <select id="statusFilter"
+                class="px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500">
+
+                <option value="all">All Status</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+
+            </select>
+
+            <select id="categoryFilter"
+                class="px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500">
+
+                <option value="all">All Classifications</option>
+                <option value="Goods">Goods</option>
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="Consulting Services">Consulting Services</option>
+
+            </select>
+
+        </div>
+    </div>
 </div>
 
-<!-- Search and Filter Bar - Responsive -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 mb-6">
-	<div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-		<div class="flex-1">
-			<div class="relative">
-				<svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-				</svg>
-				<input type="text" id="searchInput" placeholder="Search by item name, code, or description..."
-					class="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-			</div>
-		</div>
-		<div class="flex flex-col sm:flex-row gap-3">
-			<select id="statusFilter"
-				class="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-				<option value="all">All Status</option>
-				<option value="In Stock">In Stock</option>
-				<option value="Low Stock">Low Stock</option>
-				<option value="Out of Stock">Out of Stock</option>
-			</select>
-			<select id="categoryFilter"
-				class="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-				<option value="all">All Classifications</option>
-				<option value="Goods">Goods</option>
-				<option value="Infrastructure">Infrastructure</option>
-				<option value="Consulting Services">Consulting Services</option>
-			</select>
-		</div>
-	</div>
+<!-- ==================== INVENTORY TABLE ==================== -->
+<div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
+
+    <div class="overflow-x-auto">
+
+        <table class="w-full min-w-[950px]">
+
+            <!-- Table Header -->
+            <thead class="bg-gray-50">
+                <tr>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                        Item Code
+                    </th>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                        Item Name
+                    </th>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                        Specification
+                    </th>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                        Unit
+                    </th>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase">
+                        Unit Cost (PHP)
+                    </th>
+
+                    <th class="px-5 py-4 text-xs font-semibold tracking-wider text-center text-gray-500 uppercase">
+                        Actions
+                    </th>
+
+                </tr>
+            </thead>
+
+            <!-- Table Body -->
+            <tbody id="inventoryTableBody" class="divide-y divide-gray-100">
+
+                {% for item in items %}
+                <tr class="transition duration-150 hover:bg-gray-50">
+
+                    <td class="px-5 py-4 text-sm font-mono text-gray-700">
+                        {{ item.item_code.code }}
+                    </td>
+
+                    <td class="px-5 py-4 text-sm font-medium text-gray-900">
+                        {{ item.name }}
+                    </td>
+
+                    <td class="px-5 py-4 text-sm text-gray-600">
+                        {{ item.specification }}
+                    </td>
+
+                    <td class="px-5 py-4 text-sm text-gray-600">
+                        {{ item.get_unit_display }}
+                    </td>
+
+                    <td class="px-5 py-4 text-sm font-medium text-gray-900">
+                        ₱ {{ item.unit_cost }}
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="px-5 py-4">
+
+                        <div class="flex items-center justify-center gap-3">
+
+                            <a href="{% url 'inventory:item_edit' item.id %}"
+                                class="text-yellow-600 transition hover:text-yellow-800"
+                                title="Edit Item">
+
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </a>
+
+                            <a href="{% url 'inventory:item_detail' item.id %}"
+                                class="text-blue-600 transition hover:text-blue-800"
+                                title="View Details">
+
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+
+                        </div>
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== PAGINATION ==================== -->
+    <div class="flex flex-col items-center justify-between gap-4 px-5 py-4 border-t border-gray-200 sm:flex-row">
+
+        <p class="text-sm text-gray-600">
+            Showing
+            <span class="font-semibold" id="showingStart">1</span>
+            to
+            <span class="font-semibold" id="showingEnd">5</span>
+            of
+            <span class="font-semibold" id="totalCount">5</span>
+            results
+        </p>
+
+        <div class="flex items-center gap-2">
+
+            <button id="prevPage"
+                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                disabled>
+                Previous
+            </button>
+
+            <button id="nextPage"
+                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                disabled>
+                Next
+            </button>
+
+        </div>
+    </div>
 </div>
 
-<!-- Inventory Table - Horizontal scroll on mobile -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-	<div class="overflow-x-auto">
-		<table class="min-w-[900px] lg:min-w-full w-full">
-			<thead class="bg-gray-50">
-				<tr>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%]">Item Code</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[28%]">Item Name</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">Specification</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">Unit</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">Unit Cost (PHP)</th>
-					<th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%]">Actions</th>
-				</tr>
-			</thead>
-			<tbody id="inventoryTableBody" class="bg-white divide-y divide-gray-200">
-				{% for item in items %}
-				<tr class="hover:bg-gray-50 transition align-middle" data-id="IT-001">
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono text-gray-600 align-middle">{{ item.item_code.code }}</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 align-middle">{{ item.name}}</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">{{ item.specification }}</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 align-middle">{{ item.get_unit_display }}</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 align-middle">₱ {{ item.unit_cost }}</td>
-					<td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500 align-middle whitespace-nowrap">
-						<a href="{% url 'inventory:item_edit' item.id %}" class="text-yellow-600 hover:text-yellow-800 mr-1 sm:mr-2 transition" title="Edit Item">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-							</svg>
-						</a>
-						<a href="{% url 'inventory:item_detail' item.id %}" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-							</svg>
-						</a>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-
-	<!-- Pagination - Responsive -->
-	<div class="bg-white px-3 sm:px-6 py-3 sm:py-4 border-t border-gray-200">
-		<div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-			<div class="text-xs sm:text-sm text-gray-700">
-				Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">5</span> of <span class="font-medium" id="totalCount">5</span> results
-			</div>
-			<div class="flex gap-2">
-				<button id="prevPage"
-					class="px-2 sm:px-3 py-1 border border-gray-300 rounded-md text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-					disabled>Previous</button>
-				<button id="nextPage"
-					class="px-2 sm:px-3 py-1 border border-gray-300 rounded-md text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-					disabled>Next</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<script>
-	// Simple filter functionality for static HTML table
-	const searchInput = document.getElementById('searchInput');
-	const statusFilter = document.getElementById('statusFilter');
-	const categoryFilter = document.getElementById('categoryFilter');
-	const tableBody = document.getElementById('inventoryTableBody');
-	const showingStart = document.getElementById('showingStart');
-	const showingEnd = document.getElementById('showingEnd');
-	const totalCount = document.getElementById('totalCount');
-	const prevPage = document.getElementById('prevPage');
-	const nextPage = document.getElementById('nextPage');
-
-	let currentPage = 1;
-	const rowsPerPage = 5;
-	let filteredRows = [];
-
-	function getAllRows() {
-		return Array.from(document.querySelectorAll('#inventoryTableBody tr'));
-	}
-
-	function updateStats() {
-		const rows = getAllRows();
-		let total = rows.length;
-		let inStock = 0;
-		let lowStock = 0;
-		let outOfStock = 0;
-		
-		rows.forEach(row => {
-			const qtyCell = row.querySelector('td:nth-child(4)');
-			const qty = parseInt(qtyCell?.textContent || '0');
-			if (qty <= 0) outOfStock++;
-			else if (qty <= 10) lowStock++;
-			else inStock++;
-		});
-		
-		document.getElementById('totalItems').textContent = total;
-		document.getElementById('inStockCount').textContent = inStock;
-		document.getElementById('lowStockCount').textContent = lowStock;
-		document.getElementById('outOfStockCount').textContent = outOfStock;
-	}
-
-	function filterRows() {
-		const searchTerm = searchInput.value.toLowerCase();
-		const status = statusFilter.value;
-		const category = categoryFilter.value;
-		const rows = getAllRows();
-		
-		filteredRows = rows.filter(row => {
-			const name = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-			const code = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
-			const rowCategory = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-			const qtyCell = row.querySelector('td:nth-child(4)');
-			const qty = parseInt(qtyCell?.textContent || '0');
-			
-			let rowStatus = '';
-			if (qty <= 0) rowStatus = 'out of stock';
-			else if (qty <= 10) rowStatus = 'low stock';
-			else rowStatus = 'in stock';
-			
-			const matchesSearch = name.includes(searchTerm) || code.includes(searchTerm);
-			const matchesStatus = status === 'all' || rowStatus === status.toLowerCase();
-			const matchesCategory = category === 'all' || rowCategory === category.toLowerCase();
-			
-			return matchesSearch && matchesStatus && matchesCategory;
-		});
-		
-		currentPage = 1;
-		displayRows();
-	}
-
-	function displayRows() {
-		const start = (currentPage - 1) * rowsPerPage;
-		const end = start + rowsPerPage;
-		const pageRows = filteredRows.slice(start, end);
-		
-		getAllRows().forEach(row => row.classList.add('hidden'));
-		pageRows.forEach(row => row.classList.remove('hidden'));
-		
-		const totalFiltered = filteredRows.length;
-		totalCount.textContent = totalFiltered;
-		showingStart.textContent = totalFiltered > 0 ? start + 1 : 0;
-		showingEnd.textContent = Math.min(end, totalFiltered);
-		
-		prevPage.disabled = currentPage === 1;
-		nextPage.disabled = end >= totalFiltered;
-	}
-
-	prevPage.addEventListener('click', () => {
-		if (currentPage > 1) {
-			currentPage--;
-			displayRows();
-		}
-	});
-	
-	nextPage.addEventListener('click', () => {
-		const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
-		if (currentPage < maxPage) {
-			currentPage++;
-			displayRows();
-		}
-	});
-	
-	searchInput.addEventListener('input', filterRows);
-	statusFilter.addEventListener('change', filterRows);
-	categoryFilter.addEventListener('change', filterRows);
-	
-	// Initialize
-	filterRows();
-	updateStats();
-</script>
 {% endblock %}
