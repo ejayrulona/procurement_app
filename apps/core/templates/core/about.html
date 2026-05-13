@@ -55,10 +55,95 @@
         .animate-float      { animation: float 6s ease-in-out infinite; }
         .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
 
-        /* ── IMPROVED HERO GRADIENT ──────────────────────────────────────
-           Darker base so white text pops without needing text-shadow hacks.
-           The three-stop angle keeps a subtle warm depth.
-        ────────────────────────────────────────────────────────────────── */
+        /* ========== PAGE ENTRANCE ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Animation classes */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.5s ease-out forwards;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 0.6s ease-out forwards;
+        }
+
+        /* Stagger delays */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+
+        /* Initial hidden state for animated elements */
+        .animate-on-load {
+            opacity: 0;
+        }
+
+        /* Hero gradient */
         .hero-gradient {
             background: linear-gradient(150deg, #7f1d1d 0%, #450a0a 60%, #1c0505 100%);
         }
@@ -78,6 +163,12 @@
             -webkit-backdrop-filter: blur(8px);
             border-radius: 16px;
         }
+
+        /* Mission/Vision card entrance */
+        .card-entrance {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
 	</style>
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-gray-100">
@@ -87,12 +178,12 @@
         {% include 'components/header.html' %}
 
         <!-- ══════════════════════════════════════════════════════════════
-             HERO SECTION — improved readability
+             HERO SECTION — with entrance animations
         ══════════════════════════════════════════════════════════════════ -->
         <div class="relative overflow-hidden hero-gradient hero-grid">
 
-            <!-- Decorative background blobs (slightly dimmer than before) -->
-            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <!-- Decorative background blobs -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none animate-fade-in">
                 <div class="absolute top-20 left-10 w-72 h-72 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float"></div>
                 <div class="absolute bottom-20 right-10 w-96 h-96 bg-orange-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float" style="animation-delay:2s;"></div>
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-800 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse-slow"></div>
@@ -111,31 +202,23 @@
                 </div>
             </div>
 
-            <!-- Main hero content -->
+            <!-- Main hero content with staggered entrance -->
             <div class="relative max-w-6xl px-4 py-16 mx-auto text-center sm:py-20 md:py-24 lg:py-28">
 
-                <!-- ── Badge ─────────────────────────────────────────────
-                     Higher-contrast border + background so it reads clearly
-                     against the dark gradient.
-                ────────────────────────────────────────────────────────── -->
-                <div class="inline-flex items-center px-4 py-1.5 mb-6 text-sm font-medium text-red-100 rounded-full border border-red-300/40 bg-white/15 backdrop-blur-sm">
+                <!-- Badge - fades in first -->
+                <div class="inline-flex items-center px-4 py-1.5 mb-6 text-sm font-medium text-red-100 rounded-full border border-red-300/40 bg-white/15 backdrop-blur-sm animate-on-load animate-fade-in">
                     <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                     </svg>
                     Established Excellence
                 </div>
 
-                <!-- ── Heading ────────────────────────────────────────────
-                     drop-shadow-lg adds a subtle dark shadow that lifts the
-                     text off the gradient on all screen sizes.
-                ────────────────────────────────────────────────────────── -->
-                <div class="relative">
+                <!-- Heading - slides up -->
+                <div class="relative animate-on-load animate-fade-in-up delay-100">
                     <h1 class="text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl">
                         About the
                         <span class="relative inline-block text-red-200">
                             Procurement Office
-                            <!-- Subtle underline accent — uses a lighter red so it's
-                                 visible against the dark bg without fighting the text -->
                             <svg class="absolute -bottom-2 left-0 w-full h-2 text-red-400/60" viewBox="0 0 100 10">
                                 <path d="M0,5 L100,5" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
                             </svg>
@@ -143,50 +226,30 @@
                     </h1>
                 </div>
 
-                <!-- ── Subtitle ───────────────────────────────────────────
-                     Kept slightly brighter (text-red-100 → text-red-50) and
-                     given a faint text-shadow for extra legibility.
-                ────────────────────────────────────────────────────────── -->
-                <p class="max-w-2xl mx-auto mt-6 text-base text-red-50 drop-shadow-md sm:text-lg md:text-xl">
+                <!-- Subtitle - fades in after heading -->
+                <p class="max-w-2xl mx-auto mt-6 text-base text-red-50 drop-shadow-md sm:text-lg md:text-xl animate-on-load animate-fade-in delay-200">
                     Western Mindanao State University
                 </p>
 
-                <!-- ── Divider ────────────────────────────────────────────
-                     Simple dot-and-line; colours bumped to red-300 so it
-                     reads on the darker background.
-                ────────────────────────────────────────────────────────── -->
-                <div class="flex items-center justify-center gap-3 mt-8">
+                <!-- Divider - scales in -->
+                <div class="flex items-center justify-center gap-3 mt-8 animate-on-load animate-scale-in delay-300">
                     <div class="h-px w-12 bg-red-300/50"></div>
                     <div class="w-2 h-2 rounded-full bg-red-300/80"></div>
                     <div class="h-px w-12 bg-red-300/50"></div>
                 </div>
 
-                <!-- ── Stats panel ────────────────────────────────────────
-                     Previously the three numbers floated freely and merged
-                     with the background. Now they sit inside a frosted dark
-                     panel, creating clear contrast for both numbers and
-                     labels. Separators are explicit 1-px lines.
-                ────────────────────────────────────────────────────────── -->
-                <div class="inline-flex items-center gap-0 mt-12 hero-stats-panel px-8 py-5">
-                    <!-- Stat: Established -->
+                <!-- Stats panel - fades in with slight slide up -->
+                <div class="inline-flex items-center gap-0 mt-12 hero-stats-panel px-8 py-5 animate-on-load animate-fade-in-up delay-400">
                     <div class="text-center px-6">
                         <div class="text-2xl font-bold text-white drop-shadow-sm">2026</div>
                         <div class="mt-1 text-xs font-semibold tracking-widest uppercase text-red-300">Established</div>
                     </div>
-
-                    <!-- Separator -->
                     <div class="w-px h-10 bg-white/15 flex-shrink-0"></div>
-
-                    <!-- Stat: Transparent -->
                     <div class="text-center px-6">
                         <div class="text-2xl font-bold text-white drop-shadow-sm">100%</div>
                         <div class="mt-1 text-xs font-semibold tracking-widest uppercase text-red-300">Transparent</div>
                     </div>
-
-                    <!-- Separator -->
                     <div class="w-px h-10 bg-white/15 flex-shrink-0"></div>
-
-                    <!-- Stat: Available -->
                     <div class="text-center px-6">
                         <div class="text-2xl font-bold text-white drop-shadow-sm">24/7</div>
                         <div class="mt-1 text-xs font-semibold tracking-widest uppercase text-red-300">Available</div>
@@ -195,22 +258,23 @@
 
             </div><!-- /hero content -->
 
-            <!-- Curved bottom edge -->
-            <div class="absolute bottom-0 left-0 right-0">
+            <!-- Curved bottom edge - fades in -->
+            <div class="absolute bottom-0 left-0 right-0 animate-on-load animate-fade-in delay-500">
                 <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 120L60 110C120 100 240 80 360 75C480 70 600 80 720 85C840 90 960 90 1080 85C1200 80 1320 70 1380 65L1440 60V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#f3f4f6"/>
                 </svg>
             </div>
         </div>
-        <!-- ══ END HERO ══════════════════════════════════════════════════ -->
+        <!-- ══ END HERO ══════════════════════════════════════════════════════ -->
 
-        <!-- About Section -->
+        <!-- About Section with entrance animations -->
         <div class="max-w-6xl px-4 py-8 mx-auto sm:px-6 sm:py-12">
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                 <div class="p-6 sm:p-8 md:p-10">
                     <!-- Mission & Vision Cards -->
                     <div class="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-2 sm:gap-6">
-                        <div class="p-5 border-l-4 rounded-r-xl bg-gradient-to-r from-blue-50 to-white border-blue-500">
+                        <!-- Mission Card - slides in from left -->
+                        <div class="p-5 border-l-4 rounded-r-xl bg-gradient-to-r from-blue-50 to-white border-blue-500 animate-on-load animate-slide-left delay-100">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="p-2 bg-blue-100 rounded-lg">
                                     <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +287,9 @@
                                 To provide efficient, transparent, and accountable procurement services that support the university's academic and administrative needs.
                             </p>
                         </div>
-                        <div class="p-5 border-l-4 rounded-r-xl bg-gradient-to-r from-red-50 to-white border-red-500">
+
+                        <!-- Vision Card - slides in from right -->
+                        <div class="p-5 border-l-4 rounded-r-xl bg-gradient-to-r from-red-50 to-white border-red-500 animate-on-load animate-slide-right delay-200">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="p-2 bg-red-100 rounded-lg">
                                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,9 +305,9 @@
                         </div>
                     </div>
 
-                    <!-- Description -->
+                    <!-- Description paragraphs - fade in with stagger -->
                     <div class="mb-8 prose max-w-none">
-                        <p class="mb-4 text-base leading-relaxed text-gray-700 sm:text-lg">
+                        <p class="mb-4 text-base leading-relaxed text-gray-700 sm:text-lg animate-on-load animate-fade-in-up delay-300">
                             The Procurement Office of
                             <strong class="text-red-700">Western Mindanao State University (WMSU)</strong>
                             in Zamboanga City is responsible for managing and supervising
@@ -251,7 +317,7 @@
                             accountability, and efficiency in serving the needs of the institution.
                         </p>
 
-                        <p class="text-base leading-relaxed text-gray-700 sm:text-lg">
+                        <p class="text-base leading-relaxed text-gray-700 sm:text-lg animate-on-load animate-fade-in-up delay-400">
                             This Procurement Management System was developed to help simplify
                             and modernize the procurement process within the university.
                             The system allows departments and colleges to submit requests
@@ -260,8 +326,8 @@
                         </p>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="relative my-10">
+                    <!-- Divider - fade in -->
+                    <div class="relative my-10 animate-on-load animate-fade-in delay-500">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-200"></div>
                         </div>
@@ -270,8 +336,8 @@
                         </div>
                     </div>
 
-                    <!-- Meet the Developers -->
-                    <div class="mb-8 text-center">
+                    <!-- Meet the Developers section - fade up -->
+                    <div class="mb-8 text-center animate-on-load animate-fade-in-up delay-600">
                         <h2 class="text-2xl font-bold text-gray-800 sm:text-3xl md:text-4xl">
                             Meet the Developers
                         </h2>
@@ -281,10 +347,10 @@
                         <div class="w-20 h-1 mx-auto mt-4 bg-red-600 rounded-full"></div>
                     </div>
 
-                    <!-- Developers Grid -->
+                    <!-- Developers Grid - cards fade in with staggered delays -->
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
                         <!-- Viktor -->
-                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all animate-on-load animate-fade-in-up delay-100">
                             <div class="relative">
                                 <div class="absolute top-0 right-0 w-20 h-20 bg-red-600 rounded-bl-full opacity-10"></div>
                                 <div class="p-6">
@@ -315,7 +381,7 @@
                         </div>
 
                         <!-- Ejay -->
-                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all animate-on-load animate-fade-in-up delay-200">
                             <div class="relative">
                                 <div class="absolute top-0 right-0 w-20 h-20 bg-red-600 rounded-bl-full opacity-10"></div>
                                 <div class="p-6">
@@ -346,7 +412,7 @@
                         </div>
 
                         <!-- Dave -->
-                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all animate-on-load animate-fade-in-up delay-300">
                             <div class="relative">
                                 <div class="absolute top-0 right-0 w-20 h-20 bg-red-600 rounded-bl-full opacity-10"></div>
                                 <div class="p-6">
@@ -377,7 +443,7 @@
                         </div>
 
                         <!-- Gelo -->
-                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                        <div class="developer-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all animate-on-load animate-fade-in-up delay-400">
                             <div class="relative">
                                 <div class="absolute top-0 right-0 w-20 h-20 bg-red-600 rounded-bl-full opacity-10"></div>
                                 <div class="p-6">
@@ -413,5 +479,16 @@
         </div>
 
     </div>
+
+    <!-- Small script to ensure animations run after page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force reflow to ensure animations trigger properly
+            const animatedElements = document.querySelectorAll('.animate-on-load');
+            animatedElements.forEach(function(el) {
+                el.style.opacity = '1';
+            });
+        });
+    </script>
 </body>
 </html>
