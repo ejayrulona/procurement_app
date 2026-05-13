@@ -407,5 +407,9 @@
     ]
 </script>
 
+<script>
+    document.getElementById("id_fiscal_year").min = "{{ min_fiscal_year }}";
+    document.getElementById("id_fiscal_year").max = "{{ max_fiscal_year }}";
+</script>
 <script type="module" src="{% static 'javascript/ppmp/createPPMP.js' %}"></script>
 {% endblock %}

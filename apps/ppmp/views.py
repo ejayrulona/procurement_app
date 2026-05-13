@@ -2,7 +2,7 @@ import json
 from datetime import date
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
@@ -14,6 +14,7 @@ from .models import ProcurementProjectManagementPlan, ProcurementLine, Procureme
 from .validators import validate_procurement_lines
 from apps.app.models import AnnualProcurementPlan, AnnualProcurementPlanEntry
 from apps.users.decorators import admin_required, any_admin_required, office_required
+from utils.utils import get_allowed_fiscal_years, get_default_fiscal_year, is_ppmp_editable
 
 @office_required
 def ppmp_create(request):
@@ -28,6 +29,16 @@ def ppmp_create(request):
         if not form.is_valid():
             return JsonResponse({"errors": form.errors}, status=400)
 
+        # Validate fiscal year is within allowed range
+        fiscal_year = form.cleaned_data["fiscal_year"]
+        allowed_years = get_allowed_fiscal_years()
+
+        if fiscal_year not in allowed_years:
+            return JsonResponse(
+                {"error": f"PPMP can only be created for FY{allowed_years[0]} or FY{allowed_years[1]}."},
+                status=400
+            )
+
         ceiling = form.cleaned_data["ceiling"]
         raw_lines = payload.get("procurement_lines", [])
 
@@ -38,7 +49,7 @@ def ppmp_create(request):
 
         try:
             office_profile = request.user.office_profile
-        except request.user.office_profile.RelatedObjectDoesNotExist:
+        except ObjectDoesNotExist:
             return JsonResponse(
                 {"error": "Office profile not found. Please complete your profile."},
                 status=400
@@ -50,6 +61,7 @@ def ppmp_create(request):
                 ppmp.office_profile = office_profile
                 ppmp.submitted_by = request.user
                 ppmp.status = ProcurementProjectManagementPlan.Status.PENDING
+                ppmp.submission_type = ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
                 ppmp.save()
 
                 for line_data in cleaned_lines:
@@ -60,7 +72,6 @@ def ppmp_create(request):
                         procurement_program=line_data["procurement_program"],
                         order=line_data["order"],
                     )
-
                     ProcurementLineEntry.objects.bulk_create([
                         ProcurementLineEntry(
                             procurement_line=line,
@@ -84,17 +95,21 @@ def ppmp_create(request):
             "ppmp_id": ppmp.pk,
         }, status=201)
 
+    allowed_years = get_allowed_fiscal_years()
+
     form = PPMPForm(
         initial={
-            "fiscal_year": timezone.now().year, 
-            "submission_type": ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
+            "fiscal_year": get_default_fiscal_year(),
+            "submission_type": ProcurementProjectManagementPlan.SubmissionType.INDICATIVE,
         }
     )
 
     context = {
         "form": form,
         "office_profile": request.user.office_profile,
-        "mode_of_procurement": ModeOfProcurement.choices
+        "mode_of_procurement": ModeOfProcurement.choices,
+        "min_fiscal_year": allowed_years[0],   
+        "max_fiscal_year": allowed_years[1],  
     }
 
     return render(request, "ppmp/create-ppmp.html", context)
@@ -210,22 +225,15 @@ def ppmp_edit(request, id):
         pk=id
     )
 
-    # Add guard rail to not allow admin aid to edit PPMPs
-    if request.user.is_adminaid:
+    if not is_ppmp_editable(ppmp, request.user):
         return JsonResponse(
-            {"error": "Only administrators are allowed to edit PPMPs."},
+            {"error": "This PPMP is no longer editable."},
             status=403
         )
 
-    if request.user.is_office:
-        if ppmp.submission_type != ProcurementProjectManagementPlan.SubmissionType.INDICATIVE:
-            return JsonResponse(
-                {"error": "Office users can only edit indicative PPMPs."},
-                status=403
-            )
-        
-        if ppmp.submitted_by != request.user:
-            return JsonResponse({"error": "Unauthorized."}, status=403)
+    # Office can only edit their own PPMPs
+    if request.user.is_office and ppmp.submitted_by != request.user:
+        return JsonResponse({"error": "Unauthorized."}, status=403)
 
     if request.method == "POST":
         try:
@@ -446,7 +454,7 @@ PPMP_TEMPLATE_PATH = str(settings.PPMP_TEMPLATE_PATH)
 @any_admin_required
 def export_ppmp_excel(request, id):
     """
-    GET /ppmp/<pk>/export/
+    GET /ppmp/<id>/export/
     Exports a PPMP as an .xlsx file using the official RA 12009 template.
     """
 
@@ -462,39 +470,30 @@ def export_ppmp_excel(request, id):
     records = []
 
     for line in ppmp.procurement_lines.all():
+
         # Build a consolidated specification from all line entries
-        spec_parts = []
-        total_budget = 0
-
         for entry in line.line_entries.select_related("item").all():
-            spec_parts.append(
-                f"{entry.item.name} — Qty: {entry.quantity} {entry.item.unit_of_measure or ''} "
-                f"@ PhP {entry.unit_cost_snapshot:,.2f}"
+
+            # Use the earliest date_needed across entries as the delivery date
+            delivery_date = min(
+                (e.date_needed for e in line.line_entries.all()),
+                default=None,
             )
-            total_budget += float(entry.total_amount)
 
-        specification = "\n".join(spec_parts)
-
-        # Use the earliest date_needed across entries as the delivery date
-        delivery_date = min(
-            (e.date_needed for e in line.line_entries.all()),
-            default=None,
-        )
-
-        records.append({
-            "general_description": line.procurement_program,
-            "classification": ppmp.get_classification_display(),
-            "quantity": line.line_entries.count(),  # number of line items
-            "unit": "lot",
-            "specification": specification,
-            "mode_of_procurement": line.get_mode_of_procurement_display(),
-            "start_of_procurement": None,   
-            "end_of_procurement": None,     
-            "delivery_date": delivery_date,
-            "source_of_funds": ppmp.get_source_of_funds_display(),
-            "estimated_budget": total_budget,
-            "remarks": "",
-        })
+            records.append({
+                "general_description": line.item_code.general_description,
+                "classification": ppmp.get_classification_display(),
+                "quantity": entry.quantity,  
+                "unit": entry.item.unit,
+                "specification": entry.item.specification,
+                "mode_of_procurement": line.get_mode_of_procurement_display(),
+                "start_of_procurement": None,   
+                "end_of_procurement": None,     
+                "delivery_date": delivery_date,
+                "source_of_funds": ppmp.get_source_of_funds_display(),
+                "estimated_budget": entry.total_amount,
+                "remarks": "",
+            })
 
     excel_bytes = generate_ppmp_excel(
         records=records,
@@ -507,7 +506,7 @@ def export_ppmp_excel(request, id):
 
     filename = (
         f"PPMP_{ppmp.office_profile.office_name}_"
-        f"{ppmp.get_classification_display()}_"
+        f"{ppmp.get_submission_type_display()}_"
         f"FY{ppmp.fiscal_year}.xlsx"
     )
 

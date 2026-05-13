@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     exportExcelBtn.addEventListener('click', async () => {
         const fiscal_year = exportExcelBtn.dataset.fiscalYear;
+        const ppmpId = exportExcelBtn.dataset.ppmpId
 
         try {
             if (exportExcelBtn) {
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 exportExcelBtn.textContent = "Exporting…";
             }
 
-            const response = await fetch(`/ppmp/${appId}/export/`, {
+            const response = await fetch(`/ppmp/${ppmpId}/export/`, {
                 method: "GET",
                 headers: {
                     "X-CSRFToken": getCookie("csrftoken"),

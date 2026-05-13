@@ -9,7 +9,7 @@
 <div class="max-w-4xl mx-auto">
 	<!-- Back Button -->
 	<div class="mb-6">
-		<a href="{% url 'inventory:item_list' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition">
+		<a href="{% url 'inventory:item_list' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
 			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 			</svg>
@@ -17,17 +17,17 @@
 		</a>
 	</div>
 	<!-- Form Card -->
-	<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-		<div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-4">
+	<div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
+		<div class="px-6 py-4 bg-gradient-to-r from-red-700 to-red-800">
 			<div class="flex items-center gap-3">
-				<div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+				<div class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
 					<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 					</svg>
 				</div>
 				<div>
 					<h3 class="text-xl font-bold text-white">Add Object Code</h3>
-					<p class="text-red-100 text-sm">This page will be visible to all colleges/offices when creating their PPMP</p>
+					<p class="text-sm text-red-100">This page will be visible to all colleges/offices when creating their PPMP</p>
 				</div>
 			</div>
 		</div>
@@ -37,27 +37,27 @@
 			
 			<div class="space-y-6">
 				<div>
-					<label for="{{ form.object_of_expenditure.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Code <span class="text-red-500">*</span></label>
-					{{ form.object_of_expenditure }}
-                    <input type="text" id="searchInput" placeholder="Add Code here"
-					class="w-full pl-5 sm:pl-5 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+					<label for="{{ form.code.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Code <span class="text-red-500">*</span></label>
+					{{ form.code }}
 				</div>
                 <div>
-					<label for="{{ form.object_of_expenditure.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">General Description <span class="text-red-500">*</span></label>
-					{{ form.object_of_expenditure }}
-                    <input type="text" id="searchInput" placeholder="Add General Description here"
-					class="w-full pl-5 sm:pl-5 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+					<label for="{{ form.general_description.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">General Description <span class="text-red-500">*</span></label>
+					{{ form.general_description }}
 				</div>
                 <div>
-					<label for="{{ form.object_of_expenditure.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Object Code <span class="text-red-500">*</span></label>
-					{{ form.object_of_expenditure }}
-                    <input type="text" id="searchInput" placeholder="Add Object Code here"
-					class="w-full pl-5 sm:pl-5 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+					<label for="{{ form.object_code.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-700">Object Code <span class="text-red-500">*</span></label>
+					{{ form.object_code }}
+					<datalist id="object-code-list">
+						{% for object_code in object_codes %}
+							<option value="{{ object_code.code }}">
+							</option>
+						{% endfor %}
+					</datalist>
 				</div>
 			</div>
 
 			<!-- Form Actions -->
-			<div class="flex gap-3 justify-end mt-8 pt-4 border-t border-gray-200">
+			<div class="flex justify-end gap-3 pt-4 mt-8 border-t border-gray-200">
 				<a href="{% url 'inventory:item_list' %}"
 					class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition">
 					Cancel
@@ -71,18 +71,16 @@
 	</div>
 
 	<!-- Info Card -->
-	<div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+	<div class="p-4 mt-6 border border-blue-200 bg-blue-50 rounded-xl">
 		<div class="flex gap-3">
-			<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<svg class="flex-shrink-0 w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 			</svg>
 			<div>
-				<p class="text-sm text-blue-800 font-medium">PPMP Integration Note</p>
-				<p class="text-xs text-blue-600 mt-1">Object Code added here will appear in the inventory catalog and can be selected by colleges/offices when creating their Procurement Project Management Plans (PPMP).</p>
+				<p class="text-sm font-medium text-blue-800">PPMP Integration Note</p>
+				<p class="mt-1 text-xs text-blue-600">Object Code added here will appear in the inventory catalog and can be selected by colleges/offices when creating their Procurement Project Management Plans (PPMP).</p>
 			</div>
 		</div>
 	</div>
 </div>
-
-<script type="module" src="{% static 'javascript/inventory/item.js' %}"></script>
 {% endblock %}

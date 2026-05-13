@@ -23,6 +23,7 @@ Column mapping (data rows, cols A–N):
 import io
 from datetime import date, datetime
 from openpyxl import load_workbook
+from openpyxl.cell.cell import MergedCell
 from openpyxl.styles import Alignment
 
 # CONSTANTS
@@ -148,7 +149,8 @@ def _write_header_metadata(ws, fiscal_year, end_user_unit, ppmp_number, submissi
 def _clear_data_rows(ws, start_row: int, end_row: int):
     for row in ws.iter_rows(min_row=start_row, max_row=end_row):
         for cell in row:
-            cell.value = None
+            if not isinstance(cell, MergedCell):
+                cell.value = None
 
 
 # WRITE — one record → one row
@@ -210,6 +212,8 @@ def _write_total_row(ws, total_row: int, data_start: int, data_end: int):
 
 def _set(ws, addr: str, value, wrap: bool = False):
     cell = ws[addr]
+    if isinstance(cell, MergedCell):
+        return
     cell.value = None if value in (None, "", "—", "–", "--") else str(value)
     if wrap:
         existing = cell.alignment

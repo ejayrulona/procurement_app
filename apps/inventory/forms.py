@@ -2,6 +2,111 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import ObjectOfExpenditure, ObjectCode, ItemCode, Item
 
+class ObjectOfExpenditureForm(forms.ModelForm):
+    class Meta:
+        model = ObjectOfExpenditure
+        fields = ("name",)
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                    "placeholder": "Office Supplies Expenses"
+                }
+            )
+        }
+
+
+class ObjectCodeForm(forms.ModelForm):
+    expenditure = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                "id": "expenditure-dropdown", "list": "expenditure-list", "autocomplete": "off",
+                "placeholder": "Office Supplies Expenses"
+            }
+        )
+    )
+
+    class Meta:
+        model = ObjectCode
+        fields = ("code",)
+        widgets = {
+            "code": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                    "placeholder": "0000000000"
+                }
+            ),
+        }
+
+    def clean_expenditure(self):
+        name = self.cleaned_data.get("expenditure")
+        
+        try:
+            return ObjectOfExpenditure.objects.get(name=name)
+        except ObjectOfExpenditure.DoesNotExist:
+            raise forms.ValidationError(
+                "Invalid object of expenditure. Please choose from the given options."
+            )
+        
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.expenditure = self.cleaned_data["expenditure"]
+
+        if commit:
+            instance.save()
+
+        return instance
+
+
+class ItemCodeForm(forms.ModelForm):
+    object_code = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                "id": "object-code-dropdown", "list": "object-code-list", "autocomplete": "off",
+                "placeholder": "0000000000"
+            }
+        )
+    )
+    class Meta:
+        model = ItemCode
+        fields = ("code", "general_description")
+        widgets = {
+            "code": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                    "placeholder": "000"
+                }
+            ),
+            "general_description": forms.TextInput(
+                attrs={
+                    "class": "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition",
+                    "placeholder": "Bondpaper A4"
+                }
+            )
+        }
+
+    def clean_object_code(self):
+        code = self.cleaned_data.get("object_code")
+
+        try:
+            return ObjectCode.objects.get(code=code)
+        except ItemCode.DoesNotExist:
+            raise forms.ValidationError(
+                "Invalid object code. Please choose from the given options."
+            )
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.object_code = self.cleaned_data["object_code"]
+
+        if commit:
+            instance.save()
+
+        return instance
+
+
 class ItemForm(forms.ModelForm):
     object_of_expenditure = forms.CharField(
         widget=forms.TextInput(
