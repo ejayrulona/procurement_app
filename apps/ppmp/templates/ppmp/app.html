@@ -45,12 +45,12 @@
         <!-- Buttons Container -->
         <div class="flex flex-wrap justify-end gap-3 mb-4">
             <!-- Edit APP Button -->
-            <a href="{% url 'ppmp:edit_app' %}" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-yellow-600 rounded-lg shadow-sm hover:bg-yellow-700">
+            <button type="button" id="add-schedule-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-yellow-600 rounded-lg shadow-sm hover:bg-yellow-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
-                Edit APP
-            </a>
+                Add Schedule
+            </button>
             
             <!-- Create Final PPMP Button -->
             <button id="createFinalPpmpBtn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700">
@@ -68,6 +68,8 @@
                 Export to Excel
             </button>
         </div>
+
+        <div id="appData" data-app-id="{{ app.pk }}"></div>
 
         <!-- Main APP Table (matches the Excel column structure exactly) -->
         <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
@@ -191,6 +193,79 @@
     </div>
 </div>
 
+<!-- Add Schedule Modal -->
+<div id="scheduleModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black/50">
+    <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-xl">
+
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-lg font-semibold text-gray-800">Add Schedule</h2>
+            <button type="button" id="closeScheduleModal"
+                class="text-gray-400 transition hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <p class="mb-5 text-xs text-gray-500">
+            The schedule will be applied to all entries in this APP.
+            Fields marked as optional may be left blank.
+        </p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Advertisement / Posting of IB/REI
+                </label>
+                <input type="date" id="scheduleAdvertisementDate"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Submission / Opening of Bids
+                    <span class="text-xs font-normal text-gray-400">(Optional)</span>
+                </label>
+                <input type="date" id="scheduleSubmissionDate"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Notice of Award
+                    <span class="text-xs font-normal text-gray-400">(Optional)</span>
+                </label>
+                <input type="date" id="scheduleNoticeOfAwardDate"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Contract Signing
+                </label>
+                <input type="date" id="scheduleContractSigningDate"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition">
+            </div>
+
+            <p id="scheduleError" class="hidden text-xs text-red-500"></p>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+            <button type="button" id="cancelScheduleBtn"
+                class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-100 rounded-lg hover:bg-gray-200">
+                Cancel
+            </button>
+            <button type="button" id="saveScheduleBtn"
+                class="px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
+                Save Schedule
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script type="module" src="{% static 'javascript/ppmp/addSchedule.js' %}"></script>
 <script>
     // Create Final PPMP Button Modal
     const createFinalPpmpBtn = document.getElementById('createFinalPpmpBtn');

@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -511,5 +512,76 @@ def app(request, id):
 
     return render(request, "ppmp/app.html", context)
 
-def edit_app(request):
-    return render(request, "ppmp/edit-app.html")
+@admin_required
+def app_add_schedule(request, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    app = get_object_or_404(AnnualProcurementPlan, pk=id)
+
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    advertisement_date = (payload.get("advertisement_date") or "").strip()
+    submission_date = (payload.get("submission_date") or "").strip()
+    notice_of_award_date = (payload.get("notice_of_award_date") or "").strip()
+    contract_signing_date = (payload.get("contract_signing_date") or "").strip()
+
+    # Parse only the dates that were provided
+    def parse_optional_date(value, field_name):
+        if not value:
+            return None
+        try:
+            return date.fromisoformat(value)
+        except ValueError:
+            raise ValidationError(f"{field_name}: Invalid date format. Use YYYY-MM-DD.")
+
+    try:
+        ad_date  = parse_optional_date(advertisement_date, "Advertisement date")
+        sub_date = parse_optional_date(submission_date, "Submission date")
+        noa_date = parse_optional_date(notice_of_award_date, "Notice of award date")
+        cs_date  = parse_optional_date(contract_signing_date, "Contract signing date")
+    except ValidationError as error:
+        return JsonResponse({"error": error.message}, status=400)
+
+    # Validate logical order only for dates that are provided
+    provided_dates = [
+        (ad_date, "Advertisement"),
+        (sub_date, "Submission"),
+        (noa_date, "Notice of Award"),
+        (cs_date, "Contract Signing"),
+    ]
+    filled_dates = [(date, label) for date, label in provided_dates if date is not None]
+
+    for i in range(1, len(filled_dates)):
+        if filled_dates[i][0] <= filled_dates[i - 1][0]:
+            return JsonResponse(
+                {
+                    "error": (
+                        f"{filled_dates[i][1]} date must be after "
+                        f"{filled_dates[i - 1][1]} date."
+                    )
+                },
+                status=400
+            )
+
+    try:
+        with transaction.atomic():
+            app.app_entries.all().update(
+                advertisement_date=ad_date,
+                submission_date=sub_date,
+                notice_of_award_date=noa_date,
+                contract_signing_date=cs_date,
+            )
+    except Exception:
+        return JsonResponse(
+            {"error": "An error occurred while saving. Please try again."},
+            status=500
+        )
+
+    return JsonResponse({
+        "message": "Schedule updated successfully for all entries.",
+        "app_id": app.id,
+    }, status=200)
