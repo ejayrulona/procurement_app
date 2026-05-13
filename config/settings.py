@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.activity_logs",
     "apps.ppmp",
+    "apps.app",
 ]
 
 MIDDLEWARE = [
@@ -144,6 +145,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+PPMP_TEMPLATE_PATH = BASE_DIR / "templates" / "NGPA_PPMP-RA-12009-1.xlsx"
 APP_TEMPLATE_PATH = BASE_DIR / "templates" / "APP_Template_2026  as of  March 3 2026 as of 1456H.xlsx"
 
 AUTH_USER_MODEL = "users.User"

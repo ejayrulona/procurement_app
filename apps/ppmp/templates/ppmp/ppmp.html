@@ -13,15 +13,12 @@
     </a>
     <div class="flex gap-3">
       {% if request.user.is_office %}
-        <form method="post" action="{% url 'ppmp:ppmp_create_final' ppmp.id %}">
-          {% csrf_token %}
-          <button type="submit" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+          <a href="{% url '' %}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
             Create Final PPMP
-          </button>
-        </form>
+          </a>
       {% endif %}
-      <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
-        Print / PDF
+      <button id="export-excel-btn" data-fiscal-year="{{ ppmp.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+        Export as Excel
       </button>
       {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
       <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.procurement_program|escapejs }}')" class="flex items-center gap-2 px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700">

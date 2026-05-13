@@ -70,4 +70,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("An unexpected error occurred. Please try again.");
             });
     });
+
+    const exportExcelBtn = document.getElementById("export-excel-btn");
+
+    exportExcelBtn.addEventListener('click', async () => {
+        const fiscal_year = exportExcelBtn.dataset.fiscalYear;
+
+        try {
+            if (exportExcelBtn) {
+                exportExcelBtn.disabled = true;
+                exportExcelBtn.textContent = "Exporting…";
+            }
+
+            const response = await fetch(`/ppmp/${appId}/export/`, {
+                method: "GET",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Export failed: ${response.statusText}`);
+            }
+
+            // Convert the response to a downloadable Blob
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            // Trigger browser download
+            const disposition = response.headers.get("Content-Disposition");
+
+            let filename = `PPMP_FY${fiscal_year}.xlsx`;
+
+            if (disposition && disposition.includes("filename=")) {
+                filename = disposition
+                    .split("filename=")[1]
+                    .replace(/"/g, "");
+            }
+
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.download = filename;
+
+            document.body.appendChild(anchor);
+            anchor.click();
+
+            // Clean up
+            anchor.remove();
+            URL.revokeObjectURL(url);
+
+        } catch (err) {
+            console.error("Export error:", err);
+            alert("Export failed. Please try again or contact support.");
+        } finally {
+            if (exportExcelBtn) {
+                exportExcelBtn.disabled = false;
+                exportExcelBtn.textContent = "Export to Excel";
+            }
+        }
+    })
+
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return "";
+    }
 });

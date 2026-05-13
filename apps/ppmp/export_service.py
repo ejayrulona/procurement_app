@@ -1,92 +1,115 @@
 """
-Annual Procurement Plan (APP) - Excel Export Service
+Project Procurement Management Plan (PPMP) - Excel Export Service
 
-Calibrated to the official WMSU APP Template.
+Calibrated to the official NGPA PPMP Template (RA 12009).
 
-Column mapping (APP section only, cols A–N):
-  A  = Code (PAP) → formula =C{row}  (auto-derived)
-  B  = Procurement Program/Project
-  C  = Object Code
-  D  = PMO/End-User
-  E  = Mode of Procurement
-  F  = Advertisement/Posting of IB/REI  
-  G  = Submission/Opening of Bids
-  H  = Notice of Award                  
-  I  = Contract Signing                 
-  J  = Source of Funds
-  K  = Total (Estimated Budget) → formula =L{row}+M{row}
-  L  = MOOE
-  M  = CO
+Column mapping (data rows, cols A–N):
+  A  = General Description and Objective of the Project to be Procured
+  B  = Type of the Project (Classification: Goods / Infrastructure / Consulting Services)
+  C  = Quantity
+  D  = Unit
+  E  = Description / Specification
+  F  = Recommended Mode of Procurement
+  G  = Pre-Procurement Conference, if applicable
+  H  = Start of Procurement Activity (MM/YYYY)
+  I  = End of Procurement Activity (MM/YYYY)
+  J  = Expected Delivery / Implementation Period (MM/YYYY)
+  K  = Source of Funds
+  L  = Estimated Budget / Authorized Budgetary Allocation (PhP)
+  M  = Attached Supporting Documents
   N  = Remarks
 """
 
 import io
 from datetime import date, datetime
-from typing import Optional
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 
-# CONSTANTS — matched to the real template
+# CONSTANTS
 
-DATA_START_ROW = 5   # First data row in the template (rows 1-4 are headers)
+DATA_START_ROW = 19   # First data row in the template (rows 1–18 are headers/instructions)
+TOTAL_BUDGET_LABEL = "TOTAL BUDGET:"
 
 CURRENCY_FMT = '#,##0.00'
-DATE_FMT = 'MMM-YY'   # (e.g. Jan-26)
+DATE_FMT = 'MM/YYYY'
 
 
 # PUBLIC API
 
-def generate_app_excel(
+def generate_ppmp_excel(
     records: list[dict],
     template_path: str,
+    fiscal_year: int | None = None,
+    end_user_unit: str | None = None,
+    ppmp_number: str | None = None,
+    submission_type: str | None = None,
 ) -> bytes:
     """
-    Populate the official APP Excel template with procurement records.
+    Populate the official PPMP Excel template with procurement records.
 
     Steps:
       1. Load the template (preserves all formatting, merged cells, headers)
-      2. Clear existing data rows (values only — formatting stays intact)
-      3. Write new records starting at DATA_START_ROW
-      4. Serialize to bytes and return
+      2. Fill in header metadata (fiscal year, end-user unit, PPMP number)
+      3. Clear existing data rows (values only — formatting stays intact)
+      4. Write new records starting at DATA_START_ROW
+      5. Add TOTAL BUDGET formula below the last data row
+      6. Serialize to bytes and return
 
     Parameters
-    
     records : list[dict]
         Each dict should contain:
 
         {
-            "program_project":     str,
-            "object_code":         str,
-            "pmo_end_user":        str,
-            "mode_of_procurement": str,
-            "advert_date":         date | datetime | str | None,
-            "submission_date":     date | datetime | str | None,
-            "notice_date":         date | datetime | str | None,
-            "contract_signing":    date | datetime | str | None,
-            "source_of_funds":     str,
-            "mooe":                float | int | None,
-            "co":                  float | int | None,
-            "remarks":             str | None,
+            "general_description":     str,   # Full description/objective of the project
+            "classification":          str,   # "Goods" | "Infrastructure" | "Consulting Services"
+            "quantity":                int | float,
+            "unit":                    str,   # e.g. "lot", "pcs", "reams"
+            "specification":           str,   # Technical description / specification
+            "mode_of_procurement":     str,   # Display label of mode
+            "start_of_procurement":    date | datetime | str | None,  # MM/YYYY
+            "end_of_procurement":      date | datetime | str | None,  # MM/YYYY
+            "delivery_date":           date | datetime | str | None,  # MM/YYYY
+            "source_of_funds":         str,
+            "estimated_budget":        float | int | None,
+            "remarks":                 str | None,
         }
 
-        Note: "code_pap" (col A) and "total" (col K) are auto-computed
-        via Excel formulas you do NOT need to supply them.
+        Columns G (Pre-Procurement Conference) and M (Attached Supporting Documents)
+        are intentionally left blank for the admin to fill in manually.
 
     template_path : str
         Absolute path to the official .xlsx template file.
 
+    fiscal_year : int | None
+        Fiscal year to write into the header row.
+
+    end_user_unit : str | None
+        End-user / implementing unit name for the header.
+
+    ppmp_number : str | None
+        PPMP number to write into the title row.
+
+    submission_type : str | None
+        "Indicative" or "Final" — written into the PPMP type header row.
+
     Returns
-    
+    -------
     bytes
         Raw .xlsx bytes ready to stream as an HTTP file-download response.
     """
     wb = load_workbook(template_path)
     ws = wb.active
 
+    _write_header_metadata(ws, fiscal_year, end_user_unit, ppmp_number, submission_type)
     _clear_data_rows(ws, DATA_START_ROW, ws.max_row)
 
     for i, record in enumerate(records):
         _write_record_row(ws, DATA_START_ROW + i, record)
+
+    # Add total budget formula one row below the last data row
+    last_data_row = DATA_START_ROW + len(records) - 1
+    total_row = last_data_row + 1
+    _write_total_row(ws, total_row, DATA_START_ROW, last_data_row)
 
     buffer = io.BytesIO()
     wb.save(buffer)
@@ -94,70 +117,98 @@ def generate_app_excel(
     return buffer.read()
 
 
-# CLEAR  — wipe values only, preserve all cell formatting
+# HEADER METADATA
+
+def _write_header_metadata(ws, fiscal_year, end_user_unit, ppmp_number, submission_type):
+    """Write fiscal year, end-user unit, PPMP number, and submission type into header cells."""
+
+    # Scan for header label cells and write adjacent values
+    for row in ws.iter_rows(max_row=DATA_START_ROW - 1):
+        for cell in row:
+            val = str(cell.value or "").strip()
+
+            if "Fiscal Year" in val and fiscal_year is not None:
+                # Write fiscal year into the cell itself or adjacent
+                cell.value = f"Fiscal Year : {fiscal_year}"
+
+            elif "End-User or Implementing Unit" in val and end_user_unit:
+                cell.value = f"End-User or Implementing Unit: {end_user_unit}"
+
+            elif "PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP) NO." in val:
+                suffix = f", for CY {fiscal_year}" if fiscal_year else ""
+                num = ppmp_number or "___"
+                cell.value = f"PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP) NO. {num}{suffix}"
+
+            elif "PPMP Type" in val and submission_type:
+                cell.value = f"PPMP Type: {submission_type}"
+
+
+# CLEAR — wipe values only, preserve all cell formatting
 
 def _clear_data_rows(ws, start_row: int, end_row: int):
-    """
-    Set cell values to None for every cell in the data area.
-    Formatting (borders, fills, fonts, number formats) is left untouched
-    so the template's visual style survives between exports.
-    """
-
     for row in ws.iter_rows(min_row=start_row, max_row=end_row):
         for cell in row:
             cell.value = None
 
 
-# WRITE  — one record → one row
+# WRITE — one record → one row
 
 def _write_record_row(ws, row: int, rec: dict):
-    # Write one procurement record into the given Excel row.
+    # A: General Description and Objective
+    _set(ws, f"A{row}", rec.get("general_description"), wrap=True)
 
-    # A: Code (PAP) — formula mirrors Object Code (col C), same as template
-    ws[f"A{row}"] = f"=C{row}"
+    # B: Classification (Type of Project)
+    _set(ws, f"B{row}", rec.get("classification"))
 
-    # B: Procurement Program/Project
-    _set(ws, f"B{row}", rec.get("program_project"), wrap=True)
+    # C: Quantity
+    qty = rec.get("quantity")
+    if qty is not None:
+        try:
+            ws[f"C{row}"].value = float(qty)
+        except (ValueError, TypeError):
+            ws[f"C{row}"].value = qty
 
-    # C: Object Code — stored as text to preserve leading zeros
-    cell_c = ws[f"C{row}"]
-    cell_c.value = str(rec.get("object_code") or "")
-    cell_c.number_format = "@"
+    # D: Unit of Measure
+    _set(ws, f"D{row}", rec.get("unit"))
 
-    # D: PMO/End-User
-    _set(ws, f"D{row}", rec.get("pmo_end_user"))
+    # E: Description / Specification
+    _set(ws, f"E{row}", rec.get("specification"), wrap=True)
 
-    # E: Mode of Procurement
-    _set(ws, f"E{row}", rec.get("mode_of_procurement"), wrap=True)
+    # F: Recommended Mode of Procurement
+    _set(ws, f"F{row}", rec.get("mode_of_procurement"), wrap=True)
 
-    # F–I: Schedule dates
-    _set_date(ws, f"F{row}", rec.get("advertisement_date"))
-    _set_date(ws, f"G{row}", rec.get("submission_date"))
-    _set_date(ws, f"H{row}", rec.get("notice_of_award_date"))
-    _set_date(ws, f"I{row}", rec.get("contract_signing_date"))
+    # G: Pre-Procurement Conference — intentionally left blank (admin fills in Excel)
 
-    # J: Source of Funds
-    _set(ws, f"J{row}", rec.get("source_of_funds"), wrap=True)
+    # H: Start of Procurement Activity (MM/YYYY)
+    _set_date(ws, f"H{row}", rec.get("start_of_procurement"))
 
-    # K: Total — formula (MOOE + CO), same pattern as template
-    ws[f"K{row}"] = f"=L{row}+M{row}"
-    ws[f"K{row}"].number_format = CURRENCY_FMT
+    # I: End of Procurement Activity (MM/YYYY)
+    _set_date(ws, f"I{row}", rec.get("end_of_procurement"))
 
-    # L: MOOE
-    _set_currency(ws, f"L{row}", rec.get("mooe"))
+    # J: Expected Delivery / Implementation Period (MM/YYYY)
+    _set_date(ws, f"J{row}", rec.get("delivery_date"))
 
-    # M: CO
-    _set_currency(ws, f"M{row}", rec.get("co"))
+    # K: Source of Funds
+    _set(ws, f"K{row}", rec.get("source_of_funds"), wrap=True)
+
+    # L: Estimated Budget / Authorized Budgetary Allocation
+    _set_currency(ws, f"L{row}", rec.get("estimated_budget"))
+
+    # M: Attached Supporting Documents — intentionally left blank (admin fills in Excel)
 
     # N: Remarks
     _set(ws, f"N{row}", rec.get("remarks"), wrap=True)
 
 
+def _write_total_row(ws, total_row: int, data_start: int, data_end: int):
+    ws[f"K{total_row}"] = TOTAL_BUDGET_LABEL
+    ws[f"L{total_row}"] = f"=SUM(L{data_start}:L{data_end})"
+    ws[f"L{total_row}"].number_format = CURRENCY_FMT
+
+
 # CELL HELPERS
 
 def _set(ws, addr: str, value, wrap: bool = False):
-    # Write a plain string value; treats None/dash as blank.
-
     cell = ws[addr]
     cell.value = None if value in (None, "", "—", "–", "--") else str(value)
     if wrap:
@@ -170,11 +221,7 @@ def _set(ws, addr: str, value, wrap: bool = False):
 
 
 def _set_date(ws, addr: str, value):
-    """
-    Write a date/datetime.  Accepts datetime, date, ISO string, or None.
-    Applies MMM-YY number format to match the template's display style.
-    """
-
+    """Write a date/datetime. Applies MM/YYYY number format to match template style."""
     cell = ws[addr]
     if value in (None, "", "—", "–", "--"):
         cell.value = None
@@ -187,15 +234,13 @@ def _set_date(ws, addr: str, value):
         try:
             cell.value = datetime.fromisoformat(value)
         except ValueError:
-            cell.value = value  # store as-is if unparseable
+            cell.value = value
     else:
         cell.value = value
     cell.number_format = DATE_FMT
 
 
 def _set_currency(ws, addr: str, value):
-    # Write a numeric value with currency formatting; None stays blank.
-
     cell = ws[addr]
     if value in (None, ""):
         cell.value = None
