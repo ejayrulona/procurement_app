@@ -238,25 +238,27 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Secretary / Alternate Contact Information -->
-                    <div class="pt-6 mb-6 border-t border-gray-200">
-                        <h3 class="mb-4 text-lg font-semibold text-gray-800">Secretary / Alternate Contact Information</h3>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div class="p-3 rounded-lg bg-gray-50">
-                                <p class="text-xs text-gray-500">Full Name</p>
-                                <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_full_name }}</p>
-                            </div>
-                            <div class="p-3 rounded-lg bg-gray-50">
-                                <p class="text-xs text-gray-500">Email Address</p>
-                                <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_email }}</p>
-                            </div>
-                            <div class="p-3 rounded-lg bg-gray-50">
-                                <p class="text-xs text-gray-500">Phone Number</p>
-                                <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_phone_number }}</p>
+                    {% if user.office_profile.secretary_full_name or user.office_profile.secretary_email or user.office_profile.secretary_phone_number %}
+                        <div class="pt-6 mb-6 border-t border-gray-200">
+                            <h3 class="mb-4 text-lg font-semibold text-gray-800">Secretary / Alternate Contact Information</h3>
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div class="p-3 rounded-lg bg-gray-50">
+                                    <p class="text-xs text-gray-500">Full Name</p>
+                                    <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_full_name }}</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-gray-50">
+                                    <p class="text-xs text-gray-500">Email Address</p>
+                                    <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_email }}</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-gray-50">
+                                    <p class="text-xs text-gray-500">Phone Number</p>
+                                    <p class="text-sm font-semibold text-gray-800">{{ user.office_profile.secretary_phone_number }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
 
                     <!-- Remarks/Reason (Only shown for declined status) -->
                     {% if registration_request.status == "declined" %}

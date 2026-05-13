@@ -67,7 +67,7 @@
                         <p class="text-xs text-red-100">Profile Settings</p>
                     </div>
                 </div>
-                <a href="{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:college_dashboard' %}{% endif %}" 
+                <a href="{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:office_dashboard' %}{% endif %}" 
                    class="flex items-center gap-2 text-white text-base hover:text-red-100 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -255,7 +255,7 @@
 
                         <!-- Form Actions -->
                         <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                            <button type="button" onclick="window.location.href='{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:college_dashboard' %}{% endif %}'"
+                            <button type="button" onclick="window.location.href='{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:office_dashboard' %}{% endif %}'"
                                     class="px-6 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition">
                                 Cancel
                             </button>

@@ -12,7 +12,7 @@ class HomeLoginView(LoginView):
         if user.is_any_admin:
             return reverse_lazy("core:admin_dashboard")
         
-        return reverse_lazy("core:college_dashboard")
+        return reverse_lazy("core:office_dashboard")
 
 def about(request):
     return render(request, 'core/about.html')
@@ -22,5 +22,5 @@ def admin_dashboard(request):
     return render(request, "core/admin_dashboard.html")
 
 @office_required
-def college_dashboard(request):
-    return render(request, "core/college_dashboard.html")
+def office_dashboard(request):
+    return render(request, "core/office_dashboard.html")
