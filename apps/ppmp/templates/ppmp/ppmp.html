@@ -17,9 +17,22 @@
             Create Final PPMP
           </a>
       {% endif %}
-      <button id="export-excel-btn" data-ppmp-id="{{ ppmp.id }}" data-fiscal-year="{{ ppmp.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
-        Export as Excel
-      </button>
+    <button 
+      id="export-excel-btn" 
+      data-ppmp-id="{{ ppmp.id }}"
+      data-fiscal-year="{{ ppmp.fiscal_year }}" 
+      class="flex items-center gap-2 px-4 py-2 font-medium text-white transition-all duration-200 bg-green-600 shadow-md rounded-lg hover:bg-green-700 hover:shadow-lg">
+      <!-- Excel/File Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" 
+          class="w-5 h-5" 
+          fill="currentColor" 
+          viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm0 1.5L18.5 8H14z"/>
+        <path d="M9.5 11l1.5 2-1.5 2h1.7l.7-1 .7 1H14l-1.5-2 1.5-2h-1.7l-.7 1-.7-1z"/>
+      </svg>
+
+      Export as Excel
+    </button>
       {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
       <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.procurement_program|escapejs }}')" class="flex items-center gap-2 px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

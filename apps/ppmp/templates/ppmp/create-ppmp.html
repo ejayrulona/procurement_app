@@ -6,282 +6,307 @@
 {% block header_subtitle %}Create multiple Project Procurement Management Plans{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl px-4 py-8 mx-auto">
+<div class="max-w-6xl px-3 sm:px-4 py-4 sm:py-8 mx-auto">
     <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="mb-4 sm:mb-6">
+        <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-1.5 sm:gap-2 text-gray-600 transition hover:text-red-600">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            <span class="font-medium">Back to PPMPs</span>
+            <span class="text-sm sm:text-base font-medium">Back to PPMPs</span>
         </a>
     </div>
+
     <!-- Page Title -->
-    <div class="mb-8 text-center">
-        <h1 class="mb-2 text-3xl font-bold text-gray-800">Create Project Procurement Management Plan</h1>
-        <p class="text-gray-500">Create multiple Procurement Plans sharing the same basic information</p>
-        <div class="w-24 h-1 mx-auto mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
+    <div class="mb-6 sm:mb-8 text-center">
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 px-2">Create Project Procurement Management Plan</h1>
+        <p class="text-xs sm:text-sm text-gray-500 mt-1 px-4">Create multiple Procurement Plans sharing the same basic information</p>
+        <div class="w-20 sm:w-24 h-1 mx-auto mt-2 sm:mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
     </div>
 
-        <form id="ppmpForm" data-action="{% url 'ppmp:ppmp_create' %}" class="space-y-6">
-            {% csrf_token %}
+    <form id="ppmpForm" data-action="{% url 'ppmp:ppmp_create' %}" class="space-y-4 sm:space-y-6">
+        {% csrf_token %}
 
-            <!-- ==================== BASIC INFORMATION ==================== -->
-            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
-                            <span class="text-sm font-bold text-red-600">1</span>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-semibold text-gray-800">Basic Information</h2>
-                            <p class="text-xs text-gray-500">Classification, funding, and office details</p>
-                        </div>
+        <!-- ==================== BASIC INFORMATION ==================== -->
+        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-lg sm:rounded-xl">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-lg">
+                        <span class="text-xs sm:text-sm font-bold text-red-600">1</span>
                     </div>
-                </div>
-
-                <div class="p-6">
-                    <!-- Submission Type -->
-                    <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
-                        {{ form.submission_type.as_hidden }}
-                        <p class="text-sm text-gray-500">Submission Type</p>
-                        <p class="font-semibold text-gray-800">
-                            {% if is_final %}
-                                Final
-                            {% else %}
-                                Indicative
-                            {% endif %}
-                        </p>
-                        <p class="text-xs text-gray-400">
-                            {% if is_final %}
-                                This is a final submission based on your approved indicative PPMP.
-                            {% else %}
-                                This is an indicative submission based on projected needs.
-                            {% endif %}
-                        </p>
-                    </div>
-                    
-                    <br><hr><br>
-
-                    <!-- Office Info — read only, pulled from profile -->
-                    <div class="p-4 mb-5 border border-gray-200 rounded-lg bg-gray-50">
-                        <p class="text-sm text-gray-500">Submitting Office</p>
-                        <p class="font-semibold text-gray-800" id="officeNameDisplay">
-                            {{ office_profile.office_name }}
-                        </p>
-                        <p class="text-xs text-gray-400">
-                            {{ office_profile.get_pap_category_display }}
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <!-- Classification -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Classification <span class="text-red-500">*</span>
-                            </label>
-                            {{ form.classification }}
-                        </div>
-
-                        <!-- Source of Funds -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Source of Funds <span class="text-red-500">*</span>
-                            </label>
-                            {{ form.source_of_funds }}
-                        </div>
-
-                        <!-- Fiscal Year -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Fiscal Year <span class="text-red-500">*</span>
-                            </label>
-                            {{ form.fiscal_year }}
-                        </div>
-
-                        <!-- Ceiling -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Ceiling Amount (₱) <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute text-gray-500 -translate-y-1/2 pointer-events-none left-3 top-1/2">₱</span>
-                                {{ form.ceiling }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== PROCUREMENT LINES ==================== -->
-            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
-                                <span class="text-sm font-bold text-red-600">2</span>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800">Procurement Lines</h2>
-                                <p class="text-xs text-gray-500">Add one or more procurement lines</p>
-                            </div>
-                        </div>
-                        <button type="button" id="addLineBtn"
-                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Add Procurement Line
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-6">
-                    <!-- Line Tabs -->
-                    <div id="lineTabs" class="flex flex-wrap gap-2 pb-3 mb-6 border-b border-gray-200">
-                    </div>
-
-                    <!-- Line Panels Container -->
-                    <div id="lineContainer" class="space-y-6">
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="paginationControls" class="flex items-center justify-center gap-3 pt-4 mt-6 border-t border-gray-200">
-                        <button type="button" id="prevLineBtn"
-                            class="px-4 py-2 text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            ← Previous
-                        </button>
-                        <span id="pageIndicator" class="text-sm text-gray-600">Line 1 of 1</span>
-                        <button type="button" id="nextLineBtn"
-                            class="px-4 py-2 text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            Next →
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TOTALS ==================== -->
-            <div class="p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl">
-                <div class="flex items-center justify-between">
                     <div>
-                        <span class="text-lg font-semibold text-gray-800">Total Across All Lines</span>
-                        <p class="mt-1 text-xs text-gray-500">Sum of all selected items across all procurement lines</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-3xl font-bold text-red-600" id="totalAllLines">₱ 0.00</p>
-                        <p id="ceilingWarning" class="hidden mt-1 text-xs text-red-500">
-                            ⚠ Total has exceeded the ceiling
-                        </p>
+                        <h2 class="text-base sm:text-lg font-semibold text-gray-800">Basic Information</h2>
+                        <p class="text-xs text-gray-500 hidden sm:block">Classification, funding, and office details</p>
                     </div>
                 </div>
             </div>
 
-            <!-- ==================== ACTIONS ==================== -->
-            <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
-                <button type="button" id="submitBtn"
-                    class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2">
-                    Submit PPMP
-                </button>
+            <div class="p-4 sm:p-6">
+                <!-- Submission Type -->
+                <div class="p-3 sm:p-4 mb-4 sm:mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                    {{ form.submission_type.as_hidden }}
+                    <p class="text-xs sm:text-sm text-gray-500">Submission Type</p>
+                    <p class="text-sm sm:text-base font-semibold text-gray-800">
+                        {% if is_final %}
+                            Final
+                        {% else %}
+                            Indicative
+                        {% endif %}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        {% if is_final %}
+                            This is a final submission based on your approved indicative PPMP.
+                        {% else %}
+                            This is an indicative submission based on projected needs.
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <br><hr class="my-2 sm:my-4"><br>
+
+                <!-- Office Info — read only, pulled from profile -->
+                <div class="p-3 sm:p-4 mb-4 sm:mb-5 border border-gray-200 rounded-lg bg-gray-50">
+                    <p class="text-xs sm:text-sm text-gray-500">Submitting Office</p>
+                    <p class="text-sm sm:text-base font-semibold text-gray-800 break-words" id="officeNameDisplay">
+                        {{ office_profile.office_name }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        {{ office_profile.get_pap_category_display }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
+                    <!-- Classification -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                            Classification <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.classification }}
+                    </div>
+
+                    <!-- Source of Funds -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                            Source of Funds <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.source_of_funds }}
+                    </div>
+
+                    <!-- Fiscal Year -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                            Fiscal Year <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.fiscal_year }}
+                    </div>
+
+                    <!-- Ceiling -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                            Ceiling Amount (₱) <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute text-gray-500 -translate-y-1/2 pointer-events-none left-3 top-1/2 text-sm">₱</span>
+                            {{ form.ceiling }}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+
+        <!-- ==================== PROCUREMENT LINES ==================== -->
+        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-lg sm:rounded-xl">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-lg">
+                            <span class="text-xs sm:text-sm font-bold text-red-600">2</span>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-semibold text-gray-800">Procurement Lines</h2>
+                            <p class="text-xs text-gray-500 hidden sm:block">Add one or more procurement lines</p>
+                        </div>
+                    </div>
+                    <button type="button" id="addLineBtn"
+                        class="flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700 w-full sm:w-auto">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Procurement Line
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6">
+                <!-- Line Tabs - Horizontal scroll on mobile -->
+                <div id="lineTabs" class="flex flex-nowrap sm:flex-wrap gap-1.5 sm:gap-2 pb-3 mb-4 sm:mb-6 border-b border-gray-200 overflow-x-auto">
+                </div>
+
+                <!-- Line Panels Container -->
+                <div id="lineContainer" class="space-y-4 sm:space-y-6">
+                </div>
+
+                <!-- Pagination -->
+                <div id="paginationControls" class="flex items-center justify-center gap-2 sm:gap-3 pt-3 sm:pt-4 mt-4 sm:mt-6 border-t border-gray-200">
+                    <button type="button" id="prevLineBtn"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        ← Previous
+                    </button>
+                    <span id="pageIndicator" class="text-xs sm:text-sm text-gray-600">Line 1 of 1</span>
+                    <button type="button" id="nextLineBtn"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-700 transition bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TOTALS ==================== -->
+        <div class="p-4 sm:p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-lg sm:rounded-xl">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <span class="text-base sm:text-lg font-semibold text-gray-800">Total Across All Lines</span>
+                    <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">Sum of all selected items across all procurement lines</p>
+                </div>
+                <div class="text-left sm:text-right">
+                    <p class="text-2xl sm:text-3xl font-bold text-red-600" id="totalAllLines">₱ 0.00</p>
+                    <p id="ceilingWarning" class="hidden mt-1 text-xs text-red-500">
+                        ⚠ Total has exceeded the ceiling
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== REMARKS MESSAGE ==================== -->
+        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-lg sm:rounded-xl">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-lg">
+                        <span class="text-xs sm:text-sm font-bold text-red-600">3</span>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-semibold text-gray-800">Remarks / Additional Notes</h2>
+                        <p class="text-xs text-gray-500 hidden sm:block">Optional message for the Procurement Office</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 sm:p-6">
+                <textarea name="remarks" id="remarksTextarea" rows="4"
+                    class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-y"
+                    placeholder="Please provide any additional information, special instructions, or notes for the Procurement Office regarding this PPMP submission..."></textarea>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2 gap-2">
+                    <p class="text-xs text-gray-400">
+                        <span id="remarksCharCount">0</span> characters
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        This message will be sent along with your PPMP submission
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ACTIONS ==================== -->
+        <div class="sticky flex justify-end gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 shadow-lg bottom-2 sm:bottom-4 bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl">
+            <button type="button" id="submitBtn"
+                class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center justify-center gap-2 text-sm sm:text-base">
+                Submit PPMP
+            </button>
+        </div>
+    </form>
 
 
     <!-- ==================== LINE PANEL TEMPLATE ==================== -->
-    <!--
-        This template is cloned by JavaScript for each new procurement line.
-        It is hidden from the UI — JS fills in the data-line-index and renders it.
-    -->
     {{ mode_of_procurement|json_script:"procurement-choices" }}
     
     <template id="linePanelTemplate">
-        <div class="space-y-5 line-panel" data-line-index="">
+        <div class="space-y-4 sm:space-y-5 line-panel" data-line-index="">
 
             <!-- Line Header -->
-            <div class="flex items-center justify-between">
-                <h3 class="text-base font-semibold text-gray-700">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                <h3 class="text-sm sm:text-base font-semibold text-gray-700">
                     Procurement Line <span class="line-number"></span>
                 </h3>
-                <button type="button" class="text-sm text-red-500 remove-line-btn hover:text-red-700">
+                <button type="button" class="text-xs sm:text-sm text-red-500 remove-line-btn hover:text-red-700 text-left sm:text-right">
                     Remove Line
                 </button>
             </div>
 
             <!-- Mode of Procurement -->
             <div>
-                <label for="id-mode-of-procurement" class="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
                     Mode of Procurement <span class="text-red-500">*</span>
                 </label>
-                <select id="id-mode-of-procurement" class="mode-of-procurement w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition bg-white">
-                    <option value selected>---------</option> <!-- Might be removed in the future -->
+                <select class="mode-of-procurement w-full border border-gray-300 rounded-lg p-2 sm:p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition bg-white">
+                    <option value selected>---------</option>
                 </select>
             </div>
 
-            <!-- General Description (ItemCode datalist) -->
+            <!-- General Description -->
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
                     General Description <span class="text-red-500">*</span>
                 </label>
-                <input type="text" class="general-description-input w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition"
+                <input type="text" class="general-description-input w-full border border-gray-300 rounded-lg p-2 sm:p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition"
                     list="" placeholder="Type to search general description" autocomplete="off">
                 <datalist class="general-description-list"></datalist>
                 <input type="hidden" class="item-code-id-input">
             </div>
 
             <!-- Auto-generated fields -->
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div class="grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Object Code</label>
-                    <input type="text" class="object-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" readonly>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">Object Code</label>
+                    <input type="text" class="object-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2 sm:p-2.5 text-xs sm:text-sm text-gray-500 cursor-not-allowed" readonly>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
-                    <input type="text" class="item-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2.5 text-gray-500 cursor-not-allowed" readonly>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
+                    <input type="text" class="item-code-display w-full border border-gray-100 bg-gray-50 rounded-lg p-2 sm:p-2.5 text-xs sm:text-sm text-gray-500 cursor-not-allowed" readonly>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
                     Procurement Program/Project <span class="text-red-500">*</span>
                 </label>
                 <input type="text"
-                    class="procurement-program-input w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 transition"
+                    class="procurement-program-input w-full border border-gray-300 rounded-lg p-2 sm:p-2.5 text-sm focus:ring-2 focus:ring-red-500 transition"
                     placeholder="Auto-generated — you may edit this">
                 <p class="mt-1 text-xs text-gray-400">Auto-generated from chosen general description and from office name</p>
             </div>
 
-            <!-- Available Items (populated after general description selected) -->
+            <!-- Available Items -->
             <div class="hidden available-items-section">
-                <div class="flex items-center justify-between mb-3">
-                    <label class="block text-sm font-semibold text-gray-700">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700">
                         Available Items
                     </label>
-                    <button type="button" class="add-selected-items-btn px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition">
+                    <button type="button" class="add-selected-items-btn px-3 sm:px-4 py-1 sm:py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm rounded-lg transition w-full sm:w-auto">
                         Add Selected Items
                     </button>
                 </div>
-                <div class="p-3 space-y-2 border border-gray-200 rounded-lg available-items-list bg-gray-50">
+                <div class="p-2 sm:p-3 space-y-2 border border-gray-200 rounded-lg available-items-list bg-gray-50 max-h-64 overflow-y-auto">
                     <!-- Items rendered here by JS -->
                 </div>
             </div>
 
             <!-- Added Items Table -->
             <div class="hidden added-items-section">
-                <label class="block mb-3 text-sm font-semibold text-gray-700">Added Items</label>
+                <label class="block mb-2 sm:mb-3 text-xs sm:text-sm font-semibold text-gray-700">Added Items</label>
                 <div class="overflow-x-auto">
-                    <table class="w-full overflow-hidden text-sm border border-gray-200 rounded-lg">
-                        <thead class="text-xs text-gray-600 uppercase bg-gray-50">
+                    <table class="w-full text-xs sm:text-sm border border-gray-200 rounded-lg min-w-[600px] sm:min-w-0">
+                        <thead class="text-gray-600 uppercase bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3 text-left">
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">
                                     <input type="checkbox" class="select-all-entries-checkbox">
                                 </th>
-                                <th class="px-4 py-3 text-left">Item Name</th>
-                                <th class="px-4 py-3 text-left">Quantity</th>
-                                <th class="px-4 py-3 text-left">Unit</th>
-                                <th class="px-4 py-3 text-left">Unit Cost</th>
-                                <th class="px-4 py-3 text-left">Total</th>
-                                <th class="px-4 py-3 text-left">Date Needed</th>
-                                <th class="px-4 py-3 text-left">Remarks</th>
-                                <th class="px-4 py-3 text-left">Action</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Item Name</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Qty</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Unit</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Unit Cost</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Total</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Date Needed</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Remarks</th>
+                                <th class="px-2 sm:px-4 py-2 sm:py-3 text-left">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 added-items-tbody">
@@ -292,7 +317,7 @@
 
                 <!-- Line Total -->
                 <div class="flex justify-end mt-3">
-                    <span class="text-sm font-semibold text-gray-700">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-700">
                         Line Total: <span class="text-red-600 line-total">₱ 0.00</span>
                     </span>
                 </div>
@@ -305,32 +330,49 @@
     <!-- ==================== ADDED ITEM ROW TEMPLATE ==================== -->
     <template id="addedItemRowTemplate">
         <tr class="added-item-row" data-item-id="" data-unit-cost="">
-            <td class="px-4 py-3">
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
                 <input type="checkbox" class="entry-checkbox" checked>
             </td>
-            <td class="px-4 py-3 font-medium text-gray-800 item-name-cell"></td>
-            <td class="px-4 py-3">
-                <input type="number" class="w-20 p-1 text-center border border-gray-300 rounded quantity-input focus:ring-2 focus:ring-red-500"
+            <td class="px-2 sm:px-4 py-2 sm:py-3 font-medium text-gray-800 item-name-cell break-words max-w-[150px] sm:max-w-none"></td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                <input type="number" class="w-16 sm:w-20 p-1 text-center border border-gray-300 rounded quantity-input focus:ring-2 focus:ring-red-500 text-sm"
                     min="1" value="1">
             </td>
-            <td class="px-4 py-3 text-gray-500 unit-cell"></td>
-            <td class="px-4 py-3 text-gray-500 unit-cost-cell"></td>
-            <td class="px-4 py-3 font-medium text-gray-800 total-cell"></td>
-            <td class="px-4 py-3">
-                <input type="date" class="p-1 border border-gray-300 rounded date-needed-input focus:ring-2 focus:ring-red-500">
+            <td class="px-2 sm:px-4 py-2 sm:py-3 text-gray-500 unit-cell text-xs sm:text-sm"></td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3 text-gray-500 unit-cost-cell text-xs sm:text-sm"></td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3 font-medium text-gray-800 total-cell text-xs sm:text-sm"></td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                <input type="date" class="p-1 text-xs sm:text-sm border border-gray-300 rounded date-needed-input focus:ring-2 focus:ring-red-500 w-full min-w-[110px]">
             </td>
-            <td class="px-4 py-3">
-                <input type="text" class="w-full p-1 border border-gray-300 rounded remarks-input focus:ring-2 focus:ring-red-500"
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                <input type="text" class="w-full p-1 text-xs sm:text-sm border border-gray-300 rounded remarks-input focus:ring-2 focus:ring-red-500"
                     placeholder="Optional">
             </td>
-            <td class="px-4 py-3">
-                <button type="button" class="text-xs font-medium text-red-500 remove-entry-btn hover:text-red-700">
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+                <button type="button" class="text-xs font-medium text-red-500 remove-entry-btn hover:text-red-700 whitespace-nowrap">
                     Remove
                 </button>
             </td>
         </tr>
     </template>
 </div>
+
+<!-- Character counter script for remarks -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const remarksTextarea = document.getElementById('remarksTextarea');
+        const charCountSpan = document.getElementById('remarksCharCount');
+        
+        if (remarksTextarea && charCountSpan) {
+            function updateCharCount() {
+                charCountSpan.textContent = remarksTextarea.value.length;
+            }
+            
+            remarksTextarea.addEventListener('input', updateCharCount);
+            updateCharCount();
+        }
+    });
+</script>
 
 {% if existing_lines %}
 <script id="existing-lines-data" type="application/json" data-mode="prefill">
