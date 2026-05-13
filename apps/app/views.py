@@ -114,7 +114,7 @@ def app_list(request):
         "fiscal_year": get_default_fiscal_year
     }
 
-    return render(request, "ppmp/app-list.html", context)
+    return render(request, "app/app-list.html", context)
 
 
 @any_admin_required
@@ -135,7 +135,7 @@ def app(request, id):
         "app": app
     }
 
-    return render(request, "ppmp/app.html", context)
+    return render(request, "app/app.html", context)
 
 @admin_required
 def app_add_schedule(request, id):

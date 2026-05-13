@@ -82,7 +82,7 @@
                         <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.annotated_grand_total|default:"0.00"|floatformat:2 }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.prepared_by.get_full_name|default:app.prepared_by.full_name }}</td>
                         <td class="px-6 py-4 text-sm text-center whitespace-nowrap">
-                            <a href="{% url 'ppmp:app' app.id %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                            <a href="{% url 'app:app' app.id %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
                                 <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -156,7 +156,7 @@
                         class="flex-1 px-4 py-2 font-semibold text-gray-700 transition bg-gray-200 hover:bg-gray-300 rounded-xl">
                     Cancel
                 </button>
-                <form method="post" action="{% url 'ppmp:app_create' %}">
+                <form method="post" action="{% url 'app:app_create' %}">
                     {% csrf_token %}
                     <button type="submit" 
                             class="flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl">
