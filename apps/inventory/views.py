@@ -4,7 +4,7 @@ from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import ObjectOfExpenditure, ObjectCode, ItemCode, Item
-from .forms import ItemForm
+from .forms import ObjectOfExpenditureForm, ObjectCodeForm, ItemCodeForm, ItemForm
 from apps.users.decorators import any_admin_required
 
 @any_admin_required
@@ -16,6 +16,7 @@ def item_list(request):
     }
 
     return render(request, "inventory/items.html", context)
+
 
 @any_admin_required
 def item_create(request):
@@ -37,6 +38,69 @@ def item_create(request):
     }
 
     return render(request, "inventory/create-item.html", context)
+
+
+def object_expenditure_add(request):
+    if request.method == "POST":
+        form = ObjectOfExpenditureForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Object of expenditure added successfully.")
+            return redirect("inventory:item_list")
+        
+    else:
+        form = ObjectOfExpenditureForm()
+
+    context = {
+        "form": form
+    }
+
+    return render(request, "inventory/add-object-expenditure.html", context)
+
+
+def object_code_add(request):
+    if request.method == "POST":
+        form = ObjectCodeForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Object code added successfully.")
+            return redirect("inventory:item_list")
+        
+    else:
+        form = ObjectCodeForm()
+
+    context = {
+        "form": form,
+        "expenditures": ObjectOfExpenditure.objects.all()
+    }
+        
+    return render(request, "inventory/add-object-code.html", context)
+
+
+def item_code_add(request):
+    if request.method == "POST":
+        form = ItemCodeForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Item code added successfully.")
+            return redirect("inventory:item_list")
+        
+    else:
+        form = ItemCodeForm()
+
+    context = {
+        "form": form,
+        "object_codes": ObjectCode.objects.all()
+    }
+        
+    return render(request, "inventory/add-item-code.html", context)
+
 
 @any_admin_required
 def item_edit(request, id):
@@ -69,6 +133,7 @@ def item_edit(request, id):
     }
         
     return render(request, "inventory/edit-item.html", context)
+
         
 @any_admin_required
 def item_detail(request, id):
@@ -87,15 +152,18 @@ def item_detail(request, id):
 
     return render(request, "inventory/item.html", context)
 
+
 def get_object_codes(request):
     object_of_expenditure_id = request.GET.get('expenditure')
     object_codes = list(ObjectCode.objects.filter(expenditure=object_of_expenditure_id).values("id", "code"))
     return JsonResponse({"object_codes": object_codes})
 
+
 def get_item_codes(request):
     object_code_id = request.GET.get('object-code')
     item_codes = list(ItemCode.objects.filter(object_code=object_code_id).values("id", "code", "general_description"))
     return JsonResponse({"item_codes": item_codes})
+
 
 def get_all_item_codes(request):
     item_codes = ItemCode.objects.select_related("object_code").all()
@@ -124,12 +192,3 @@ def get_items_by_item_code(request):
     items = list(Item.objects.filter(item_code=item_code).values("id", "name", "specification", "unit", "unit_cost"))
 
     return JsonResponse({"items": items, "general_description": item_code.general_description})
-  
-def add_object_expenditure(request):
-    return render(request, "inventory/add-object-expenditure.html")
-
-def add_object_code(request):
-    return render(request, "inventory/add-object-code.html")
-
-def add_item_code(request):
-    return render(request, "inventory/add-item-code.html")

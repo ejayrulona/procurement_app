@@ -22,7 +22,7 @@
     <!-- Right Action Buttons -->
     <div class="flex flex-wrap items-center justify-end gap-3">
 
-        <a href="{% url 'inventory:add_object_expenditure' %}"
+        <a href="{% url 'inventory:object_expenditure_add' %}"
             class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-red-700 to-red-800 hover:shadow-md hover:scale-[1.02]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +31,7 @@
             Add Object Expenditure
         </a>
 
-        <a href="{% url 'inventory:add_object_code' %}"
+        <a href="{% url 'inventory:object_code_add' %}"
             class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 hover:shadow-md hover:scale-[1.02]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,6 +40,16 @@
             Add Object Code
         </a>
 
+        
+        <a href="{% url 'inventory:item_code_add' %}"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-green-700 to-green-800 hover:shadow-md hover:scale-[1.02]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            Add Item Code
+        </a>
+    
         <a href="{% url 'inventory:item_create' %}"
             class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-rose-700 to-rose-800 hover:shadow-md hover:scale-[1.02]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,16 +58,6 @@
             </svg>
             Add Item
         </a>
-
-        <a href="{% url 'inventory:add_item_code' %}"
-            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-200 shadow-sm rounded-xl bg-gradient-to-r from-green-700 to-green-800 hover:shadow-md hover:scale-[1.02]">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            Add Inventory Item
-        </a>
-
     </div>
 </div>
 
@@ -154,7 +154,7 @@
                 {% for item in items %}
                 <tr class="transition duration-150 hover:bg-gray-50">
 
-                    <td class="px-5 py-4 text-sm font-mono text-gray-700">
+                    <td class="px-5 py-4 font-mono text-sm text-gray-700">
                         {{ item.item_code.code }}
                     </td>
 
