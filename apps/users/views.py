@@ -201,7 +201,7 @@ def office_register(request):
                 send_email_verification(user, request)
 
             messages.success(request, "Registration request sent. Check your email to verify your account.")
-            return redirect("core:home", username=user.username)
+            return redirect("core:home")
     else:
         user_form = UserForm(prefix="user")
         office_profile_form = OfficeProfileForm(prefix="office_profile")

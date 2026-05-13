@@ -1,321 +1,583 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}PPMP | Procurement Office{% endblock %}
+{% block title %}PPMP Details | Procurement Office{% endblock %}
 
-{% block header_subtitle %}Create and manage Project Procurement Management Plans{% endblock %}
+{% block header_subtitle %}Review complete procurement plan details{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6 max-w-7xl">
-    <!-- Header with Create Button -->
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Create PPMP</h1>
-            <p class="text-gray-500 text-sm mt-1">Submit a new Project Procurement Management Plan</p>
+<div class="container max-w-5xl px-4 py-8 mx-auto">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <a href="{% url 'ppmp:ppmps' %}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
+      ← Back to List
+    </a>
+    <div class="flex gap-3">
+      {% if request.user.is_office %}
+          <a href="{% url '' %}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+            Create Final PPMP
+          </a>
+      {% endif %}
+      <button id="export-excel-btn" data-fiscal-year="{{ ppmp.fiscal_year }}" class="flex items-center gap-2 px-4 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+        Export as Excel
+      </button>
+      {% if ppmp.status != 'approved' and ppmp.status != 'rejected' %}
+      <button onclick="openEditRequestModal('{{ ppmp.id }}', '{{ ppmp.procurement_program|escapejs }}')" class="flex items-center gap-2 px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Request For Re-alignment
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="printableArea" class="overflow-hidden bg-white border shadow-lg rounded-2xl">
+    <!-- Header -->
+    <div class="px-8 py-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+      <!-- Status Bar -->
+      <div class="mb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium {% if ppmp.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif ppmp.status == 'approved'%}bg-green-100 text-green-800{% elif ppmp.status == 'for_revision'%}bg-blue-100 text-blue-800{% else %}bg-orange-100 text-orange-800{% endif %} rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full {% if ppmp.status == 'pending' %}bg-yellow-500{% elif ppmp.status == 'approved'%}bg-green-500{% elif ppmp.status == 'for_revision'%}bg-blue-500{% else %}bg-orange-500{% endif %}"></span>
+          {{ ppmp.get_status_display }}
         </div>
-        <button onclick="window.location.href='{% url 'ppmp:ppmp_form' %}'" 
-                class="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Create PPMP
-        </button>
+      </div>
+      <div class="mb-4 text-center">
+        <h1 class="text-2xl font-bold">PROJECT PROCUREMENT MANAGEMENT PLAN</h1>
+        <p class="text-gray-600">Republic of the Philippines</p>
+        <p class="font-medium text-gray-700">WESTERN MINDANAO STATE UNIVERSITY</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+        <div class="space-y-2">
+          <div class="flex">
+            <p class="w-40 font-semibold">Fiscal Year:</p>
+            <p>{{ ppmp.fiscal_year }}</p>
+          </div>
+          <div class="flex">
+            <p class="w-40 font-semibold">End-User Unit:</p>
+            <p>{{ ppmp.office_profile.office_name|default:"—" }}</p>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex">
+            <p class="w-40 font-semibold">Date Prepared:</p>
+            <p>{{ ppmp.created_at|date:"F d, Y" }}</p>
+          </div>
+          <div class="flex">
+            <p class="w-40 font-semibold">Submission Type:</p>
+            <p class="uppercase">{{ ppmp.get_submission_type_display}}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Search Bar -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <div class="relative">
-            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input type="text" id="searchInput" placeholder="Search PPMP by title, PPMP No., or division..." 
-                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+    <!-- Main Content -->
+    <div class="p-8 space-y-6">
+      <!-- Section 1: Basic Information -->
+      <div class="p-5 bg-gray-50 rounded-xl">
+        <h2 class="pb-2 mb-3 text-lg font-bold border-b">I. BASIC INFORMATION</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <p class="text-xs text-gray-500">Classification</p>
+            <p>{{ ppmp.get_classification_display }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Source of Funds</p>
+            <p>{{ ppmp.get_source_of_funds_display }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Office</p>
+            <p>{{ ppmp.office_profile.office_name }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Ceiling Amount</p>
+            <p class="font-mono">₱ {{ ppmp.ceiling }}</p>
+          </div>
+          <div class="md:col-span-2">
+            <p class="text-xs text-gray-500">Program/Activity/Project (PAP)</p>
+            <p>{{ ppmp.office_profile.get_pap_category_display }}</p>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- PPMP Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PPMP No.</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created by</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="ppmpTableBody" class="bg-white divide-y divide-gray-200">
-                    <!-- Sample Data -->
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                Pending
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-001</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Office Supply Procurement</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-001')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                Approved
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-002</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Infrastructure Development</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Admin</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">College Dean</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 24, 2026 1:00PM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-002')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                Rejected
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">PPMP-2026-003</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2026</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">IT Equipment Upgrade</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Department</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">IT Director</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">April 23, 2026 10:30AM</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button onclick="viewDetails('PPMP-2026-003')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <!-- ==================== PROCUREMENT LINES ==================== -->
+      <div class="space-y-6">
+        <!-- SECTION II: PROCUREMENT DETAILS -->
+        <div class="p-5 bg-gray-50 rounded-xl">
+          <h2 class="pb-2 mb-4 text-lg font-bold border-b">II. PROCUREMENT DETAILS</h2>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No PPMPs found</h3>
-            <p class="text-gray-500">Create your first PPMP by clicking the "Create PPMP" button above.</p>
-        </div>
-
-        <!-- Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
-            <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">3</span> of <span class="font-medium" id="totalCount">3</span> results
+          {% for procurement_line in ppmp.procurement_lines.all %}
+            <div class="mb-6">
+              <!-- Procurement Line Title -->
+              <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-800">PROCUREMENT LINE {{ procurement_line.order }} – {{ procurement_line.item_code.object_code.expenditure.name }}</h3>
+              </div>
+              
+              <!-- Procurement Details Grid -->
+              <div class="grid grid-cols-1 p-5 mb-4 bg-white border border-gray-200 gap-x-8 gap-y-5 rounded-xl md:grid-cols-2 lg:grid-cols-3">
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Procurement Program/Project</p>
+                  <p class="text-sm font-medium leading-relaxed text-gray-800">{{ procurement_line.procurement_program }}</p>
                 </div>
-                <div class="flex gap-2">
-                    <button id="prevPage"
-                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled>
-                        Previous
-                    </button>
-                    <button id="nextPage"
-                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled>
-                        Next
-                    </button>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Mode of Procurement</p>
+                  <p class="text-sm font-medium text-gray-800">{{ procurement_line.get_mode_of_procurement_display }}</p>
                 </div>
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">General Description</p>
+                  <p class="text-sm leading-relaxed text-gray-800">{{ procurement_line.item_code.general_description }}</p>
+                </div>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Item Code</p>
+                  <p class="font-mono text-sm text-gray-800">{{ procurement_line.item_code.code }}</p>
+                </div>
+                <div>
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">UACS / Object Code</p>
+                  <p class="font-mono text-sm text-gray-800">{{ procurement_line.item_code.object_code.code }}</p>
+                </div>
+                <div class="lg:col-span-2">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Object of Expenditure</p>
+                  <p class="text-sm font-medium leading-relaxed text-gray-800">{{ procurement_line.item_code.object_code.expenditure.name }}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="mb-3 text-sm font-semibold text-gray-700">Items to be Procured</h4>
+                <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                  <table class="min-w-full text-sm divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                      <tr>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Item Name</th>
+                        <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Quantity</th>
+                        <th class="w-24 px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Unit</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase w-28">Unit Cost (₱)</th>
+                        <th class="w-32 px-4 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase w-28">Date Needed</th>
+                        <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      {% for entry in procurement_line.line_entries.all %}
+                        <tr class="hover:bg-gray-50">
+                          <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ entry.item.name }}</td>
+                          <td class="px-4 py-3 text-sm text-right text-gray-700">{{ entry.quantity }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-700">{{ entry.item.get_unit_display }}</td>
+                          <td class="px-4 py-3 text-sm text-right text-gray-700">₱ {{ entry.unit_cost_snapshot }}</td>
+                          <td class="px-4 py-3 text-sm font-semibold text-right text-gray-900">₱ {{ entry.total_amount }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-700">{{ entry.date_needed|date:"F d, Y" }}</td>
+                          <td class="px-4 py-3 text-sm text-gray-500">{{ entry.remarks|default:"No remarks." }}</td>
+                        </tr>
+                      {% empty %}
+                        <tr><td colspan="7" class="px-4 py-3 text-center text-gray-500">No items found.</tr>
+                      {% endfor %}
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                      <tr>
+                        <td colspan="5" class="px-4 py-3 text-sm font-semibold text-right text-gray-900">Line {{ procurement_line.order }} Total</td>
+                        <td class="px-4 py-3 text-sm font-bold text-right text-red-600">₱ {{ procurement_line.total_amount }}</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                {% if not forloop.last %}
+                  <div class="my-4 border-t border-gray-200"></div>
+                {% endif %}
+              </div>
             </div>
+          {% empty %}
+            <p class="text-center text-gray-500">No procurement lines found.</p>
+          {% endfor %}
         </div>
+
+        <!-- GRAND TOTAL -->
+        <div class="p-5 border border-red-200 bg-gradient-to-r from-red-50 to-gray-50 rounded-xl">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-lg font-semibold text-gray-800">Grand Total (All Procurement Lines)</span>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-bold text-red-600">₱ {{ ppmp.total_amount }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section IV: Remarks -->
+        <div class="p-5 bg-gray-50 rounded-xl">
+          <h2 class="pb-2 mb-3 text-lg font-bold border-b">IV. REMARKS</h2>
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs text-gray-500">Remarks</p>
+              <p class="text-gray-700">{{ ppmp.remarks|default:"PPMP is out for review" }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signatories -->
+        <div class="grid grid-cols-1 gap-6 pt-4 text-center border-t md:grid-cols-2">
+          <div>
+            <p class="mb-4 text-sm text-gray-500">Prepared by:</p>
+            <div class="pt-2 mt-8 border-t border-gray-300">
+              <p class="font-medium">{{ ppmp.office_profile.office_name|default:"[End-User]" }}</p>
+              <p class="text-xs text-gray-500">End-User</p>
+            </div>
+          </div>
+          <div>
+            <p class="mb-4 text-sm text-gray-500">Submitted by:</p>
+            <div class="pt-2 mt-8 border-t border-gray-300">
+              <p class="font-medium">{{ ppmp.submitted_by.full_name|default:"[Head of Office]" }}</p>
+              <p class="text-xs text-gray-500">Date: {{ ppmp.created_at|date:"F d, Y"|default:"_______________" }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        {% if request.user.is_any_admin %}
+          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-200">
+            <button id="revision-btn" data-id="{{ ppmp.id }}" class="group inline-flex items-center gap-2 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-2.5 text-sm font-semibold text-yellow-700 transition-all duration-200 hover:bg-yellow-100">
+              Revision
+            </button>
+            <button id="decline-btn" class="group inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700 transition-all duration-200 hover:bg-red-100">
+              Decline
+            </button>
+            <button
+              type="button"
+              id="approve-btn"
+              class="group inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Approve
+            </button>
+            <form id="approve-form" method="post" action="{% url 'ppmp:ppmp_approve' ppmp.id %}">
+              {% csrf_token %}
+            </form>
+          </div>
+        {% endif %}
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- ==================== REVISION/DECLINE MODAL ==================== -->
+<div
+  id="remarks-modal"
+  class="fixed inset-0 z-50 bg-black/50"
+  style="display:none; align-items:center; justify-content:center;"
+  aria-modal="true"
+  role="dialog"
+>
+  <div id="ppmp-data" data-ppmp-id="{{ ppmp.id }}"></div>
+  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-6 sm:items-center sm:p-0">
+    <div class="w-full max-w-md overflow-hidden bg-white shadow-xl rounded-xl">
+      <div id="remarks-modal-header" class="flex items-center justify-between px-5 py-4" style="background: linear-gradient(to right, #991b1b, #b91c1c);">
+        <div class="flex items-center gap-2.5">
+          <span id="remarks-modal-icon">
+            <svg class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+          </span>
+          <h2 id="remarks-modal-title" class="text-base font-semibold text-white"></h2>
+        </div>
+        <button type="button" id="close-remarks-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-5 pt-4">
+        <div id="remarks-modal-banner" class="flex gap-2.5 px-3 py-2.5 text-xs leading-relaxed rounded-lg border">
+          <svg class="flex-shrink-0 w-4 h-4 mt-0.5" id="remarks-banner-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="remarks-modal-description"></span>
+        </div>
+      </div>
+      <div class="px-5 pt-4 pb-2">
+        <label class="block mb-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">Remarks / Reason <span class="text-red-500">*</span></label>
+        <textarea id="remarks-input" rows="4" class="w-full px-3 py-2.5 text-sm text-gray-800 transition border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter your remarks here..."></textarea>
+        <p id="remarks-error" class="hidden mt-1.5 text-xs text-red-600 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Remarks are required before confirming.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
+        <button type="button" id="cancel-remarks-btn" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Cancel</button>
+        <button type="button" id="confirm-remarks-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APPROVE MODAL ==================== -->
+<div id="approve-modal" class="fixed inset-0 z-50 bg-black/50" style="display:none; align-items:center; justify-content:center;" aria-modal="true" role="dialog">
+  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-6 sm:items-center sm:p-0">
+    <div class="w-full max-w-md overflow-hidden bg-white shadow-xl rounded-xl">
+      <div class="flex items-center justify-between px-5 py-4" style="background: linear-gradient(to right, #14532d, #15803d);">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h2 class="text-base font-semibold text-white">Approve PPMP</h2>
+        </div>
+        <button type="button" id="close-approve-modal-btn" class="flex items-center justify-center w-7 h-7 text-white transition rounded-md hover:bg-white/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-5 pt-4">
+        <div class="flex gap-2.5 px-3 py-2.5 text-xs leading-relaxed rounded-lg border" style="background:#f0fdf4; border-color:#86efac; color:#14532d;">
+          <svg class="flex-shrink-0 w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>Once approved, the end-user unit will be notified and the PPMP status will be updated to <strong>Approved</strong>. This action cannot be undone.</span>
+        </div>
+      </div>
+      <div class="px-5 pt-4 pb-2">
+        <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">End-User</span>
+            <span class="font-medium text-gray-800">{{ ppmp.office_profile.office_name|default:"—" }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Fiscal Year</span>
+            <span class="font-medium text-gray-800">{{ ppmp.fiscal_year }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Total Amount</span>
+            <span class="font-semibold text-green-700">₱ {{ ppmp.total_amount }}</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-400">Submission</span>
+            <span class="font-medium text-gray-800 uppercase">{{ ppmp.get_submission_type_display }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-3 px-5 py-4 mt-1 border-t border-gray-100 bg-gray-50">
+        <button type="button" id="cancel-approve-btn" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Cancel</button>
+        <button type="button" id="confirm-approve-btn" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition rounded-lg bg-green-700 hover:bg-green-800">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Yes, Approve PPMP
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EDIT REQUEST MODAL ==================== -->
+<div id="editRequestModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeEditRequestModal()"></div>
+    <div class="relative w-full max-w-lg mx-auto my-8 transition-all transform bg-white shadow-xl rounded-2xl">
+      <div class="bg-white">
+        <div class="px-6 py-4 border-b border-red-100 bg-red-50 rounded-t-2xl">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800">Request PPMP Edit</h3>
+            <button type="button" onclick="closeEditRequestModal()" class="text-gray-400 hover:text-gray-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <form id="editRequestForm" method="post" action="#">
+          {% csrf_token %}
+          <input type="hidden" name="ppmp_id" id="modal_ppmp_id" />
+          <div class="px-6 py-5 space-y-4">
+            <div>
+              <label class="block mb-1 text-sm font-medium text-gray-700">PPMP Title</label>
+              <p id="modal_ppmp_title" class="text-sm font-medium text-gray-800"></p>
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-medium text-gray-700">
+                Reason for Edit Request
+                <span class="text-red-500">*</span>
+              </label>
+              <textarea name="reason" id="edit_reason" required rows="4" class="w-full px-3 py-2 transition border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" placeholder="Please describe the changes you need..."></textarea>
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl">
+            <button type="button" onclick="closeEditRequestModal()" class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white transition bg-red-700 rounded-lg shadow-sm hover:bg-red-800">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    // Sample PPMP Data
-    let ppmpData = [
-        {
-            id: "PPMP-2026-001",
-            year: "2026",
-            title: "Office Supply Procurement",
-            division: "Admin",
-            created_by: "College Dean",
-            date: "April 24, 2026 1:00PM",
-            status: "Pending"
+  // ==================== REVISION/DECLINE MODAL ====================
+  (function () {
+    const modal        = document.getElementById('remarks-modal');
+    const header       = document.getElementById('remarks-modal-header');
+    const iconWrap     = document.getElementById('remarks-modal-icon');
+    const titleEl      = document.getElementById('remarks-modal-title');
+    const banner       = document.getElementById('remarks-modal-banner');
+    const bannerIcon   = document.getElementById('remarks-banner-icon');
+    const descEl       = document.getElementById('remarks-modal-description');
+    const textarea     = document.getElementById('remarks-input');
+    const errorEl      = document.getElementById('remarks-error');
+    const confirmBtn   = document.getElementById('confirm-remarks-btn');
+    const cancelBtn    = document.getElementById('cancel-remarks-btn');
+    const closeBtn     = document.getElementById('close-remarks-modal-btn');
+    const ppmpId       = document.getElementById('ppmp-data').dataset.ppmpId;
+    let currentAction = null;
+
+    const ICONS = {
+      revision: `<svg class="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>`,
+      decline: `<svg class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+      </svg>`,
+    };
+
+    const THEMES = {
+      revision: {
+        headerGradient: 'linear-gradient(to right, #92400e, #b45309)',
+        bannerBg: '#fffbeb',
+        bannerBorder: '#fde68a',
+        bannerText: '#78350f',
+        bannerIconColor: '#d97706',
+        confirmBg: '#b45309',
+        confirmHover: '#92400e',
+        label: 'Send for Revision',
+        description: 'Please provide a clear reason so the end-user unit can correct the PPMP accordingly.',
+      },
+      decline: {
+        headerGradient: 'linear-gradient(to right, #991b1b, #b91c1c)',
+        bannerBg: '#fef2f2',
+        bannerBorder: '#fca5a5',
+        bannerText: '#7f1d1d',
+        bannerIconColor: '#dc2626',
+        confirmBg: '#b91c1c',
+        confirmHover: '#991b1b',
+        label: 'Decline PPMP',
+        description: 'This PPMP will be declined and the end-user unit will be notified. This action cannot be undone.',
+      },
+    };
+
+    function openModal(action) {
+      const t = THEMES[action];
+      currentAction = action;
+      header.style.background = t.headerGradient;
+      iconWrap.innerHTML = ICONS[action];
+      titleEl.textContent = action === 'revision' ? 'Request Revision' : 'Decline PPMP';
+      banner.style.cssText = `background:${t.bannerBg}; border-color:${t.bannerBorder}; color:${t.bannerText};`;
+      bannerIcon.style.color = t.bannerIconColor;
+      descEl.textContent = t.description;
+      confirmBtn.textContent = t.label;
+      confirmBtn.style.background = t.confirmBg;
+      confirmBtn.onmouseover = () => confirmBtn.style.background = t.confirmHover;
+      confirmBtn.onmouseout = () => confirmBtn.style.background = t.confirmBg;
+      textarea.value = '';
+      errorEl.classList.add('hidden');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => textarea.focus(), 80);
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+      currentAction = null;
+    }
+
+    function submitModal() {
+      const remarks = textarea.value.trim();
+      if (!remarks) {
+        errorEl.classList.remove('hidden');
+        textarea.focus();
+        return;
+      }
+      errorEl.classList.add('hidden');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Submitting…';
+      fetch(`/ppmp/${ppmpId}/${currentAction}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          'Content-Type': 'application/json',
         },
-        {
-            id: "PPMP-2026-002",
-            year: "2026",
-            title: "Infrastructure Development",
-            division: "Admin",
-            created_by: "College Dean",
-            date: "April 24, 2026 1:00PM",
-            status: "Approved"
-        },
-        {
-            id: "PPMP-2026-003",
-            year: "2026",
-            title: "IT Equipment Upgrade",
-            division: "IT Department",
-            created_by: "IT Director",
-            date: "April 23, 2026 10:30AM",
-            status: "Rejected"
-        }
-    ];
-
-    // Helper function to get status badge
-    function getStatusBadge(status) {
-        const badges = {
-            'Pending': 'bg-yellow-100 text-yellow-800',
-            'Approved': 'bg-green-100 text-green-800',
-            'Rejected': 'bg-red-100 text-red-800',
-            'Submitted': 'bg-blue-100 text-blue-800'
-        };
-        const badgeClass = badges[status] || 'bg-gray-100 text-gray-800';
-        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span>`;
+        body: JSON.stringify({ remarks }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) location.reload();
+          else alert('Error: ' + (data.error || 'Unknown error'));
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = THEMES[currentAction].label;
+        })
+        .catch(() => {
+          alert('Request failed. Please try again.');
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = THEMES[currentAction].label;
+        })
+        .finally(() => closeModal());
     }
 
-    // Render table
-    let currentPage = 1;
-    const rowsPerPage = 5;
-    let filteredData = [];
+    document.getElementById('revision-btn')?.addEventListener('click', () => openModal('revision'));
+    document.getElementById('decline-btn')?.addEventListener('click', () => openModal('decline'));
+    cancelBtn?.addEventListener('click', closeModal);
+    closeBtn?.addEventListener('click', closeModal);
+    confirmBtn?.addEventListener('click', submitModal);
+    modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+  })();
 
-    function renderTable() {
-        const tableBody = document.getElementById('ppmpTableBody');
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageData = filteredData.slice(start, end);
+  // ==================== APPROVE MODAL ====================
+  (function () {
+    const modal = document.getElementById('approve-modal');
+    const approveBtn = document.getElementById('approve-btn');
+    const confirmBtn = document.getElementById('confirm-approve-btn');
+    const cancelBtn = document.getElementById('cancel-approve-btn');
+    const closeBtn = document.getElementById('close-approve-modal-btn');
+    const form = document.getElementById('approve-form');
 
-        if (filteredData.length === 0) {
-            tableBody.innerHTML = '';
-            document.getElementById('emptyState').classList.remove('hidden');
-            document.querySelector('table').classList.add('hidden');
-            return;
-        }
+    if (!modal || !approveBtn || !confirmBtn || !cancelBtn || !closeBtn || !form) return;
 
-        document.getElementById('emptyState').classList.add('hidden');
-        document.querySelector('table').classList.remove('hidden');
-        
-        tableBody.innerHTML = '';
-        pageData.forEach(item => {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50 transition';
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(item.status)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">${escapeHtml(item.id)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.year)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHtml(item.title)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.division)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.created_by)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${escapeHtml(item.date)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button onclick="viewDetails('${item.id}')" class="text-blue-600 hover:text-blue-800 transition" title="View Details">
-                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-
-        // Update pagination info
-        const startNum = start + 1;
-        const endNum = Math.min(end, filteredData.length);
-        document.getElementById('showingStart').textContent = filteredData.length > 0 ? startNum : 0;
-        document.getElementById('showingEnd').textContent = endNum;
-        document.getElementById('totalCount').textContent = filteredData.length;
-
-        // Update pagination buttons
-        const prevBtn = document.getElementById('prevPage');
-        const nextBtn = document.getElementById('nextPage');
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = end >= filteredData.length;
+    function openModal() {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
 
-    // Escape HTML
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
     }
 
-    // Apply search filter
-    function applySearch() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        
-        filteredData = ppmpData.filter(item => {
-            return item.id.toLowerCase().includes(searchTerm) ||
-                   item.title.toLowerCase().includes(searchTerm) ||
-                   item.division.toLowerCase().includes(searchTerm) ||
-                   item.created_by.toLowerCase().includes(searchTerm);
-        });
-        
-        currentPage = 1;
-        renderTable();
+    function submitApproval() {
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Approving…`;
+      form.submit();
     }
 
-    // View details function
-    function viewDetails(ppmpId) {
-        const ppmp = ppmpData.find(p => p.id === ppmpId);
-        if (ppmp) {
-            // Store in localStorage for detailed view page
-            localStorage.setItem('selectedPPMP', JSON.stringify(ppmp));
-            // Redirect to detailed view (you can change this URL as needed)
-            window.location.href = `/ppmp/detailed_view/?ppmp_id=${ppmpId}`;
-        } else {
-            alert('PPMP details not found.');
-        }
-    }
+    approveBtn.addEventListener('click', openModal);
+    cancelBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    confirmBtn.addEventListener('click', submitApproval);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+  })();
 
-    // Pagination event listeners
-    document.getElementById('prevPage').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    });
-    
-    document.getElementById('nextPage').addEventListener('click', () => {
-        const maxPage = Math.ceil(filteredData.length / rowsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderTable();
-        }
-    });
+  // ==================== EDIT REQUEST MODAL ====================
+  function openEditRequestModal(ppmpId, ppmpTitle) {
+    document.getElementById("modal_ppmp_id").value = ppmpId;
+    document.getElementById("modal_ppmp_title").innerText = ppmpTitle;
+    document.getElementById("edit_reason").value = "";
+    document.getElementById("editRequestModal").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 
-    // Search event listener
-    document.getElementById('searchInput').addEventListener('input', applySearch);
-
-    // Initialize
-    filteredData = [...ppmpData];
-    renderTable();
-
-    // Make viewDetails global for onclick
-    window.viewDetails = viewDetails;
+  function closeEditRequestModal() {
+    document.getElementById("editRequestModal").classList.add("hidden");
+    document.body.style.overflow = "";
+  }
 </script>
 {% endblock %}

@@ -97,6 +97,34 @@ def get_item_codes(request):
     item_codes = list(ItemCode.objects.filter(object_code=object_code_id).values("id", "code", "general_description"))
     return JsonResponse({"item_codes": item_codes})
 
+def get_all_item_codes(request):
+    item_codes = ItemCode.objects.select_related("object_code").all()
+
+    data = [
+        {
+            "id": ic.id,
+            "code": ic.code,
+            "general_description": ic.general_description,
+            "object_code_display": ic.object_code.code,
+        }
+        for ic in item_codes
+    ]
+
+    return JsonResponse({"item_codes": data})
+
+
+def get_items_by_item_code(request):
+    item_code_id = request.GET.get("item_code_id")
+
+    if not item_code_id:
+        return JsonResponse({"error": "item_code_id is required."}, status=400)
+
+    item_code = get_object_or_404(ItemCode, pk=item_code_id)
+
+    items = list(Item.objects.filter(item_code=item_code).values("id", "name", "specification", "unit", "unit_cost"))
+
+    return JsonResponse({"items": items, "general_description": item_code.general_description})
+  
 def add_object_expenditure(request):
     return render(request, "inventory/add-object-expenditure.html")
 

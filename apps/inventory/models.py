@@ -62,7 +62,7 @@ class Item(models.Model):
 
 
     name = models.CharField(max_length=100)
-    specification = models.CharField(max_length=100)
+    specification = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=20, choices=Unit.choices)
     unit_cost = models.DecimalField(max_digits=12, decimal_places=2)
 

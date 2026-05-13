@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}APP | Procurement Office{% endblock %}
+
+{% block header_subtitle %}Manage Annual Procurement Plans (APP){% endblock %}
+
+{% block content %}
+<div class="container px-4 py-6 mx-auto max-w-7xl">
+    <!-- Header with Create APP Button -->
+    <div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Annual Procurement Plan (APP)</h1>
+            <p class="mt-1 text-sm text-gray-500">View and manage all consolidated Annual Procurement Plans</p>
+            <div class="w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-red-500 to-red-300"></div>
+        </div>
+        <div class="flex gap-3">
+            <button id="create-app-btn" 
+                    class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-lg shadow-md transition duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Create APP
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex gap-2 mb-6 overflow-x-auto">
+        <button class="px-4 py-2 text-sm font-medium text-red-600 transition rounded-lg status-filter-btn active bg-red-50" data-status="all">
+            All
+        </button>
+        <button class="px-4 py-2 text-sm font-medium text-gray-600 transition rounded-lg status-filter-btn hover:bg-gray-100" data-status="indicative">
+            Indicative
+        </button>
+        <button class="px-4 py-2 text-sm font-medium text-gray-600 transition rounded-lg status-filter-btn hover:bg-gray-100" data-status="final">
+            Final
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+        <div class="relative">
+            <svg class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search by fiscal year..." 
+                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+        </div>
+    </div>
+
+    <!-- APP Table -->
+    <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Fiscal Year</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Total (₱)</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Prepared by</th>
+                        <th class="px-6 py-4 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appTableBody" class="bg-white divide-y divide-gray-200">
+                    {% for app in apps %}
+                    <tr class="transition hover:bg-gray-50" data-year="{{ app.fiscal_year }}" data-id="{{ app.id }}" data-status="{{ app.status|default:'indicative' }}">
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">{{ app.fiscal_year }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1.5"></span>
+                                {{ app.get_submission_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                {{ app.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.annotated_grand_total|default:"0.00"|floatformat:2 }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.prepared_by.get_full_name|default:app.prepared_by.full_name }}</td>
+                        <td class="px-6 py-4 text-sm text-center whitespace-nowrap">
+                            <a href="{% url 'ppmp:app' app.id %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="ml-2 text-yellow-600 transition hover:text-yellow-800" title="Edit APP" onclick="editApp({{ app.id }}); return false;">
+                                <svg class="inline w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-2">No APP records found</p>
+                            <p class="text-sm">Click "Create APP" to get started</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 bg-white border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">5</span> of <span class="font-medium" id="totalCount">0</span> results
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage"
+                        class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Previous
+                    </button>
+                    <button id="nextPage"
+                        class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create APP Modal -->
+<div id="create-app-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden transition-all duration-300 bg-black/50">
+    <div class="w-full max-w-md p-6 mx-4 transition-all transform bg-white shadow-2xl rounded-2xl" id="create-app-modal-content">
+        <div class="text-center">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
+                <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            
+            <h3 class="mb-3 text-2xl font-bold text-gray-800">Create Annual Procurement Plan</h3>
+            
+            <div class="p-4 mb-4 border border-blue-200 bg-blue-50 rounded-xl">
+                <p class="text-sm text-blue-800">
+                    Create APP for <strong>FY: {{ fiscal_year }} </strong>.
+                </p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="cancel-create-app-btn" 
+                        class="flex-1 px-4 py-2 font-semibold text-gray-700 transition bg-gray-200 hover:bg-gray-300 rounded-xl">
+                    Cancel
+                </button>
+                <form method="post" action="{% url 'ppmp:app_create' %}">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl">
+                        Proceed to Registration
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const createAPPBtn = document.getElementById('create-app-btn');
+    const createAPPModal = document.getElementById('create-app-modal');
+    const cancelCreateAPPBtn = document.getElementById('cancel-create-app-btn');
+
+    function openCreateModal() {
+        createAPPModal.classList.remove('hidden');
+    }
+    
+    function closeCreateModal() {
+        createAPPModal.classList.add('hidden');
+    }
+    
+    createAPPBtn.addEventListener('click', openCreateModal);
+    cancelCreateAPPBtn.addEventListener('click', closeCreateModal);
+    
+    createAPPModal.addEventListener('click', event => {
+        if (event.target === createAPPModal) {
+            closeCreateModal();
+        }
+    });
+    
+    // Edit function - redirects to Django edit URL
+    function editApp(id) {
+        window.location.href = `/ppmp/app/${id}/edit/`;
+    }
+
+    // Submit for review function
+    function submitForReview(id) {
+        if (confirm('Are you sure you want to submit this APP for review?')) {
+            fetch(`/ppmp/app/${id}/submit-review/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to submit for review'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    }
+
+    // Pagination and search functionality
+    let currentPage = 1;
+    const rowsPerPage = 5;
+    let allRows = [];
+    let filteredRows = [];
+    let currentStatusFilter = 'all';
+
+    // Get all data rows from the table
+    function getAllRows() {
+        const tbody = document.getElementById('appTableBody');
+        return Array.from(tbody.querySelectorAll('tr'));
+    }
+
+    // Filter rows based on search input and status
+    function filterRows() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredRows = allRows.filter(row => {
+            // Skip empty rows (no data message)
+            if (row.querySelector('td[colspan]')) return false;
+            
+            const yearCell = row.querySelector('td:first-child');
+            const yearMatch = yearCell && yearCell.textContent.toLowerCase().includes(searchTerm);
+            
+            // Status filter
+            let statusMatch = true;
+            if (currentStatusFilter !== 'all') {
+                const statusAttr = row.getAttribute('data-status');
+                statusMatch = statusAttr === currentStatusFilter;
+            }
+            
+            return yearMatch && statusMatch;
+        });
+        
+        currentPage = 1;
+        renderTable();
+    }
+
+    // Render the current page
+    function renderTable() {
+        const tbody = document.getElementById('appTableBody');
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+
+        // Clear and re-append rows
+        tbody.innerHTML = '';
+        
+        if (pageRows.length === 0) {
+            // Show empty state
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `
+                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                    <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p class="mt-2">No APP records found</p>
+                    <p class="text-sm">Try adjusting your search or filter criteria</p>
+                </td>
+            `;
+            tbody.appendChild(emptyRow);
+        } else {
+            pageRows.forEach(row => {
+                tbody.appendChild(row.cloneNode(true));
+            });
+        }
+
+        // Update pagination info
+        const totalCount = filteredRows.length;
+        const showingStart = totalCount > 0 ? start + 1 : 0;
+        const showingEnd = Math.min(end, totalCount);
+
+        document.getElementById('showingStart').textContent = showingStart;
+        document.getElementById('showingEnd').textContent = showingEnd;
+        document.getElementById('totalCount').textContent = totalCount;
+
+        // Update pagination buttons
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = end >= totalCount;
+    }
+
+    // Event listeners for pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            renderTable();
+        }
+    });
+
+    // Search input listener
+    document.getElementById('searchInput').addEventListener('input', filterRows);
+
+    // Status filter buttons
+    document.querySelectorAll('.status-filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active state
+            document.querySelectorAll('.status-filter-btn').forEach(b => {
+                b.classList.remove('active', 'text-red-600', 'bg-red-50');
+                b.classList.add('text-gray-600');
+            });
+            this.classList.add('active', 'text-red-600', 'bg-red-50');
+            this.classList.remove('text-gray-600');
+            
+            // Update filter
+            currentStatusFilter = this.getAttribute('data-status');
+            filterRows();
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Initialize
+    function initialize() {
+        allRows = getAllRows();
+        filteredRows = [...allRows];
+        renderTable();
+    }
+    
+    initialize();
+
+    // Expose functions globally
+    window.editApp = editApp;
+    window.submitForReview = submitForReview;
+</script>
+
+<style>
+    .status-filter-btn.active {
+        background-color: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .status-filter-btn {
+        transition: all 0.2s ease;
+    }
+</style>
+{% endblock %}

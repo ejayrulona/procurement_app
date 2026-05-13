@@ -4,10 +4,13 @@ from . import views
 app_name = "ppmp"
 
 urlpatterns = (
-    path("request/", views.request, name="request"),
-    path("ppmp_form/", views.ppmp_form, name="ppmp_form"),
-    path("ppmp/", views.ppmp, name="ppmp"),
-    path("detailed_view/", views.detailed_view, name="detailed_view"),
-    path("list_page/", views.list_page, name="list_page"),
-    path("draft/", views.draft, name="draft"),
+    path("create/", views.ppmp_create, name="ppmp_create"),
+    path("<int:id>/create-final/", views.ppmp_create_final, name="ppmp_create_final"),
+    path("ppmp/<int:id>/", views.ppmp, name="ppmp"),
+    path("ppmps/", views.ppmps, name="ppmps"),
+    path("<int:id>/edit/", views.ppmp_edit, name="ppmp_edit"),
+    path("<int:id>/approve/", views.ppmp_approve, name="ppmp_approve"),
+    path("<int:id>/decline/", views.ppmp_decline, name="ppmp_decline"),
+    path("<int:id>/revise/", views.ppmp_revise, name="ppmp_revise"),
+    path("<int:id>/export/", views.export_ppmp_excel, name="export_ppmp_excel"),
 )

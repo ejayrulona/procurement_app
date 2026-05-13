@@ -1,3 +1,7 @@
 from django.contrib import admin
+from . models import ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry
 
-# Register your models here.
+
+admin.site.register(ProcurementProjectManagementPlan)
+admin.site.register(ProcurementLine)
+admin.site.register(ProcurementLineEntry)
