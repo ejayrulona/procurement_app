@@ -176,6 +176,34 @@
                 </div>
             </div>
 
+            <!-- ==================== REMARKS MESSAGE ==================== -->
+            <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded-lg">
+                            <span class="text-sm font-bold text-red-600">3</span>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">Remarks / Additional Notes</h2>
+                            <p class="text-xs text-gray-500">Optional message for the Procurement Office</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <textarea name="remarks" id="remarksTextarea" rows="4"
+                        class="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-y"
+                        placeholder="Please provide any additional information, special instructions, or notes for the Procurement Office regarding this PPMP submission..."></textarea>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-xs text-gray-400">
+                            <span id="remarksCharCount">0</span> characters
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            This message will be sent along with your PPMP submission
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- ==================== ACTIONS ==================== -->
             <div class="sticky flex justify-end gap-4 p-4 border border-gray-200 shadow-lg bottom-4 bg-white/90 backdrop-blur-sm rounded-xl">
                 <button type="button" id="submitBtn"
@@ -331,6 +359,23 @@
         </tr>
     </template>
 </div>
+
+<!-- Character counter script for remarks -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const remarksTextarea = document.getElementById('remarksTextarea');
+        const charCountSpan = document.getElementById('remarksCharCount');
+        
+        if (remarksTextarea && charCountSpan) {
+            function updateCharCount() {
+                charCountSpan.textContent = remarksTextarea.value.length;
+            }
+            
+            remarksTextarea.addEventListener('input', updateCharCount);
+            updateCharCount();
+        }
+    });
+</script>
 
 {% if existing_lines %}
 <script id="existing-lines-data" type="application/json" data-mode="prefill">
