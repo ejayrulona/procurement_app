@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -344,7 +345,7 @@ def ppmp_approve(request, id):
             },
             status=400
         )
-
+    
     try:
         with transaction.atomic():
             ppmp.status = ProcurementProjectManagementPlan.Status.APPROVED
@@ -451,7 +452,7 @@ def ppmp_revise(request, id):
 
 PPMP_TEMPLATE_PATH = str(settings.PPMP_TEMPLATE_PATH)
 
-@any_admin_required
+@login_required
 def export_ppmp_excel(request, id):
     """
     GET /ppmp/<id>/export/

@@ -59,6 +59,14 @@ class Item(models.Model):
         PAIR = "pair", "Pair"
         BUNDLE = "bundle", "Bundle"
         GALLON = "gallon", "Gallon"
+        LOT = "lot", "Lot"
+        PAD = "pad", "Pad"
+        TUBE = "tube", "Tube"
+        SACHET = "sachet", "Sachet"
+        TANK = "tank", "Tank"
+        TIN = "tin", "Tin"
+        BAR = "bar", "Bar"
+        DOZEN = "dozen", "Dozen"
 
 
     name = models.CharField(max_length=100)

@@ -1,6 +1,9 @@
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
+
+MOOE_THRESHOLD = Decimal("50000.00")
 
 class ModeOfProcurement(models.TextChoices):
     COMPETETIVE_BIDDING = "competitive_bidding", "Competitive Bidding"
@@ -112,6 +115,26 @@ class ProcurementLine(models.Model):
 
     def __str__(self):
         return f"{self.ppmp} | Line {self.order}: {self.item_code.general_description}"
+
+    @property
+    def mooe_total(self):
+        """Sum of totals for entries where unit_cost_snapshot < 50,000."""
+
+        return sum(
+            entry.quantity * entry.unit_cost_snapshot
+            for entry in self.line_entries.all()
+            if entry.unit_cost_snapshot < MOOE_THRESHOLD
+        )
+
+    @property
+    def co_total(self):
+        """Sum of totals for entries where unit_cost_snapshot >= 50,000."""
+        
+        return sum(
+            entry.quantity * entry.unit_cost_snapshot
+            for entry in self.line_entries.all()
+            if entry.unit_cost_snapshot >= MOOE_THRESHOLD
+        )
 
     @property
     def total_amount(self):

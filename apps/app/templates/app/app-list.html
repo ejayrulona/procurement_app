@@ -79,7 +79,7 @@
                                 {{ app.get_status_display }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.annotated_grand_total|default:"0.00"|floatformat:2 }}</td>
+                        <td class="px-6 py-4 font-mono text-sm font-semibold text-right text-gray-900 whitespace-nowrap">₱ {{ app.grand_total }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ app.prepared_by.get_full_name|default:app.prepared_by.full_name }}</td>
                         <td class="px-6 py-4 text-sm text-center whitespace-nowrap">
                             <a href="{% url 'app:app' app.id %}" class="text-blue-600 transition hover:text-blue-800" title="View Details">

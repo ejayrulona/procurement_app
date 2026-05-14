@@ -33,16 +33,16 @@ class AnnualProcurementPlan(models.Model):
         return f"APP - FY{self.fiscal_year}"
     
     @property
-    def grand_total(self):
-        return sum(entry.total for entry in self.app_entries.all())
-    
-    @property
     def grand_total_mooe(self):
         return sum(entry.mooe for entry in self.app_entries.all())
-    
+
     @property
     def grand_total_co(self):
         return sum(entry.co for entry in self.app_entries.all())
+
+    @property
+    def grand_total(self):
+        return self.grand_total_mooe + self.grand_total_co
     
 
 class AnnualProcurementPlanEntry(models.Model):
@@ -54,10 +54,6 @@ class AnnualProcurementPlanEntry(models.Model):
     submission_date = models.DateField(null=True, blank=True, verbose_name="Submission/Opening of Bids")
     notice_of_award_date = models.DateField(null=True, blank=True, verbose_name="Notice of Award")
     contract_signing_date = models.DateField(null=True, blank=True, verbose_name="Contract Signing")
-
-    # Estimated Budget Breakdown
-    mooe = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="MOOE")
-    co = models.DecimalField(max_digits=14, decimal_places=2, default=0, verbose_name="CO")
 
     remarks = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -74,6 +70,24 @@ class AnnualProcurementPlanEntry(models.Model):
     @property
     def total(self):
         return self.mooe + self.co
+    
+    @property
+    def mooe(self):
+        """Total MOOE across all procurement lines of this PPMP."""
+
+        return sum(
+            line.mooe_total
+            for line in self.ppmp.procurement_lines.all()
+        )
+
+    @property
+    def co(self):
+        """Total CO across all procurement lines of this PPMP."""
+
+        return sum(
+            line.co_total
+            for line in self.ppmp.procurement_lines.all()
+        )
     
     @property
     def pmo_end_user(self):

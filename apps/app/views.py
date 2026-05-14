@@ -37,7 +37,7 @@ def app_create(request):
     app = AnnualProcurementPlan.objects.create(
         fiscal_year=fiscal_year,
         prepared_by=request.user,
-        submission_type=ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
+        submission_type=AnnualProcurementPlan.SubmissionType.INDICATIVE
     )
 
     return JsonResponse({
@@ -103,15 +103,11 @@ def app_list(request):
         "prepared_by"
     ).prefetch_related(
         "app_entries"
-    ).annotate(
-        annotated_grand_total=Sum("app_entries__mooe") + Sum("app_entries__co"),
-        annotated_grand_total_mooe=Sum("app_entries__mooe"),
-        annotated_grand_total_co=Sum("app_entries__co"),
     ).all()
 
     context = {
         "apps": apps,
-        "fiscal_year": get_default_fiscal_year
+        "fiscal_year": get_default_fiscal_year()
     }
 
     return render(request, "app/app-list.html", context)
@@ -246,9 +242,9 @@ def export_app_excel(request, id):
                 "notice_of_award_date": entry.notice_of_award_date,
                 "contract_signing_date": entry.contract_signing_date,
                 "source_of_funds": entry.source_of_funds,
-                "total": float(entry.total),
-                "mooe": float(entry.mooe),
-                "co": float(entry.co),
+                "total": float(line.mooe_total + line.co_total),
+                "mooe": float(line.mooe_total),
+                "co": float(line.co_total),
                 "remarks": entry.remarks or "",
             })
 

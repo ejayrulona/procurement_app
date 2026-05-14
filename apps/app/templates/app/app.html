@@ -115,9 +115,9 @@
                                 <td class="px-3 py-3 text-xs text-gray-500 border-r">{{ entry.notice_of_award|date:"Y-m-d"|default:"—" }}</td>
                                 <td class="px-3 py-3 text-xs text-gray-500 border-r">{{ entry.contract_signing_date|date:"Y-m-d"|default:"—" }}</td>
                                 <td class="px-3 py-3 text-gray-600 border-r">{{ entry.source_of_funds }}</td>
-                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ entry.total }}</td>
-                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ entry.mooe }}</td>
-                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ entry.co }}</td>
+                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ line.mooe_total|add:line.co_total }}</td>
+                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ line.mooe_total }}</td>
+                                <td class="px-3 py-3 font-mono text-right border-r">₱ {{ line.co_total }}</td>
                                 <td class="px-3 py-3 text-xs text-gray-500">{{ entry.remarks|default:"—" }}</td>
                             </tr>
                             {% endfor %}

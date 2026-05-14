@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import datetime
 
 def get_allowed_fiscal_years():
     """
@@ -26,7 +27,7 @@ def is_ppmp_editable(ppmp, user):
     """
     
     now = timezone.now()
-    grace_deadline = timezone.datetime(ppmp.fiscal_year + 1, 1, 15, tzinfo=timezone.asia)
+    grace_deadline = timezone.make_aware(datetime(ppmp.fiscal_year + 1, 1, 15))
 
     if now > grace_deadline:
         return False
