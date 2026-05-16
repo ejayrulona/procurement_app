@@ -62,7 +62,6 @@ def ppmp_create(request):
                 ppmp.office_profile = office_profile
                 ppmp.submitted_by = request.user
                 ppmp.status = ProcurementProjectManagementPlan.Status.PENDING
-                ppmp.submission_type = ProcurementProjectManagementPlan.SubmissionType.INDICATIVE
                 ppmp.save()
 
                 for line_data in cleaned_lines:

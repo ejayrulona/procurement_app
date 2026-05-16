@@ -29,7 +29,7 @@ class ObjectCode(models.Model):
 
 class ItemCode(models.Model):
     code = models.CharField(max_length=30)
-    general_description = models.CharField(max_length=150)
+    general_description = models.TextField()
     object_code = models.ForeignKey(ObjectCode, on_delete=models.PROTECT, related_name="item_codes")
 
     class Meta:
