@@ -10,6 +10,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .export_service import generate_app_excel
 from .models import AnnualProcurementPlan   
+from apps.activity_logs.models import ActivityLog
+from apps.activity_logs.utils import log_activity
 from apps.ppmp.models import ProcurementProjectManagementPlan 
 from apps.users.decorators import admin_required, any_admin_required, office_required
 from utils.utils import get_allowed_fiscal_years, get_default_fiscal_year
@@ -40,6 +42,14 @@ def app_create(request):
         submission_type=AnnualProcurementPlan.SubmissionType.INDICATIVE
     )
 
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.CREATE_APP,
+        target_type=ActivityLog.TargetType.APP,
+        target_id=app.id,
+        target_label=str(app),
+    )
+    
     return JsonResponse({
         "message": f"APP for FY: {fiscal_year} created successfully.",
         "app_id": app.pk,
@@ -89,6 +99,14 @@ def app_create_final(request):
         fiscal_year=fiscal_year,
         submission_type=AnnualProcurementPlan.SubmissionType.FINAL,
         prepared_by=request.user,
+    )
+
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.CREATE_APP,
+        target_type=ActivityLog.TargetType.APP,
+        target_id=app.id,
+        target_label=str(app),
     )
 
     return JsonResponse({

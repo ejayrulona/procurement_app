@@ -13,6 +13,8 @@ from .export_service import generate_ppmp_excel
 from .forms import PPMPForm
 from .models import ProcurementProjectManagementPlan, ProcurementLine, ProcurementLineEntry, ModeOfProcurement   
 from .validators import validate_procurement_lines
+from apps.activity_logs.models import ActivityLog
+from apps.activity_logs.utils import log_activity
 from apps.app.models import AnnualProcurementPlan, AnnualProcurementPlanEntry
 from apps.users.decorators import admin_required, any_admin_required, office_required
 from utils.utils import get_allowed_fiscal_years, get_default_fiscal_year, is_ppmp_editable
@@ -83,6 +85,14 @@ def ppmp_create(request):
                         )
                         for entry in line_data["entries"]
                     ])
+
+                log_activity(
+                    user=request.user,
+                    action=ActivityLog.Action.CREATE_PPMP,
+                    target_type=ActivityLog.TargetType.PPMP,
+                    target_id=ppmp.id,
+                    target_label=str(ppmp)
+                )
 
         except Exception as error:
             return JsonResponse(
@@ -287,6 +297,14 @@ def ppmp_edit(request, id):
                         for entry in line_data["entries"]
                     ])
 
+                log_activity(
+                    user=request.user,
+                    action=ActivityLog.Action.EDIT_PPMP,
+                    target_type=ActivityLog.TargetType.PPMP,
+                    target_id=ppmp.id,
+                    target_label=str(ppmp)
+                )
+
         except Exception as error:
             return JsonResponse(
                 {"error": "An error occurred while saving. Please try again."},
@@ -352,6 +370,14 @@ def ppmp_approve(request, id):
             ppmp.reviewed_at = timezone.now()
             ppmp.save()
 
+            log_activity(
+                user=request.user,
+                action=ActivityLog.Action.APPROVE_PPMP,
+                target_type=ActivityLog.TargetType.PPMP,
+                target_id=ppmp.id,
+                target_label=str(ppmp)
+            )
+
             AnnualProcurementPlanEntry.objects.create(
                 app=app,
                 ppmp=ppmp,
@@ -362,7 +388,7 @@ def ppmp_approve(request, id):
             {"error": "An error occurred during approval."},
             status=500
         )
-
+    
     return JsonResponse({
         "message": "PPMP approved and added to the Annual Procurement Plan.",
         "ppmp_id": ppmp.id,
@@ -404,6 +430,15 @@ def ppmp_decline(request, id):
     ppmp.remarks = remarks
     ppmp.save()
 
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.DECLINE_PPMP,
+        target_type=ActivityLog.TargetType.PPMP,
+        target_id=ppmp.id,
+        target_label=str(ppmp),
+        remarks=remarks
+    )
+
     return JsonResponse({
         "message": "PPMP declined.",
         "ppmp_id": ppmp.id,
@@ -441,6 +476,15 @@ def ppmp_revise(request, id):
     ppmp.reviewed_at = timezone.now()
     ppmp.remarks = remarks
     ppmp.save()
+
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.SET_REVISION_PPMP,
+        target_type=ActivityLog.TargetType.PPMP,
+        target_id=ppmp.id,
+        target_label=str(ppmp),
+        remarks=remarks
+    )
 
     return JsonResponse({
         "message": "PPMP returned for revision.",

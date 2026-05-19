@@ -30,7 +30,7 @@ class AnnualProcurementPlan(models.Model):
 
     
     def __str__(self):
-        return f"APP - FY{self.fiscal_year}"
+        return f"APP - FY{self.fiscal_year} ({self.get_submission_type_display()})"
     
     @property
     def grand_total_mooe(self):
