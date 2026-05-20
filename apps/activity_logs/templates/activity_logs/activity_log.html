@@ -35,6 +35,8 @@
 				</div>
 			</div>
 		</div>
+		
+		{% if request.user.is_any_admin %}
 		<div class="p-4 bg-white border border-gray-200 rounded-lg">
 			<div class="flex items-center justify-between">
 				<div>
@@ -61,6 +63,7 @@
 				</div>
 			</div>
 		</div>
+		{% endif %}
 	</div>
 
 	<!-- Search and Filter Section -->
@@ -117,10 +120,10 @@
 							<div class="text-sm font-medium text-gray-900">{{ activity.user_full_name }}</div>
 						</td>
 						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium text-green-800 uppercase bg-green-100 rounded-full">{{ activity.user_role }}</span>
+							<span class="px-2 py-1 text-xs font-medium uppercase {% if activity.user_role == 'admin' %}text-red-800 bg-red-100{% elif activity.user_role == 'admin_aid' %}text-teal-800 bg-teal-100{% else %}text-indigo-800 bg-indigo-100{% endif %} rounded-full">{{ activity.user_role }}</span>
 						</td>
 						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">{{ activity.get_action_display }}</span>
+							{{ activity.get_action_display }}
 						</td>
 						<td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ activity.target_label }}</td>
 					</tr>
