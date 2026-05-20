@@ -18,6 +18,8 @@ from .models import (
     User, AdminProfile, OfficeProfile, RegistrationRequest, AccountSetupToken, 
     EmailVerificationToken
 )
+from apps.activity_logs.models import ActivityLog
+from apps.activity_logs.utils import log_activity
 
 @admin_required
 def create_admin_aid(request):
@@ -45,6 +47,13 @@ def create_admin_aid(request):
                     is_setup_complete=False,
                 )
 
+                log_activity(
+                    user=request.user,
+                    action=ActivityLog.Action.CREATE_ADMIN_AID_ACCOUNT,
+                    target_type=ActivityLog.TargetType.USER,
+                    target_id=user.id,
+                    target_label=user.full_name or user.username
+                )
                 send_account_setup_email(user, request)
 
             messages.success(request, f"Account created and setup email sent to {user.email}.")
@@ -152,6 +161,13 @@ def resend_setup_email(request, id):
         messages.info(request, "This account has already been set up.")
         return redirect("users:list_admin_aid_accounts")
     
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.RESEND_SETUP_EMAIL,
+        target_type=ActivityLog.TargetType.USER,
+        target_id=user.id,
+        target_label=user.full_name or user.username
+    )
     send_account_setup_email(user, request)
     messages.success(request, f"Setup email resent to {user.email}.")
 
@@ -172,9 +188,18 @@ def toggle_user_status(request, id):
 
         if user.is_active:
             send_account_activated_email(user, request)
+            action = ActivityLog.Action.ACTIVATE_AID_ACCOUNT
         else:
             send_account_deactivated_email(user)
+            action = ActivityLog.Action.DEACTIVATE_AID_ACCOUNT
         
+        log_activity(
+            user=request.user,
+            action=action,
+            target_type=ActivityLog.TargetType.USER,
+            target_id=user.id,
+            target_label=user.full_name or user.username
+        )
         status_label = "activated" if user.is_active else "deactivated"
         messages.success(request, f"{user.full_name} has been {status_label}.")
 
@@ -330,6 +355,13 @@ def approve_registration_request(request, id):
         registration_request.user.is_active = True
         registration_request.user.save()
 
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.APPROVE_REGISTRATION,
+        target_type=ActivityLog.TargetType.USER,
+        target_id=user.id,
+        target_label=user.full_name or user.username
+    )
     send_registration_approved_email(registration_request.user, request)
     messages.success(request, f"{registration_request.user.full_name}'s registration has been approved.")
     return redirect("users:list_registration_requests")
@@ -359,6 +391,14 @@ def decline_registration_request(request, id):
         registration_request.remarks = remarks
         registration_request.save()
 
+    log_activity(
+        user=request.user,
+        action=ActivityLog.Action.DECLINE_REGISTRATION,
+        target_type=ActivityLog.TargetType.USER,
+        target_id=user.id,
+        target_label=user.full_name or user.username,
+        remarks=remarks
+    )
     send_registration_declined_email(registration_request.user, remarks)
     messages.success(request, f"{registration_request.user.full_name}'s registration has been declined.")
     return redirect("users:list_registration_requests")

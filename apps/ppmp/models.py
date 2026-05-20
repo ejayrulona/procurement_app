@@ -73,7 +73,7 @@ class ProcurementProjectManagementPlan(models.Model):
 
 
     def __str__(self):
-        return f"{self.office_profile.office_name} - {self.get_classification_display()} - FY: {self.fiscal_year}"
+        return f"{self.office_profile.office_name} - FY: {self.fiscal_year} ({self.get_submission_type_display()})"
     
     @property
     def total_amount(self):

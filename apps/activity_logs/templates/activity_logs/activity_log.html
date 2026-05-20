@@ -8,64 +8,67 @@
 {% block content %}
 <div class="space-y-6">
 	<!-- Summary Cards -->
-	<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-		<div class="bg-white rounded-lg border border-gray-200 p-4">
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+		<div class="p-4 bg-white border border-gray-200 rounded-lg">
 			<div class="flex items-center justify-between">
 				<div>
 					<p class="text-sm text-gray-500">Total Activities</p>
-					<p class="text-2xl font-bold text-gray-800" id="totalActivities">17</p>
+					<p class="text-2xl font-bold text-gray-800" id="totalActivities">{{ total_activities }}</p>
 				</div>
-				<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+				<div class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full">
 					<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 					</svg>
 				</div>
 			</div>
 		</div>
-		<div class="bg-white rounded-lg border border-gray-200 p-4">
+		<div class="p-4 bg-white border border-gray-200 rounded-lg">
 			<div class="flex items-center justify-between">
 				<div>
 					<p class="text-sm text-gray-500">PPMP Activities</p>
-					<p class="text-2xl font-bold text-gray-800" id="ppmpCount">8</p>
+					<p class="text-2xl font-bold text-gray-800" id="ppmpCount">{{ ppmp_activities }}</p>
 				</div>
-				<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+				<div class="flex items-center justify-center w-10 h-10 bg-green-100 rounded-full">
 					<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 					</svg>
 				</div>
 			</div>
 		</div>
-		<div class="bg-white rounded-lg border border-gray-200 p-4">
+		
+		{% if request.user.is_any_admin %}
+		<div class="p-4 bg-white border border-gray-200 rounded-lg">
 			<div class="flex items-center justify-between">
 				<div>
 					<p class="text-sm text-gray-500">User Management</p>
-					<p class="text-2xl font-bold text-gray-800" id="userCount">4</p>
+					<p class="text-2xl font-bold text-gray-800" id="userCount">{{ user_activities }}</p>
 				</div>
-				<div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+				<div class="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-full">
 					<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
 					</svg>
 				</div>
 			</div>
 		</div>
-		<div class="bg-white rounded-lg border border-gray-200 p-4">
+		<div class="p-4 bg-white border border-gray-200 rounded-lg">
 			<div class="flex items-center justify-between">
 				<div>
 					<p class="text-sm text-gray-500">Inventory Updates</p>
-					<p class="text-2xl font-bold text-gray-800" id="inventoryCount">3</p>
+					<p class="text-2xl font-bold text-gray-800" id="inventoryCount">{{ item_activities }}</p>
 				</div>
-				<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+				<div class="flex items-center justify-center w-10 h-10 bg-yellow-100 rounded-full">
 					<svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
 					</svg>
 				</div>
 			</div>
 		</div>
+		{% endif %}
 	</div>
 
 	<!-- Search and Filter Section -->
-	<div class="bg-white rounded-lg border border-gray-200 p-4">
-		<div class="flex flex-col md:flex-row gap-4">
+	<div class="p-4 bg-white border border-gray-200 rounded-lg">
+		<div class="flex flex-col gap-4 md:flex-row">
 			<!-- Search Bar -->
 			<div class="relative flex-1">
 				<input type="text" id="searchActivity" placeholder="Search by user, action, or reference..." 
@@ -86,10 +89,10 @@
 
 			<!-- Action Buttons -->
 			<div class="flex gap-2">
-				<button id="filterBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200">
+				<button id="filterBtn" class="px-4 py-2 text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700">
 					Apply Filter
 				</button>
-				<button id="resetBtn" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition duration-200">
+				<button id="resetBtn" class="px-4 py-2 text-white transition duration-200 bg-gray-500 rounded-lg hover:bg-gray-600">
 					Reset
 				</button>
 			</div>
@@ -97,101 +100,50 @@
 	</div>
 
 	<!-- Activity Log Table -->
-	<div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+	<div class="overflow-hidden bg-white border border-gray-200 rounded-lg">
 		<div class="overflow-x-auto">
 			<table class="min-w-full divide-y divide-gray-200">
 				<thead class="bg-gray-50">
 					<tr>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
+						<th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date & Time</th>
+						<th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">User</th>
+						<th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Role</th>
+						<th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Action</th>
+						<th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Target</th>
 					</tr>
 				</thead>
 				<tbody id="activityTableBody" class="bg-white divide-y divide-gray-200">
-					<!-- Static HTML Sample Data -->
-					<tr class="hover:bg-gray-50 transition" data-category="PPMP" data-date="2024-03-23">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 09:30:15</td>
+					{% for activity in activities %}
+					<tr class="transition hover:bg-gray-50" data-category="PPMP" data-date="2024-03-23">
+						<td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ activity.timestamp }}</td>
 						<td class="px-6 py-4 whitespace-nowrap">
-							<div class="text-sm font-medium text-gray-900">John M. Santos</div>
+							<div class="text-sm font-medium text-gray-900">{{ activity.user_full_name }}</div>
 						</td>
 						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Admin</span>
+							<span class="px-2 py-1 text-xs font-medium uppercase {% if activity.user_role == 'admin' %}text-red-800 bg-red-100{% elif activity.user_role == 'admin_aid' %}text-teal-800 bg-teal-100{% else %}text-indigo-800 bg-indigo-100{% endif %} rounded-full">{{ activity.user_role }}</span>
 						</td>
 						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">Created PPMP</span>
+							{{ activity.get_action_display }}
 						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">ICT Equipment for College of Engineering</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="text-xs font-mono text-gray-600">PPMP-2024-001</span>
-						</td>
+						<td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ activity.target_label }}</td>
 					</tr>
-					<tr class="hover:bg-gray-50 transition" data-category="Inventory" data-date="2024-03-23">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 10:15:22</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<div class="text-sm font-medium text-gray-900">Maria R. Cruz</div>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Admin Aid</span>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Updated Inventory</span>
-						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Added 50 units of Dell Laptops</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="text-xs font-mono text-gray-600">INV-2024-089</span>
-						</td>
-					</tr>
-					<tr class="hover:bg-gray-50 transition" data-category="User" data-date="2024-03-23">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 11:45:08</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<div class="text-sm font-medium text-gray-900">Admin User</div>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Admin</span>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Approved Registration</span>
-						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Approved account for College of Science</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="text-xs font-mono text-gray-600">REG-2024-015</span>
-						</td>
-					</tr>
-					<tr class="hover:bg-gray-50 transition" data-category="APP" data-date="2024-03-23">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-03-23 13:20:45</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<div class="text-sm font-medium text-gray-900">Robert C. Lee</div>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Admin Aid</span>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">Generated APP</span>
-						</td>
-						<td class="px-6 py-4 text-sm text-gray-600">Annual Procurement Plan FY 2025</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<span class="text-xs font-mono text-gray-600">APP-2025-001</span>
-						</td>
-					</tr>
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
 
 		<!-- Pagination -->
-		<div class="bg-white px-6 py-4 border-t border-gray-200">
+		<div class="px-6 py-4 bg-white border-t border-gray-200">
 			<div class="flex items-center justify-between">
 				<div class="text-sm text-gray-700">
 					Showing <span class="font-medium" id="showingStart">1</span> to <span class="font-medium" id="showingEnd">4</span> 
 					of <span class="font-medium" id="totalCount">4</span> results
 				</div>
 				<div class="flex gap-2">
-					<button id="prevPage" class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+					<button id="prevPage" class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
 						Previous
 					</button>
-					<button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+					<button id="nextPage" class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
 						Next
 					</button>
 				</div>
@@ -281,11 +233,11 @@
 			emptyRow.id = 'emptyStateRow';
 			emptyRow.innerHTML = `
 				<td colspan="6" class="px-6 py-12 text-center text-gray-500">
-					<svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 					</svg>
 					<p class="text-sm">No activity logs found</p>
-					<p class="text-xs mt-1">Try adjusting your search or filter criteria</p>
+					<p class="mt-1 text-xs">Try adjusting your search or filter criteria</p>
 				</td>
 			`;
 			document.getElementById('activityTableBody').appendChild(emptyRow);
