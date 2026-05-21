@@ -16,6 +16,8 @@ from .validators import validate_procurement_lines
 from apps.activity_logs.models import ActivityLog
 from apps.activity_logs.utils import log_activity
 from apps.app.models import AnnualProcurementPlan, AnnualProcurementPlanEntry
+from apps.notification.models import Notification
+from apps.notification.utils import notify_user
 from apps.users.decorators import admin_required, any_admin_required, office_required
 from utils.utils import get_allowed_fiscal_years, get_default_fiscal_year, is_ppmp_editable
 
@@ -370,6 +372,11 @@ def ppmp_approve(request, id):
             ppmp.reviewed_at = timezone.now()
             ppmp.save()
 
+            AnnualProcurementPlanEntry.objects.create(
+                app=app,
+                ppmp=ppmp,
+            )
+
             log_activity(
                 user=request.user,
                 action=ActivityLog.Action.APPROVE_PPMP,
@@ -378,9 +385,12 @@ def ppmp_approve(request, id):
                 target_label=str(ppmp)
             )
 
-            AnnualProcurementPlanEntry.objects.create(
-                app=app,
-                ppmp=ppmp,
+            notify_user(
+                recipient=ppmp.submitted_by,
+                notification_type=Notification.Type.PPMP_APPROVED,
+                target_label=str(ppmp),
+                target_id=ppmp.id,
+                actor_name=request.user.full_name
             )
 
     except Exception:
@@ -439,6 +449,15 @@ def ppmp_decline(request, id):
         remarks=remarks
     )
 
+    notify_user(
+        recipient=ppmp.submitted_by,
+        notification_type=Notification.Type.PPMP_DECLINED,
+        target_label=str(ppmp),
+        target_id=ppmp.id,
+        remarks=remarks,
+        actor_name=request.user.full_name
+    )
+
     return JsonResponse({
         "message": "PPMP declined.",
         "ppmp_id": ppmp.id,
@@ -486,11 +505,18 @@ def ppmp_revise(request, id):
         remarks=remarks
     )
 
+    notify_user(
+        recipient=ppmp.submitted_by,
+        notification_type=Notification.Type.PPMP_SET_FOR_REVISION,
+        target_label=str(ppmp),
+        remarks=remarks,
+        actor_name=request.user.full_name
+    )
+
     return JsonResponse({
         "message": "PPMP returned for revision.",
         "ppmp_id": ppmp.id,
     }, status=200)
-
 
 
 PPMP_TEMPLATE_PATH = str(settings.PPMP_TEMPLATE_PATH)

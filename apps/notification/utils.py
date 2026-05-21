@@ -1,29 +1,19 @@
 from .models import Notification
-from apps.activity_logs.models import ActivityLog
 
-_NOTIFICATION_MAP = {
-    ActivityLog.Action.APPROVE_PPMP: (
-        Notification.Type.PPMP_APPROVED,
-        lambda **kwargs: (
-            "PPMP approved",
-            f"Your PPMP \"{kwargs['target_label']}\" has been approved.",
-        ),
+_MESSAGE_MAP = {
+    Notification.Type.PPMP_APPROVED: lambda **kwargs: (
+        "PPMP approved",
+        f"Your PPMP \"{kwargs['target_label']}\" has been approved.",
     ),
-    ActivityLog.Action.DECLINE_PPMP: (
-        Notification.Type.PPMP_DECLINED,
-        lambda **kwargs: (
-            "PPMP declined",
-            f"Your PPMP \"{kwargs['target_label']}\" has been declined."
-            + (f" Reason: {kwargs['remarks']}" if kwargs.get("remarks") else ""),
-        ),
+    Notification.Type.PPMP_DECLINED: lambda **kwargs: (
+        "PPMP declined",
+        f"Your PPMP \"{kwargs['target_label']}\" has been declined."
+        + (f" Reason: {kwargs['remarks']}" if kwargs.get("remarks") else ""),
     ),
-    ActivityLog.Action.SET_REVISION_PPMP: (
-        Notification.Type.PPMP_SET_FOR_REVISION,
-        lambda **kwargs: (
-            "PPMP set for revision",
-            f"Your PPMP \"{kwargs['target_label']}\" has been sent back for revision."
-            + (f" Note: {kwargs['remarks']}" if kwargs.get("remarks") else ""),
-        ),
+    Notification.Type.PPMP_SET_FOR_REVISION: lambda **kwargs: (
+        "PPMP set for revision",
+        f"Your PPMP \"{kwargs['target_label']}\" has been sent back for revision."
+        + (f" Note: {kwargs['remarks']}" if kwargs.get("remarks") else ""),
     ),
 }
 
@@ -31,29 +21,24 @@ _NOTIFICATION_MAP = {
 def notify_user(
     *,
     recipient,
-    action,
+    notification_type,
     target_label="",
-    target_type="",
-    target_id=None,
     remarks=None,
     actor_name="",
 ):
-    entry = _NOTIFICATION_MAP.get(action)
+    entry = _MESSAGE_MAP.get(notification_type)
     if entry is None:
-        return  # Action does not trigger a notification
+        return
 
-    notification_type, message_builder = entry
-    title, message = message_builder(
+    title, message = entry(
         target_label = target_label,
-        remarks      = remarks,
-        actor_name   = actor_name,
+        remarks = remarks,
+        actor_name = actor_name,
     )
 
     Notification.objects.create(
-        recipient         = recipient,
+        recipient = recipient,
         notification_type = notification_type,
-        title             = title,
-        message           = message,
-        target_type       = target_type,
-        target_id         = target_id,
+        title = title,
+        message = message,
     )
