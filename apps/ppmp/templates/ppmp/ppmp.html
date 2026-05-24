@@ -21,7 +21,7 @@
       id="export-excel-btn" 
       data-ppmp-id="{{ ppmp.id }}"
       data-fiscal-year="{{ ppmp.fiscal_year }}" 
-      class="flex items-center gap-2 px-4 py-2 font-medium text-white transition-all duration-200 bg-green-600 shadow-md rounded-lg hover:bg-green-700 hover:shadow-lg">
+      class="flex items-center gap-2 px-4 py-2 font-medium text-white transition-all duration-200 bg-green-600 rounded-lg shadow-md hover:bg-green-700 hover:shadow-lg">
       <!-- Excel/File Icon -->
       <svg xmlns="http://www.w3.org/2000/svg" 
           class="w-5 h-5" 
@@ -482,7 +482,7 @@
       currentAction = action;
       header.style.background = t.headerGradient;
       iconWrap.innerHTML = ICONS[action];
-      titleEl.textContent = action === 'revision' ? 'Request Revision' : 'Decline PPMP';
+      titleEl.textContent = action === 'revise' ? 'Request Revision' : 'Decline PPMP';
       banner.style.cssText = `background:${t.bannerBg}; border-color:${t.bannerBorder}; color:${t.bannerText};`;
       bannerIcon.style.color = t.bannerIconColor;
       descEl.textContent = t.description;

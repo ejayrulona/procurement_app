@@ -23,7 +23,7 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.core.urls", namespace="core")),
-    path("activity_logs/", include("apps.activity_logs.urls", namespace="activity_logs")),
+    path("activity-logs/", include("apps.activity_logs.urls", namespace="activity_logs")),
     path("inventory/", include("apps.inventory.urls", namespace="inventory")),
     path("users/", include("apps.users.urls", namespace="users")),
     path("notification/", include("apps.notification.urls", namespace="notification")),
