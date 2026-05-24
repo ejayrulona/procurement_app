@@ -3,8 +3,9 @@ from django.db import transaction
 from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ObjectOfExpenditure, ObjectCode, ItemCode, Item
+from .importer import import_items_from_excel
 from .forms import ObjectOfExpenditureForm, ObjectCodeForm, ItemCodeForm, ItemForm
+from .models import ObjectOfExpenditure, ObjectCode, ItemCode, Item
 from apps.users.decorators import any_admin_required
 
 @any_admin_required
@@ -40,6 +41,7 @@ def item_create(request):
     return render(request, "inventory/create-item.html", context)
 
 
+@any_admin_required
 def object_expenditure_add(request):
     if request.method == "POST":
         form = ObjectOfExpenditureForm(request.POST)
@@ -60,6 +62,7 @@ def object_expenditure_add(request):
     return render(request, "inventory/add-object-expenditure.html", context)
 
 
+@any_admin_required
 def object_code_add(request):
     if request.method == "POST":
         form = ObjectCodeForm(request.POST)
@@ -81,6 +84,7 @@ def object_code_add(request):
     return render(request, "inventory/add-object-code.html", context)
 
 
+@any_admin_required
 def item_code_add(request):
     if request.method == "POST":
         form = ItemCodeForm(request.POST)
@@ -192,3 +196,34 @@ def get_items_by_item_code(request):
     items = list(Item.objects.filter(item_code=item_code).values("id", "name", "specification", "unit", "unit_cost"))
 
     return JsonResponse({"items": items, "general_description": item_code.general_description})
+
+
+@any_admin_required
+def import_items(request):
+    if request.method == "POST":
+        uploaded_file = request.FILES.get("file")
+
+        if not uploaded_file:
+            return JsonResponse({"error": "No file uploaded."}, status=400)
+
+        if not uploaded_file.name.endswith(".xlsx"):
+            return JsonResponse(
+                {"error": "Invalid file type. Please upload an .xlsx file."}, status=400
+            )
+
+        # 10MB limit
+        if uploaded_file.size > 10 * 1024 * 1024:
+            return JsonResponse(
+                {"error": "File too large. Maximum size is 10MB."}, status=400
+            )
+
+        result = import_items_from_excel(uploaded_file)
+
+        return JsonResponse({
+            "created": result.created,
+            "updated": result.updated,
+            "skipped": result.skipped,
+            "errors": result.errors,
+        }, status=200)
+
+    return render(request, "inventory/import-items.html")

@@ -70,7 +70,7 @@ class Item(models.Model):
 
 
     name = models.CharField(max_length=100)
-    specification = models.CharField(max_length=100, null=True, blank=True)
+    specification = models.CharField(max_length=100, blank=True, default="")
     unit = models.CharField(max_length=20, choices=Unit.choices)
     unit_cost = models.DecimalField(max_digits=12, decimal_places=2)
 
@@ -87,6 +87,12 @@ class Item(models.Model):
         verbose_name = "Item"
         verbose_name_plural = "Items"
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "item_code", "specification"],
+                name="unique_item_per_item_code_and_specification"
+            )
+        ]
 
 
     def __str__(self):

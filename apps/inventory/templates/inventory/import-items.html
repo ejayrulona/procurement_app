@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl px-4 py-8 mx-auto">
+    <div class="mb-6">
+		<a href="{% url 'inventory:item_list' %}" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-red-600">
+			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+			</svg>
+			<span class="font-medium">Back to Inventory</span>
+		</a>
+	</div>
+    
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Import Items from Excel</h1>
+        <p class="mt-1 text-sm text-gray-500">
+            Upload the official price list Excel file to create or update inventory records.
+        </p>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+        <div id="uploadArea"
+            class="flex flex-col items-center justify-center gap-3 p-8 transition border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-red-400">
+            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <p class="text-sm text-gray-500">
+                <span class="font-semibold text-red-600">Click to upload</span> or drag and drop
+            </p>
+            <p class="text-xs text-gray-400">.xlsx files only — max 10MB</p>
+            <input type="file" id="fileInput" accept=".xlsx" class="hidden">
+        </div>
+
+        <p id="fileName" class="hidden mt-3 text-sm text-center text-gray-600"></p>
+
+        <button type="button" id="importBtn" disabled
+            class="w-full mt-4 px-6 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition">
+            Import Items
+        </button>
+    </div>
+
+    <!-- Result Panel -->
+    <div id="resultPanel" class="hidden p-6 mt-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+        <h2 class="mb-4 text-base font-semibold text-gray-800">Import Result</h2>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="p-3 text-center rounded-lg bg-green-50">
+                <p class="text-2xl font-bold text-green-600" id="resultCreated">0</p>
+                <p class="text-xs text-gray-500">Created</p>
+            </div>
+            <div class="p-3 text-center rounded-lg bg-blue-50">
+                <p class="text-2xl font-bold text-blue-600" id="resultUpdated">0</p>
+                <p class="text-xs text-gray-500">Updated</p>
+            </div>
+            <div class="p-3 text-center rounded-lg bg-yellow-50">
+                <p class="text-2xl font-bold text-yellow-600" id="resultSkipped">0</p>
+                <p class="text-xs text-gray-500">Skipped</p>
+            </div>
+        </div>
+
+        <div id="errorList" class="hidden">
+            <p class="mb-2 text-sm font-semibold text-red-600">Errors / Warnings:</p>
+            <ul id="errorItems" class="space-y-1 overflow-y-auto text-xs text-gray-600 list-disc list-inside max-h-48">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const uploadArea = document.getElementById("uploadArea");
+    const fileInput  = document.getElementById("fileInput");
+    const fileName   = document.getElementById("fileName");
+    const importBtn  = document.getElementById("importBtn");
+    const resultPanel = document.getElementById("resultPanel");
+    const csrfToken  = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    uploadArea.addEventListener("click", () => fileInput.click());
+
+    uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("border-red-400");
+    });
+
+    uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("border-red-400");
+    });
+
+    uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("border-red-400");
+        const file = e.dataTransfer.files[0];
+        if (file) handleFileSelect(file);
+    });
+
+    fileInput.addEventListener("change", () => {
+        if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+    });
+
+    function handleFileSelect(file) {
+        fileName.textContent = `Selected: ${file.name}`;
+        fileName.classList.remove("hidden");
+        importBtn.disabled = false;
+        importBtn.dataset.file = true;
+        importBtn._file = file;
+    }
+
+    importBtn.addEventListener("click", () => {
+        const file = importBtn._file;
+        if (!file) return;
+
+        importBtn.disabled = true;
+        importBtn.textContent = "Importing...";
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("csrfmiddlewaretoken", csrfToken);
+
+        fetch("/inventory/items/import/", {
+            method: "POST",
+            body: formData,
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            document.getElementById("resultCreated").textContent = data.created;
+            document.getElementById("resultUpdated").textContent = data.updated;
+            document.getElementById("resultSkipped").textContent = data.skipped;
+
+            const errorList = document.getElementById("errorList");
+            const errorItems = document.getElementById("errorItems");
+            errorItems.innerHTML = "";
+
+            if (data.errors && data.errors.length) {
+                data.errors.forEach(err => {
+                    const li = document.createElement("li");
+                    li.textContent = err;
+                    errorItems.appendChild(li);
+                });
+                errorList.classList.remove("hidden");
+            } else {
+                errorList.classList.add("hidden");
+            }
+
+            resultPanel.classList.remove("hidden");
+        })
+        .catch(() => {
+            alert("An unexpected error occurred. Please try again.");
+        })
+        .finally(() => {
+            importBtn.disabled = false;
+            importBtn.textContent = "Import Items";
+        });
+    });
+});
+</script>
+{% endblock %}
