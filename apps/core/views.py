@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from apps.activity_logs.models import ActivityLog
 from apps.inventory.models import Item
 from apps.ppmp.models import ProcurementProjectManagementPlan
@@ -41,4 +42,36 @@ def admin_dashboard(request):
 
 @office_required
 def office_dashboard(request):
-    return render(request, "core/office_dashboard.html")
+    current_year = timezone.now().year
+
+    indicative_ppmp = ProcurementProjectManagementPlan.objects.filter(
+            office_profile=request.user.office_profile,
+            submission_type=ProcurementProjectManagementPlan.SubmissionType.INDICATIVE,
+            fiscal_year=current_year
+        ).first()
+    final_ppmp = ProcurementProjectManagementPlan.objects.filter(
+            office_profile=request.user.office_profile,
+            submission_type=ProcurementProjectManagementPlan.SubmissionType.FINAL,
+            fiscal_year=current_year
+        ).first()
+
+    ppmps = (
+            ProcurementProjectManagementPlan.objects.filter(
+                office_profile=request.user.office_profile
+            ).select_related(
+                "office_profile"
+            ).prefetch_related(
+                "procurement_lines__item_code",
+                "procurement_lines__line_entries__item"
+            )[:5]
+        )
+    activities = ActivityLog.objects.filter(user=request.user).prefetch_related("user").order_by("-timestamp")[:5]
+
+    context = {
+        "indicative_ppmp": indicative_ppmp,
+        "final_ppmp": final_ppmp,
+        "ppmps": ppmps,
+        "activities": activities
+    }
+
+    return render(request, "core/office_dashboard.html", context)

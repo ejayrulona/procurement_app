@@ -1,45 +1,92 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}College Dashboard | Procurement Office{% endblock %}
+{% block title %}Office Dashboard | Procurement Office{% endblock %}
 
 {% block header_subtitle %}College of Engineering - Dashboard Overview{% endblock %}
 
 {% block content %}
 <!-- Stats Cards -->
-<div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
-    <div class="stat-card blue">
-        <div class="stat-top">
-            <span class="stat-label">Total Items</span>
-            <div class="stat-icon blue">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 sm:gap-6 sm:mb-8">
+
+    <!-- Indicative PPMP Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Indicative PPMP</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full">
+                <svg class="w-5 h-5 text-blue-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
             </div>
         </div>
-        <div class="stat-value">60</div>
-        <div class="stat-sub">Total line items across all PPMPs</div>
+
+        {% if indicative_ppmp %}
+            <div class="mb-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                    {% if indicative_ppmp.status == 'approved' %}bg-green-100 text-green-700
+                    {% elif indicative_ppmp.status == 'pending' %}bg-yellow-100 text-yellow-700
+                    {% elif indicative_ppmp.status == 'declined' %}bg-orange-100 text-orange-700
+                    {% elif indicative_ppmp.status == 'for_revision' %}bg-blue-100 text-blue-700
+                    {% endif %}">
+                    {{ indicative_ppmp.get_status_display }}
+                </span>
+            </div>
+            <p class="mb-3 text-xs text-gray-400">FY {{ indicative_ppmp.fiscal_year }}</p>
+        {% else %}
+            <p class="mb-3 text-sm font-medium text-gray-400 sm:mb-4">Not created yet</p>
+        {% endif %}
+
+        <div class="flex gap-3">
+            {% if indicative_ppmp %}
+                <a href="{% url 'ppmp:ppmp' indicative_ppmp.id %}"
+                   class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">View →</a>
+            {% else %}
+                <a href="{% url 'ppmp:ppmps' %}"
+                   class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">Create →</a>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="stat-card green">
-        <div class="stat-top">
-            <span class="stat-label">Approved</span>
-            <div class="stat-icon green">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <!-- Final PPMP Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Final PPMP</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-full">
+                <svg class="w-5 h-5 text-green-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
             </div>
         </div>
-        <div class="stat-value green">4</div>
-        <div class="stat-sub">Approved PPMPs (57% of total)</div>
+
+        {% if final_ppmp %}
+            <div class="mb-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                    {% if final_ppmp.status == 'APPROVED' %}bg-green-100 text-green-700
+                    {% elif final_ppmp.status == 'PENDING' %}bg-yellow-100 text-yellow-700
+                    {% elif final_ppmp.status == 'DECLINED' %}bg-orange-100 text-orange-700
+                    {% elif final_ppmp.status == 'FOR_REVISION' %}bg-blue-100 text-blue-700
+                    {% endif %}">
+                    {{ final_ppmp.get_status_display }}
+                </span>
+            </div>
+            <p class="mb-3 text-xs text-gray-400">FY {{ final_ppmp.fiscal_year }}</p>
+        {% else %}
+            <p class="mb-3 text-sm font-medium text-gray-400 sm:mb-4">Not created yet</p>
+        {% endif %}
+
+        <div class="flex gap-3">
+            {% if final_ppmp %}
+                <a href="{% url 'ppmp:ppmp' final_ppmp.id %}"
+                   class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">View →</a>
+            {% else %}
+                <a href="{% url 'ppmp:ppmps' %}"
+                   class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">Create →</a>
+            {% endif %}
+        </div>
     </div>
 
-</div>
-
-<!-- Quick Action Buttons -->
-<div class="flex gap-4 mb-8">
-    <a href="{% url 'ppmp:ppmp_create' %}" class="btn-primary">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Create PPMP
-    </a>
 </div>
 
 <!-- Recent PPMPs Table (Primary Focus) -->
@@ -47,7 +94,7 @@
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div>
             <h3 class="text-lg font-semibold text-gray-800">Recent PPMP Submissions</h3>
-            <p class="mt-1 text-sm text-gray-500">Latest submissions from College of Engineering — data is current as of today</p>
+            <p class="mt-1 text-sm text-gray-500">Latest submissions from {{ request.user.office_profile.office_name }} — data is current as of today</p>
         </div>
         <a href="{% url 'ppmp:ppmps' %}" class="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700">
             View All Records →
@@ -57,61 +104,33 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">PPMP Title</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date Submitted</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Total Items</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Total Cost</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Action</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Year</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Submission Type</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Classification</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Created by</th>
+                    <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <tr class="transition hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Engineering Equipment 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">March 15, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">18</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">₱2,890,000</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
-                </tr>
-                <tr class="transition hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Laboratory Supplies Q1</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">March 10, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">32</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">₱1,245,000</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-pending">Pending</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
-                </tr>
-                <tr class="transition hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">IT Equipment Upgrade</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">March 5, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">9</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">₱1,560,000</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-revision">Needs Revision</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">Revise</a></td>
-                </tr>
-                <tr class="transition hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Office Furniture</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">February 28, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">14</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">₱890,000</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
-                </tr>
-                <tr class="transition hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Library Resources 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">February 20, 2024</td>
-                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">22</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">₱3,200,000</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge badge-approved">Approved</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap"><a href="#" class="action-link">View</a></td>
-                </tr>
+                {% for ppmp in ppmps %}
+                    <tr class="transition hover:bg-gray-50">
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.fiscal_year }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold {% if ppmp.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif ppmp.status == 'approved'%}bg-green-100 text-green-800{% elif ppmp.status == 'for_revision'%}bg-blue-100 text-blue-800{% else %}bg-orange-100 text-orange-800{% endif %} rounded-full">
+                                {{ ppmp.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ ppmp.get_submission_type_display }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.get_classification_display }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.office_profile.get_pap_category_display }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.created_at|date:"F d, Y"}}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
-    </div>
-    <!-- Table summary for clarity -->
-    <div class="px-6 py-3 text-xs text-gray-500 border-t border-gray-200 bg-gray-50">
-        Showing 5 most recent submissions · Total PPMPs this FY: 7 · Overall approval rate: 57%
     </div>
 </div>
 
@@ -119,54 +138,93 @@
 <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
     <div class="px-6 py-4 border-b border-gray-200">
         <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
-        <p class="mt-1 text-sm text-gray-500">Latest actions on your college's PPMPs</p>
+        <p class="mt-1 text-sm text-gray-500">Latest actions on your office's PPMPs</p>
     </div>
-    <div class="divide-y divide-gray-200">
-        <div class="flex items-start gap-3 px-6 py-4 transition hover:bg-gray-50">
-            <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-green-100 rounded-full">
-                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <div class="flex-1">
-                <p class="text-sm text-gray-800">PPMP <strong>"Engineering Equipment 2024"</strong> was approved by the Procurement Office.</p>
-                <p class="mt-1 text-xs text-gray-500">2 hours ago</p>
-            </div>
-        </div>
-        <div class="flex items-start gap-3 px-6 py-4 transition hover:bg-gray-50">
-            <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full">
-                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div class="flex-1">
-                <p class="text-sm text-gray-800">PPMP <strong>"Laboratory Supplies Q1"</strong> was submitted and is now awaiting review.</p>
-                <p class="mt-1 text-xs text-gray-500">Yesterday, 3:45 PM</p>
-            </div>
-        </div>
-        <div class="flex items-start gap-3 px-6 py-4 transition hover:bg-gray-50">
-            <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-red-100 rounded-full">
-                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-            </div>
-            <div class="flex-1">
-                <p class="text-sm text-gray-800">PPMP <strong>"IT Equipment Upgrade"</strong> was returned and requires revision before resubmission.</p>
-                <p class="mt-1 text-xs text-gray-500">2 days ago</p>
-            </div>
-        </div>
-        <div class="flex items-start gap-3 px-6 py-4 transition hover:bg-gray-50">
-            <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-green-100 rounded-full">
-                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <div class="flex-1">
-                <p class="text-sm text-gray-800">PPMP <strong>"Library Resources 2024"</strong> received final approval from the Budget Office.</p>
-                <p class="mt-1 text-xs text-gray-500">3 days ago</p>
-            </div>
-        </div>
-    </div>
+    <div class="p-4 sm:p-6">
+		<!-- Activity List -->
+		<div class="space-y-3 overflow-y-auto sm:space-y-4 max-h-96 activity-scroll">
+			{% for activity in activities %}
+			<div class="flex items-start gap-3 p-2 transition rounded-lg sm:p-3 hover:bg-gray-50">
+
+				<!-- Icon -->
+				<div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+					{% if activity.target_type == 'USER' %}
+						bg-blue-100
+					{% elif activity.target_type == 'ITEM' %}
+						bg-green-100
+					{% elif activity.target_type == 'PPMP' %}
+						bg-yellow-100
+					{% elif activity.target_type == 'APP' %}
+						bg-purple-100
+					{% else %}
+						bg-gray-100
+					{% endif %}
+				">
+
+					<!-- USER -->
+					{% if activity.target_type == 'USER' %}
+					<svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M5.121 17.804A9 9 0 1118.364 4.56a9 9 0 01-13.243 13.243z" />
+					</svg>
+
+					<!-- ITEM -->
+					{% elif activity.target_type == 'ITEM' %}
+					<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M20 13V7a2 2 0 00-2-2h-3V3H9v2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4" />
+					</svg>
+
+					<!-- PPMP -->
+					{% elif activity.target_type == 'PPMP' %}
+					<svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+					</svg>
+
+					<!-- APP -->
+					{% elif activity.target_type == 'APP' %}
+					<svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+					</svg>
+					{% endif %}
+				</div>
+
+				<!-- Content -->
+				<div class="flex-1 min-w-0">
+					<p class="text-sm text-gray-800">
+						<span class="font-semibold">{{ activity.user_full_name }}</span>
+						{{ activity.get_action_display|lower }}
+
+						{% if activity.target_label %}
+							:
+							<span class="font-medium">{{ activity.target_label }}</span>
+						{% endif %}
+					</p>
+
+					<p class="mt-1 text-xs text-gray-500">
+						{{ activity.timestamp|timesince }} ago
+					</p>
+				</div>
+			</div>
+			{% empty %}
+			<div class="py-6 text-sm text-center text-gray-500">
+				No recent activities found.
+			</div>
+			{% endfor %}
+		</div>
+
+		<!-- View All Activity Link -->
+		<div class="pt-3 mt-4 text-center border-t border-gray-200">
+			<a href="{% url 'activity_logs:activity_log' %}" class="inline-flex items-center gap-1 text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">
+				View all activity
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+				</svg>
+			</a>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -301,6 +359,4 @@
     }
     .action-link:hover { background: #fef2f2; border-color: #dc2626; }
 </style>
-
-<!-- Chart.js script removed as requested - no visual graphs remain -->
 {% endblock %}
