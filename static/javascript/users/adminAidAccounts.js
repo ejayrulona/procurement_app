@@ -9,42 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //     }
     // });
 
-    // Create Admin Aid Modal
-    const createAdminAidBtn = document.getElementById('create-admin-aid-btn');
-    const createAdminAidModal = document.getElementById('create-admin-aid-modal');
-    const createAdminAidModalContent = document.getElementById('create-admin-aid-modal-content');
-    const cancelCreateBtn = document.getElementById('cancel-create-btn');
-    // const confirmCreateBtn = document.getElementById('confirm-create-btn');
-
-    function openCreateModal() {
-        createAdminAidModal.classList.remove('hidden');
-        // setTimeout(() => {
-        //     createAdminAidModalContent.classList.remove('scale-95', 'opacity-0');
-        //     createAdminAidModalContent.classList.add('scale-100', 'opacity-100');
-        // }, 10);
-    }
-    
-    function closeCreateModal() {
-        createAdminAidModal.classList.add('hidden');
-        // createAdminAidModalContent.classList.remove('scale-100', 'opacity-100');
-        // createAdminAidModalContent.classList.add('scale-95', 'opacity-0');
-        // setTimeout(() => {
-        // }, 200);
-    }
-    
-    createAdminAidBtn.addEventListener('click', openCreateModal);
-    cancelCreateBtn.addEventListener('click', closeCreateModal);
-    
-    // confirmCreateBtn.addEventListener('click', () => {
-    //     window.location.href = "{% url 'users:create_admin_aid' %}";
-    // });
-    
-    createAdminAidModal.addEventListener('click', event => {
-        if (event.target === createAdminAidModal) {
-            closeCreateModal();
-        }
-    });
-    
     // Status Toggle Variables
     // let pendingUserId = null;
     // let pendingUserName = null;
@@ -73,21 +37,21 @@ document.addEventListener('DOMContentLoaded', () => {
             toggle.checked = !isActive;
             
             if (newStatus === 'activate') {
-                statusModalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-800 mb-4";
+                statusModalIcon.className = "flex items-center justify-center w-16 h-16 mx-auto mb-4 text-green-800 bg-green-100 rounded-full";
                 statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
                 statusModalTitle.textContent = 'Activate Account';
                 statusModalTitle.getElementsByClassNameName = 'text-2xl font-bold text-green-800 mb-3';
                 actionText.textContent = 'Activate';
                 userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white font-semibold rounded-xl shadow-md transition";
+                confirmStatusBtn.className = "flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 rounded-xl";
             } else {
-                statusModalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-800 mb-4";
+                statusModalIcon.className = "flex items-center justify-center w-16 h-16 mx-auto mb-4 text-red-800 bg-red-100 rounded-full";
                 statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
                 statusModalTitle.textContent = 'Deactivate Account';
-                statusModalTitle.className = 'text-2xl font-bold text-red-800 mb-3';
+                statusModalTitle.className = 'mb-3 text-2xl font-bold text-red-800';
                 actionText.textContent = 'Deactivate';
                 userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition";
+                confirmStatusBtn.className = "flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl";
             }
 
             statusToggleForm.action = `/users/admin-aid/${userId}/toggle-status/`;

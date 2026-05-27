@@ -456,6 +456,13 @@ def reapply_registration(request, username):
 @login_required
 def profile(request, id):
     user = get_object_or_404(User, pk=id)
+
+    if user != request.user:
+        if request.user.is_any_admin:
+            return redirect("core:admin_dashboard")
+        else:
+            return redirect("core:office_dashboard")
+
     user_profile = (
         get_object_or_404(AdminProfile, user=user)  
         if user.role in (User.Role.ADMIN, User.Role.ADMIN_AID)
