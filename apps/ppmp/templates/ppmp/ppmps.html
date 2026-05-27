@@ -65,7 +65,15 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                {{ ppmp.get_submission_type_display }}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if ppmp.submission_type == 'indicative' %}bg-purple-100 text-purple-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {% if ppmp.submission_type == 'indicative' %}
+                                        <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-1.5"></span>
+                                        {{ ppmp.get_submission_type_display }}
+                                    {% else %}
+                                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                        {{ ppmp.get_submission_type_display }}
+                                    {% endif %}
+                                </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.get_classification_display }}</td>
                             <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.office_profile.get_pap_category_display }}</td>
