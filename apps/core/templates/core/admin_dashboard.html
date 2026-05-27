@@ -9,136 +9,170 @@
 
 <!-- Welcome Section -->
 <!-- Stats Cards - Responsive Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-	<!-- Pending Request Card -->
-	<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition">
-		<div class="flex items-center justify-between mb-3">
-			<h3 class="text-base sm:text-lg font-semibold text-gray-700">Pending Request/s</h3>
-			<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-				<svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-				</svg>
-			</div>
-		</div>
-		<p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">4</p>
-		<div class="flex gap-3">
-			<a href="#" class="text-xs sm:text-sm text-red-600 hover:text-red-700 font-medium">See all →</a>
-		</div>
-	</div>
+<div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 sm:gap-6 sm:mb-8">
 
-	<!-- Ongoing Request Card -->
-	<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition">
-		<div class="flex items-center justify-between mb-3">
-			<h3 class="text-base sm:text-lg font-semibold text-gray-700">On going Request/s</h3>
-			<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-				<svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-					</path>
-				</svg>
-			</div>
-		</div>
-		<p class="text-3xl sm:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">1</p>
-		<div class="flex gap-3">
-			<a href="#" class="text-xs sm:text-sm text-red-600 hover:text-red-700 font-medium">See all →</a>
-		</div>
-	</div>
+    <!-- Pending PPMPs Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Pending PPMP/s</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full">
+                <svg class="w-5 h-5 text-yellow-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+        </div>
+        <p class="mb-3 text-3xl font-bold text-gray-800 sm:text-4xl sm:mb-4">{{ pending_ppmps }}</p>
+        <div class="flex gap-3">
+            <a href="{% url 'ppmp:ppmps' %}" class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">See all →</a>
+        </div>
+    </div>
+
+    <!-- Pending Registrations Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Pending Registration/s</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-red-100 rounded-full">
+                <svg class="w-5 h-5 text-red-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                </svg>
+            </div>
+        </div>
+        <p class="mb-3 text-3xl font-bold text-gray-800 sm:text-4xl sm:mb-4">{{ pending_registrations }}</p>
+        <div class="flex gap-3">
+            <a href="{% url 'users:list_registration_requests' %}" class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">See all →</a>
+        </div>
+    </div>
+
+    <!-- Total Items Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Total Items</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-green-100 rounded-full">
+                <svg class="w-5 h-5 text-green-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                </svg>
+            </div>
+        </div>
+        <p class="mb-3 text-3xl font-bold text-gray-800 sm:text-4xl sm:mb-4">{{ total_items }}</p>
+        <div class="flex gap-3">
+            <a href="{% url 'inventory:item_list' %}" class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">See all →</a>
+        </div>
+    </div>
+
+    <!-- Total PPMPs Card -->
+    <div class="p-4 transition bg-white border border-gray-200 shadow-sm rounded-2xl sm:p-6 hover:shadow-md">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-semibold text-gray-700 sm:text-lg">Total PPMPs</h3>
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full">
+                <svg class="w-5 h-5 text-blue-600 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+        </div>
+        <p class="mb-3 text-3xl font-bold text-gray-800 sm:text-4xl sm:mb-4">{{ total_ppmps }}</p>
+        <div class="flex gap-3">
+            <a href="{% url 'ppmp:ppmps' %}" class="text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">See all →</a>
+        </div>
+    </div>
+
 </div>
 
 <!-- Activity Log Section - Responsive -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-	<div class="border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+<div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-2xl">
+	<div class="px-4 py-3 border-b border-gray-200 sm:px-6 sm:py-4">
 		<div class="flex items-center gap-2">
 			<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 					d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
 				</path>
 			</svg>
-			<h3 class="text-base sm:text-lg font-semibold text-gray-800">Activity Log</h3>
+			<h3 class="text-base font-semibold text-gray-800 sm:text-lg">Activity Log</h3>
 		</div>
-		<p class="text-xs sm:text-sm text-gray-500 mt-1">History activity</p>
+		<p class="mt-1 text-xs text-gray-500 sm:text-sm">History activity</p>
 	</div>
 
 	<div class="p-4 sm:p-6">
 		<!-- Activity List -->
-		<div class="space-y-3 sm:space-y-4 max-h-96 overflow-y-auto activity-scroll">
-			<!-- Activity Item 1 -->
-			<div class="flex items-start gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition">
-				<div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-					<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-					</svg>
-				</div>
-				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-gray-800 truncate">New request submitted by John Doe</p>
-					<p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
-				</div>
-			</div>
+		<div class="space-y-3 overflow-y-auto sm:space-y-4 max-h-96 activity-scroll">
+			{% for activity in activities %}
+			<div class="flex items-start gap-3 p-2 transition rounded-lg sm:p-3 hover:bg-gray-50">
 
-			<!-- Activity Item 2 -->
-			<div class="flex items-start gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition">
-				<div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+				<!-- Icon -->
+				<div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+					{% if activity.target_type == 'USER' %}
+						bg-blue-100
+					{% elif activity.target_type == 'ITEM' %}
+						bg-green-100
+					{% elif activity.target_type == 'PPMP' %}
+						bg-yellow-100
+					{% elif activity.target_type == 'APP' %}
+						bg-purple-100
+					{% else %}
+						bg-gray-100
+					{% endif %}
+				">
+
+					<!-- USER -->
+					{% if activity.target_type == 'USER' %}
 					<svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-						</path>
+							d="M5.121 17.804A9 9 0 1118.364 4.56a9 9 0 01-13.243 13.243z" />
 					</svg>
-				</div>
-				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-gray-800 truncate">Inventory updated: Laptop (15 units added)</p>
-					<p class="text-xs text-gray-500 mt-1">1 hour ago</p>
-				</div>
-			</div>
 
-			<!-- Activity Item 3 -->
-			<div class="flex items-start gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition">
-				<div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+					<!-- ITEM -->
+					{% elif activity.target_type == 'ITEM' %}
+					<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M20 13V7a2 2 0 00-2-2h-3V3H9v2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4" />
+					</svg>
+
+					<!-- PPMP -->
+					{% elif activity.target_type == 'PPMP' %}
 					<svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 					</svg>
-				</div>
-				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-gray-800 truncate">Request #PR-2024-001 is pending approval</p>
-					<p class="text-xs text-gray-500 mt-1">3 hours ago</p>
-				</div>
-			</div>
 
-			<!-- Activity Item 4 -->
-			<div class="flex items-start gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition">
-				<div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+					<!-- APP -->
+					{% elif activity.target_type == 'APP' %}
 					<svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-						</path>
+							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
 					</svg>
+					{% endif %}
 				</div>
-				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-gray-800 truncate">Invoice #INV-2024-045 generated</p>
-					<p class="text-xs text-gray-500 mt-1">Yesterday at 2:30 PM</p>
-				</div>
-			</div>
 
-			<!-- Activity Item 5 -->
-			<div class="flex items-start gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition">
-				<div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-					<svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-						</path>
-					</svg>
-				</div>
+				<!-- Content -->
 				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-gray-800 truncate">New delivery received: Office Supplies (25 items)</p>
-					<p class="text-xs text-gray-500 mt-1">Yesterday at 9:15 AM</p>
+					<p class="text-sm text-gray-800">
+						<span class="font-semibold">{{ activity.user_full_name }}</span>
+						{{ activity.get_action_display|lower }}
+
+						{% if activity.target_label %}
+							:
+							<span class="font-medium">{{ activity.target_label }}</span>
+						{% endif %}
+					</p>
+
+					<p class="mt-1 text-xs text-gray-500">
+						{{ activity.timestamp|timesince }} ago
+					</p>
 				</div>
 			</div>
+			{% empty %}
+			<div class="py-6 text-sm text-center text-gray-500">
+				No recent activities found.
+			</div>
+			{% endfor %}
 		</div>
 
 		<!-- View All Activity Link -->
-		<div class="mt-4 pt-3 border-t border-gray-200 text-center">
-			<a href="#" class="text-xs sm:text-sm text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1">
+		<div class="pt-3 mt-4 text-center border-t border-gray-200">
+			<a href="{% url 'activity_logs:activity_log' %}" class="inline-flex items-center gap-1 text-xs font-medium text-red-600 sm:text-sm hover:text-red-700">
 				View all activity
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
