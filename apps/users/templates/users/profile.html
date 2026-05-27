@@ -1,366 +1,314 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Settings | Procurement Office</title>
     <link rel="icon" type="image/jpg" href="{% static 'images/wmsu_favicon.png' %}">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            ring: 2px;
-            ring-offset: 2px;
-        }
-
-        /* Image upload preview styles */
-        .image-preview {
-            transition: all 0.3s ease;
-        }
-
-        .image-preview:hover {
-            transform: scale(1.05);
-        }
-
-        /* Custom file input styling */
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            font-size: 100px;
-            opacity: 0;
-            right: 0;
-            top: 0;
-            cursor: pointer;
-        }
+        * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        input:focus, textarea:focus, select:focus { outline: none; }
+        .field-disabled { background-color: #f9fafb; cursor: not-allowed; color: #6b7280; }
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
-
-<body class="bg-gray-50 min-h-screen">
+<body class="min-h-screen bg-gray-50">
 
     <!-- Header -->
-    <header class="w-full bg-gradient-to-r from-red-800 to-red-700 shadow-lg sticky top-0 z-30">
+    <header class="sticky top-0 z-30 w-full shadow-lg bg-gradient-to-r from-red-800 to-red-700">
         <div class="px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-md">
-                        <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="w-full h-full object-cover">
+                    <div class="flex items-center justify-center w-10 h-10 overflow-hidden bg-white rounded-full shadow-md">
+                        <img src="{% static 'images/wmsu_logo.png' %}" alt="WMSU Logo" class="object-cover w-full h-full">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold text-white">PROCUREMENT OFFICE</h1>
                         <p class="text-xs text-red-100">Profile Settings</p>
                     </div>
                 </div>
-                <a href="{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:office_dashboard' %}{% endif %}" 
-                   class="flex items-center gap-2 text-white text-base hover:text-red-100 transition">
+                <a href="{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:office_dashboard' %}{% endif %}"
+                   class="flex items-center gap-2 text-base text-white transition hover:text-red-100">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    <span>Back to Dashboard</span>
+                    Back to Dashboard
                 </a>
             </div>
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Sidebar - Profile Summary -->
+    <div class="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+
+            <!-- Sidebar -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden sticky top-24">
-                    <div class="bg-gradient-to-r from-red-700 to-red-800 px-6 py-8 text-center">
+                <div class="sticky overflow-hidden bg-white border border-gray-200 shadow-lg top-24 rounded-2xl">
+                    <div class="px-6 py-8 text-center bg-gradient-to-r from-red-700 to-red-800">
                         <div class="relative inline-block">
-                            <div class="w-32 h-32 rounded-full bg-white mx-auto overflow-hidden border-4 border-white shadow-lg">
-                                {% if not user.user_profile.profile_photo or not user.user_profile.college_office.college_photo %}
-                                    <span class="text-gray-600 font-semibold">
-                                        {% if user.first_name and user.last_name %}
-                                            {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
-                                        {% elif user.first_name %}
-                                            {{ user.first_name|slice:":1" }}
-                                        {% elif user.last_name %}
-                                            {{ user.last_name|slice:":1" }}
-                                        {% else %}
-                                            U
-                                        {% endif %}
-                                    </span>
+                            <div class="flex items-center justify-center w-32 h-32 mx-auto overflow-hidden bg-white border-4 border-white rounded-full shadow-lg">
+                                {% if user.is_any_admin and user.admin_profile.profile_photo %}
+                                    <img id="profile-preview"
+                                        src="{{ user.admin_profile.profile_photo.url }}"
+                                        alt="Profile Photo"
+                                        class="object-cover w-full h-full">
                                 {% else %}
-                                    <img id="profile-preview" 
-                                        src="{% if user.is_any_admin %}{{ user.user_profile.profile_photo.url }}{% else %}{{ user.user_profile.college_office.college_photo.url }}{% endif %}" 
-                                        alt="Profile Logo" 
-                                        class="w-full h-full object-cover">
+                                    <span id="profile-initials" class="text-2xl font-semibold text-gray-600">
+                                        {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                                    </span>
                                 {% endif %}
                             </div>
-                            <label for="logo-upload" class="absolute bottom-0 right-0 bg-red-600 rounded-full p-2 cursor-pointer hover:bg-red-700 transition shadow-md">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                            </label>
-                            <input type="file" id="logo-upload" name="logo" accept="image/*" class="hidden">
                         </div>
-                        <h2 class="text-white text-xl font-bold mt-4" id="profile-name">{{ user.get_full_name|default:user.username }}</h2>
-                        <p class="text-red-100 text-sm mt-1" id="profile-role">{{ user.role }}</p>
+                        <h2 class="mt-4 text-xl font-bold text-white" id="sidebar-fullname">
+                            {{ user.full_name|default:user.username }}
+                        </h2>
+                        <p class="mt-1 text-sm text-red-100">{{ user.get_role_display }}</p>
                     </div>
+
                     <div class="px-6 py-4 border-t border-gray-100">
                         <div class="space-y-3 text-sm">
                             <div class="flex items-center gap-3 text-gray-600">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
-                                <span id="profile-username">@{{ user.username }}</span>
+                                <span id="sidebar-username">@{{ user.username }}</span>
                             </div>
                             <div class="flex items-center gap-3 text-gray-600">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                                <span id="profile-email">{{ user.email }}</span>
+                                <span id="sidebar-email">{{ user.email }}</span>
                             </div>
+                            {% if not user.is_any_admin %}
                             <div class="flex items-center gap-3 text-gray-600">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                 </svg>
-                                <span id="profile-college">{{ user.college_profile.college_office.name|default:"Procurement Office" }}</span>
+                                <span>{{ user.office_profile.office_name }}</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Form - Edit Profile -->
+            <!-- Main Form -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-200">
-                    <div class="border-b border-gray-200 px-6 py-4">
-                        <h2 class="text-xl font-bold text-gray-800">Edit Profile</h2>
-                        <p class="text-sm text-gray-500 mt-1">Update your account information and preferences</p>
+                <div class="bg-white border border-gray-200 shadow-lg rounded-2xl">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Profile Information</h2>
+                            <p class="mt-1 text-sm text-gray-500" id="form-subtitle">
+                                Your profile details are shown below.
+                            </p>
+                        </div>
+                        <!-- Edit / Cancel + Save Buttons -->
+                        <div id="view-actions">
+                            <button type="button" id="editBtn"
+                                class="px-5 py-2 text-sm font-semibold text-white transition rounded-xl bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900">
+                                Edit Profile
+                            </button>
+                        </div>
+                        <div id="edit-actions" class="flex hidden gap-2">
+                            <button type="button" id="cancelBtn"
+                                class="px-5 py-2 text-sm font-medium text-gray-700 transition border border-gray-300 rounded-xl hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" form="profile-form"
+                                class="px-5 py-2 text-sm font-semibold text-white transition rounded-xl bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900">
+                                Save Changes
+                            </button>
+                        </div>
                     </div>
 
                     <form id="profile-form" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
                         {% csrf_token %}
-                        
-                        <!-- Hidden logo input for form submission -->
-                        <input type="hidden" id="logo-data" name="logo_data">
-                        
-                        <!-- Personal Information Section -->
+
+                        <!-- Personal Information -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Personal Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <h3 class="pb-2 mb-4 text-base font-semibold text-gray-700 border-b border-gray-200">
+                                Personal Information
+                            </h3>
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <label for="{{ user_form.username.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Username</label>
+                                    <label for="{{ user_form.username.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Username</label>
                                     {{ user_form.username }}
                                 </div>
                                 <div>
-                                    <label for="{{ user_form.first_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">First Name</label>
+                                    <label for="{{ user_form.first_name.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">First Name</label>
                                     {{ user_form.first_name }}
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="{{ user_form.middle_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Middle Name</label>
+                                    <label for="{{ user_form.middle_name.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Middle Name</label>
                                     {{ user_form.middle_name }}
                                 </div>
                                 <div>
-                                    <label for="{{ user_form.last_name.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Last Name</label>
+                                    <label for="{{ user_form.last_name.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Last Name</label>
                                     {{ user_form.last_name }}
                                 </div>
-                            </div>
-                            <!-- Add the position title field here -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                 <div>
-                                    <label for="{{ user_form.email.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Email Address</label>
-                                    {{ user_form.email}}
+                                    <label for="{{ user_form.email.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Email Address</label>
+                                    {{ user_form.email }}
                                 </div>
                                 <div>
-                                    <label for="{{ user_form.phone_number.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Phone Number</label>
+                                    <label for="{{ user_form.phone_number.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Phone Number</label>
                                     {{ user_form.phone_number }}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- College/Office or Admin Information Section -->
+                        <!-- Role-specific Information -->
                         <div>
                             {% if user.is_any_admin %}
-                                {% if user.is_admin %}
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Admin Information</h3>
-                                {% else %}
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Admin Aid Information</h3>
-                                {% endif %}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 class="pb-2 mb-4 text-base font-semibold text-gray-700 border-b border-gray-200">
+                                    {% if user.is_admin %}Admin{% else %}Admin Aid{% endif %} Information
+                                </h3>
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
-                                        <label for="{{ user_profile_form.employee_id_number.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">Employee ID Number</label>
+                                        <label for="{{ user_profile_form.employee_id_number.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Employee ID Number</label>
                                         {{ user_profile_form.employee_id_number }}
                                     </div>
                                 </div>
                             {% else %}
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">College/Office Information</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 class="pb-2 mb-4 text-base font-semibold text-gray-700 border-b border-gray-200">
+                                    Office Information
+                                </h3>
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
-                                        <label for="{{ user_profile_form.college_office.id_for_label }}" class="block text-gray-700 font-medium text-sm mb-2">College/Office Name</label>
-                                        {{ user_profile_form.college_office }}
-                                        <datalist id="college-office-list">
-                                        {% for college_office in colleges_offices %}
-                                            <option value="{{ college_office.name }}" data-id="{{ college_office.id}}"
-                                                data-code="{{ college_office.code}}"
-                                                data-type="{{ college_office.get_organization_type_display }}"
-                                                data-campus="{{ college_office.get_campus_display }}"
-                                                data-address="{{ college_office.address }}"
-                                                data-photo="{% if college_office.college_photo %}{{college_office.college_photo.url}}{% endif %}">
-                                            </option>
-                                        {% endfor %}
+                                        <label for="{{ user_profile_form.office_name.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Office Name</label>
+                                        {{ user_profile_form.office_name }}
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 font-medium text-sm mb-2">College/Office Code</label>
-                                        <input type="text" id="college-code" required readonly
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-                                            placeholder="Auto-generated">
+                                        <label for="{{ user_profile_form.pap_category.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">PAP Category</label>
+                                        {{ user_profile_form.pap_category }}
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
-                                        <label class="block text-gray-700 font-medium text-sm mb-2">Type</label>
-                                        <input type="text" id="college-type" required readonly
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-                                            placeholder="Auto-generated">
+                                        <label for="{{ user_profile_form.secretary_full_name.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Secretary Full Name</label>
+                                        {{ user_profile_form.secretary_full_name }}
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 font-medium text-sm mb-2">Campus</label>
-                                        <input type="text" id="college-campus" required readonly
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-                                            placeholder="Auto-generated">
+                                        <label for="{{ user_profile_form.secretary_email.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Secretary Email</label>
+                                        {{ user_profile_form.secretary_email }}
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <label class="block text-gray-700 font-medium text-sm mb-2">Address / Location</label>
-                                    <input type="text" id="college-address" required readonly
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 focus:bg-white focus:border-red-400 transition-all duration-200 cursor-not-allowed"
-                                            placeholder="Auto-generated">
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div>
+                                        <label for="{{ user_profile_form.secretary_phone_number.id_for_label }}" class="block mb-1.5 text-sm font-medium text-gray-700">Secretary Phone Number</label>
+                                        {{ user_profile_form.secretary_phone_number }}
+                                    </div>
                                 </div>
                             {% endif %}
                         </div>
 
-                        <!-- Form Actions -->
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                            <button type="button" onclick="window.location.href='{% if user.is_any_admin %}{% url 'core:admin_dashboard' %}{% else %}{% url 'core:office_dashboard' %}{% endif %}'"
-                                    class="px-6 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-6 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold rounded-xl shadow-md transition">
-                                Save Changes
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <script>
-        // Image upload and preview functionality
-        const logoUpload = document.getElementById('logo-upload');
-        const profilePreview = document.getElementById('profile-preview');
-        
-        if (logoUpload) {
-            logoUpload.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        profilePreview.src = e.target.result;
-                        // Store the image data for form submission
-                        document.getElementById('logo-data').value = e.target.result;
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-        
-        // Real-time preview update for text fields
-        const firstNameInput = document.getElementById('first_name');
-        const lastNameInput = document.getElementById('last_name');
-        const emailInput = document.getElementById('email');
-        const usernameDisplay = document.getElementById('profile-username');
-        const emailDisplay = document.getElementById('profile-email');
-        const collegeNameInput = document.getElementById('college_name');
-        const collegeDisplay = document.getElementById('profile-college');
-        const nameDisplay = document.getElementById('profile-name');
-        
-        function updateProfilePreview() {
-            const firstName = firstNameInput?.value || '';
-            const lastName = lastNameInput?.value || '';
-            const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User';
-            nameDisplay.textContent = fullName;
-            
-            if (usernameDisplay) {
-                usernameDisplay.textContent = '@' + (document.querySelector('input[name="username"]')?.value || 'username');
-            }
-            if (emailDisplay) {
-                emailDisplay.textContent = emailInput?.value || 'Not specified';
-            }
-            if (collegeDisplay) {
-                collegeDisplay.textContent = collegeNameInput?.value || 'Not specified';
-            }
-        }
-        
-        if (firstNameInput) firstNameInput.addEventListener('input', updateProfilePreview);
-        if (lastNameInput) lastNameInput.addEventListener('input', updateProfilePreview);
-        if (emailInput) emailInput.addEventListener('input', updateProfilePreview);
-        if (collegeNameInput) collegeNameInput.addEventListener('input', updateProfilePreview);
-        
-        // Form submission handling
-        const profileForm = document.getElementById('profile-form');
-        if (profileForm) {
-            profileForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const newPassword = document.getElementById('new_password')?.value;
-                const confirmPassword = document.getElementById('confirm_password')?.value;
-                
-                if (newPassword || confirmPassword) {
-                    if (newPassword !== confirmPassword) {
-                        alert("Passwords do not match. Please try again.");
-                        return;
-                    }
-                    if (newPassword.length < 6) {
-                        alert("Password must be at least 6 characters long.");
-                        return;
-                    }
-                }
-                
-                // Collect form data
-                const formData = new FormData(profileForm);
-                
-                // Simulate save (replace with actual API call)
-                alert("✓ Profile updated successfully!\n\nYour changes have been saved.");
-                
-                // In production, you would submit the form data to the server
-                // formData.append('logo_data', document.getElementById('logo-data').value);
-                // fetch(window.location.href, {
-                //     method: 'POST',
-                //     body: formData,
-                //     headers: { 'X-CSRFToken': '{{ csrf_token }}' }
-                // });
-                
-                // For demo purposes, redirect back
-                // window.location.href = "#";
-            });
-        }
-    </script>
-</body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const editBtn     = document.getElementById("editBtn");
+    const cancelBtn   = document.getElementById("cancelBtn");
+    const viewActions = document.getElementById("view-actions");
+    const editActions = document.getElementById("edit-actions");
+    const formSubtitle = document.getElementById("form-subtitle");
+    const form        = document.getElementById("profile-form");
 
+    // Collect all form inputs
+    const allInputs = form.querySelectorAll("input, select, textarea");
+
+    // Store original values so Cancel can restore them
+    let originalValues = {};
+
+    function getFormValues() {
+        const values = {};
+        allInputs.forEach(input => {
+            values[input.name] = input.value;
+        });
+        return values;
+    }
+
+    function disableFields() {
+        allInputs.forEach(input => {
+            input.disabled = true;
+            input.classList.add("field-disabled");
+        });
+    }
+
+    function enableFields() {
+        allInputs.forEach(input => {
+            input.disabled = false;
+            input.classList.remove("field-disabled");
+        });
+    }
+
+    function enterViewMode() {
+        disableFields();
+        viewActions.classList.remove("hidden");
+        editActions.classList.add("hidden");
+        editActions.classList.remove("flex");
+        formSubtitle.textContent = "Your profile details are shown below.";
+    }
+
+    function enterEditMode() {
+        originalValues = getFormValues();
+        enableFields();
+        viewActions.classList.add("hidden");
+        editActions.classList.remove("hidden");
+        editActions.classList.add("flex");
+        formSubtitle.textContent = "Make your changes and click Save when done.";
+    }
+
+    function restoreOriginalValues() {
+        allInputs.forEach(input => {
+            if (originalValues[input.name] !== undefined) {
+                input.value = originalValues[input.name];
+            }
+        });
+    }
+
+    // Start in view mode
+    disableFields();
+
+    editBtn.addEventListener("click", enterEditMode);
+
+    cancelBtn.addEventListener("click", () => {
+        restoreOriginalValues();
+        enterViewMode();
+    });
+
+    // Live sidebar preview while editing
+    const firstNameInput = form.querySelector("[name$='first_name']");
+    const lastNameInput  = form.querySelector("[name$='last_name']");
+    const usernameInput  = form.querySelector("[name$='username']");
+    const emailInput     = form.querySelector("[name$='email']");
+
+    function updateSidebar() {
+        const first = firstNameInput?.value || "";
+        const last  = lastNameInput?.value  || "";
+        const full  = [first, last].filter(Boolean).join(" ");
+
+        const sidebarName = document.getElementById("sidebar-fullname");
+        const sidebarUser = document.getElementById("sidebar-username");
+        const sidebarEmail = document.getElementById("sidebar-email");
+
+        if (sidebarName && full) sidebarName.textContent = full;
+        if (sidebarUser) sidebarUser.textContent = "@" + (usernameInput?.value || "");
+        if (sidebarEmail) sidebarEmail.textContent = emailInput?.value || "";
+    }
+
+    firstNameInput?.addEventListener("input", updateSidebar);
+    lastNameInput?.addEventListener("input", updateSidebar);
+    usernameInput?.addEventListener("input", updateSidebar);
+    emailInput?.addEventListener("input", updateSidebar);
+});
+</script>
+
+</body>
 </html>
