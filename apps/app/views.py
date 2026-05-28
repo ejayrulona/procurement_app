@@ -16,25 +16,25 @@ from apps.ppmp.models import ProcurementProjectManagementPlan
 from apps.users.decorators import admin_required, any_admin_required, office_required
 from utils.utils import get_allowed_fiscal_years, get_default_fiscal_year
 
+from django.contrib import messages
+from django.shortcuts import redirect
+
 @admin_required
 def app_create(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed."}, status=405)
+        messages.error(request, "Method not allowed.")
+        return redirect("app:app_list")  # replace with your actual redirect target
 
     fiscal_year = get_default_fiscal_year()
-
     allowed_years = get_allowed_fiscal_years()
+
     if fiscal_year not in allowed_years:
-        return JsonResponse(
-            {"error": f"APP cannot be created for FY{fiscal_year} at this time."},
-            status=400
-        )
+        messages.error(request, f"APP cannot be created for FY{fiscal_year} at this time.")
+        return redirect("app:app_list")
 
     if AnnualProcurementPlan.objects.filter(fiscal_year=fiscal_year).exists():
-        return JsonResponse(
-            {"error": f"An APP for FY: {fiscal_year} already exists."},
-            status=400
-        )
+        messages.error(request, f"An APP for FY: {fiscal_year} already exists.")
+        return redirect("app:app_list")
 
     app = AnnualProcurementPlan.objects.create(
         fiscal_year=fiscal_year,
@@ -49,51 +49,41 @@ def app_create(request):
         target_id=app.id,
         target_label=str(app),
     )
-    
-    return JsonResponse({
-        "message": f"APP for FY: {fiscal_year} created successfully.",
-        "app_id": app.pk,
-    }, status=201)
+
+    messages.success(request, f"APP for FY: {fiscal_year} created successfully.")
+    return redirect("app:app_list")
 
 
 @admin_required
 def app_create_final(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed."}, status=405)
+        messages.error(request, "Method not allowed.")
+        return redirect("app:app_list")
 
     fiscal_year = get_default_fiscal_year()
     allowed_years = get_allowed_fiscal_years()
 
     if fiscal_year not in allowed_years:
-        return JsonResponse(
-            {"error": f"APP cannot be created for FY{fiscal_year} at this time."},
-            status=400
-        )
+        messages.error(request, f"APP cannot be created for FY{fiscal_year} at this time.")
+        return redirect("app:app_list")
 
-    # Final APP requires an existing indicative APP for the same year
     if not AnnualProcurementPlan.objects.filter(
         fiscal_year=fiscal_year,
         submission_type=AnnualProcurementPlan.SubmissionType.INDICATIVE
     ).exists():
-        return JsonResponse(
-            {
-                "error": (
-                    f"No Indicative APP exists for FY{fiscal_year}. "
-                    "Please create an indicative APP first before creating a final APP."
-                )
-            },
-            status=400
+        messages.error(
+            request,
+            f"No Indicative APP exists for FY{fiscal_year}. "
+            "Please create an indicative APP first before creating a final APP."
         )
+        return redirect("app:app_list")
 
-    # Check a final APP doesn't already exist
     if AnnualProcurementPlan.objects.filter(
         fiscal_year=fiscal_year,
         submission_type=AnnualProcurementPlan.SubmissionType.FINAL
     ).exists():
-        return JsonResponse(
-            {"error": f"A final APP for FY{fiscal_year} already exists."},
-            status=400
-        )
+        messages.error(request, f"A final APP for FY{fiscal_year} already exists.")
+        return redirect("app:app_list")
 
     app = AnnualProcurementPlan.objects.create(
         fiscal_year=fiscal_year,
@@ -109,10 +99,8 @@ def app_create_final(request):
         target_label=str(app),
     )
 
-    return JsonResponse({
-        "message": f"Final APP for FY{fiscal_year} created successfully.",
-        "app_id": app.id,
-    }, status=201)
+    messages.success(request, f"Final APP for FY{fiscal_year} created successfully.")
+    return redirect("app:app_list")
 
 
 @any_admin_required

@@ -1,0 +1,110 @@
+{% if messages %}
+<div id="djMsgOverlay" class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-200 bg-black/40">
+    <div id="djMsgModal" class="w-full max-w-md overflow-hidden transition-all duration-200 transform bg-white shadow-lg rounded-2xl">
+
+        <div id="djMsgHeader" class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+            <div id="djMsgIcon" class="flex items-center justify-center flex-shrink-0 w-10 h-10 text-lg font-bold rounded-full"></div>
+            <p id="djMsgTitle" class="text-sm font-semibold"></p>
+        </div>
+
+        <div id="djMsgBody" class="px-5 py-4 text-sm leading-relaxed text-gray-600"></div>
+
+        <div class="flex justify-end px-5 pb-5">
+            <button id="djMsgClose"
+                onclick="djMsgNext()"
+                class="px-5 py-2 text-sm font-medium text-white transition rounded-lg hover:opacity-90">
+                Got it
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    const messages = [
+        {% for message in messages %}
+        {
+            level: "{{ message.tags }}",
+            text:  "{{ message|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const config = {
+        success: { icon: '✓', label: 'Success',  bg: 'bg-green-50',  iconBg: 'bg-green-100',  iconColor: 'text-green-600', titleColor: 'text-green-800', btnBg: 'bg-green-600' },
+        error:   { icon: '✕', label: 'Error',    bg: 'bg-red-50',    iconBg: 'bg-red-100',    iconColor: 'text-red-600',   titleColor: 'text-red-800',   btnBg: 'bg-red-600'   },
+        warning: { icon: '⚠', label: 'Warning',  bg: 'bg-yellow-50', iconBg: 'bg-yellow-100', iconColor: 'text-yellow-600',titleColor: 'text-yellow-800',btnBg: 'bg-yellow-600'},
+        info:    { icon: 'i', label: 'Info',      bg: 'bg-blue-50',   iconBg: 'bg-blue-100',   iconColor: 'text-blue-600',  titleColor: 'text-blue-800',  btnBg: 'bg-blue-600'  },
+        debug:   { icon: '⚙', label: 'Debug',    bg: 'bg-gray-50',   iconBg: 'bg-gray-100',   iconColor: 'text-gray-600',  titleColor: 'text-gray-800',  btnBg: 'bg-gray-600'  },
+    };
+
+    const overlay = document.getElementById('djMsgOverlay');
+    const header  = document.getElementById('djMsgHeader');
+    const icon    = document.getElementById('djMsgIcon');
+    const title   = document.getElementById('djMsgTitle');
+    const body    = document.getElementById('djMsgBody');
+    const btn     = document.getElementById('djMsgClose');
+
+    let index = 0;
+
+    function resolveLevel(tags) {
+        if (!tags) return 'info';
+        if (tags.includes('error'))   return 'error';
+        if (tags.includes('success')) return 'success';
+        if (tags.includes('warning')) return 'warning';
+        if (tags.includes('debug'))   return 'debug';
+        return 'info';
+    }
+
+    function applyClasses(el, remove, add) {
+        el.classList.remove(...remove);
+        el.classList.add(...add);
+    }
+
+    function showMessage(i) {
+        const msg  = messages[i];
+        const level = resolveLevel(msg.level);
+        const c    = config[level];
+
+        const allBgs        = Object.values(config).map(x => x.bg);
+        const allIconBgs    = Object.values(config).map(x => x.iconBg);
+        const allIconColors = Object.values(config).map(x => x.iconColor);
+        const allTitleColors= Object.values(config).map(x => x.titleColor);
+        const allBtnBgs     = Object.values(config).map(x => x.btnBg);
+
+        applyClasses(header, allBgs,         [c.bg]);
+        applyClasses(icon,   [...allIconBgs, ...allIconColors], [c.iconBg, c.iconColor]);
+        applyClasses(title,  allTitleColors, [c.titleColor]);
+        applyClasses(btn,    allBtnBgs,      [c.btnBg]);
+
+        icon.textContent  = c.icon;
+        title.textContent = c.label;
+        body.textContent  = msg.text;
+
+        btn.textContent = (messages.length > 1 && i < messages.length - 1)
+            ? `Next (${i + 1}/${messages.length})`
+            : 'Got it';
+    }
+
+    window.djMsgNext = function () {
+        index++;
+        if (index < messages.length) {
+            showMessage(index);
+        } else {
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+    };
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) djMsgNext();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') djMsgNext();
+    });
+
+    showMessage(0);
+})();
+</script>
+{% endif %}
