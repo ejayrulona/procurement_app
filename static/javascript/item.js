@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ─── Item Form Datalist (Create/Edit page only) ───────────────────────────
+
     const objectExpenditureInput = document.getElementById('object-expenditure-dropdown');
     const objectCodeInput = document.getElementById('object-code-dropdown');
     const itemCodeInput = document.getElementById('item-code-dropdown');
-
     const objectExpenditureList = document.getElementById('object-expenditure-list');
     const objectCodeList = document.getElementById('object-code-list');
     const itemCodeList = document.getElementById('item-code-list');
@@ -11,28 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentObjectExpenditureId = '';
     let currentObjectCodeId = '';
-    
+
     if (objectExpenditureInput) {
-        // Used later when form validation is included
-        // objectExpenditureInput.addEventListener('change', () => {
-        //     if (objectExpenditureInput.value) {
-        //         document.querySelector('.object-code-error')?.remove();
-        //     }
-
-        //     if (!objectExpenditureInput.value) {
-        //         if (objectCodeInput) objectCodeInput.value = '';
-        //     }
-        // });
-
         objectExpenditureInput.addEventListener("input", event => {
             const selectedOption = Array.from(objectExpenditureList.querySelectorAll('option'))
                 .find(option => option.value === objectExpenditureInput.value);
-                
+
             if (selectedOption) {
                 currentObjectExpenditureId = selectedOption.dataset.id;
-                
-                if (objectCodeInput && event.isTrusted ) objectCodeInput.value = "";
-                
+                if (objectCodeInput && event.isTrusted) objectCodeInput.value = "";
                 fetchObjectCodes(currentObjectExpenditureId);
             }
         });
@@ -45,18 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchObjectCodes(currentObjectExpenditureId);
         }
     }
-
-    // Used later when form validation is included
-    // objectCodeInput?.addEventListener('focus', () => {
-    //     document.querySelector('.object-code-error')?.remove();
-
-    //     if (!objectExpenditureInput.value) {
-    //         let errorElement = document.createElement('p');
-    //         errorElement.classList.add('object-code-error', 'text-red-500', 'text-xs', 'mt-1');
-    //         errorElement.innerText = 'Please select a object of expenditure first.';
-    //         objectCodeInput.insertAdjacentElement('afterend', errorElement);
-    //     }
-    // });
 
     function fetchObjectCodes(objectExpenditureId) {
         if (!objectExpenditureId) return;
@@ -73,8 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         objectCodeList.appendChild(option);
                     });
 
-                    if (objectCodeInput && objectCodeInput.value ) {
-                        const event = new Event('input', {bubbles: true});
+                    if (objectCodeInput && objectCodeInput.value) {
+                        const event = new Event('input', { bubbles: true });
                         objectCodeInput.dispatchEvent(event);
                     }
                 }
@@ -82,26 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (objectCodeInput) {
-        // Used later when form validation is included
-        // objectCodeInput.addEventListener('change', () => {
-        //     if (objectCodeInput.value) {
-        //         document.querySelector('.item-code-error')?.remove();
-        //     }
-
-        //     if (!objectCodeInput.value) {
-        //         if (objectCodeInput) objectCodeInput.value = '';
-        //     }
-        // });
-
         objectCodeInput.addEventListener("input", event => {
             const selectedOption = Array.from(objectCodeList.querySelectorAll('option'))
                 .find(option => option.value === objectCodeInput.value);
-                
+
             if (selectedOption) {
                 currentObjectCodeId = selectedOption.dataset.id;
-                
                 if (itemCodeInput && event.isTrusted) itemCodeInput.value = "";
-                
                 fetchItemCodes(currentObjectCodeId);
             }
         });
@@ -131,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         itemCodeList.appendChild(option);
                     });
 
-                    if (itemCodeInput && itemCodeInput.value ) {
-                        const event = new Event('input', {bubbles: true});
+                    if (itemCodeInput && itemCodeInput.value) {
+                        const event = new Event('input', { bubbles: true });
                         itemCodeInput.dispatchEvent(event);
                     }
                 }
@@ -154,13 +118,102 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    if(itemCodeInput){
+    if (itemCodeInput) {
         itemCodeInput.addEventListener('input', () => {
-            autoGenerateGeneralDescription(findMatch(itemCodeInput.value));        
+            autoGenerateGeneralDescription(findMatch(itemCodeInput.value));
         });
+
+        if (itemCodeInput.value) {
+            autoGenerateGeneralDescription(findMatch(itemCodeInput.value));
+        }
     }
 
-    if(itemCodeInput.value){
-        autoGenerateGeneralDescription(findMatch(itemCodeInput.value));
+    // ─── Search & Pagination (Inventory list page only) ───────────────────────
+
+    const tableBody = document.getElementById('inventoryTableBody');
+
+    if (!tableBody) return;
+
+    const searchInput = document.getElementById('searchInput');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const showingStart = document.getElementById('showingStart');
+    const showingEnd = document.getElementById('showingEnd');
+    const totalCount = document.getElementById('totalCount');
+
+    const ROWS_PER_PAGE = 10;
+    let currentPage = 1;
+    let currentFiltered = [];
+
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+    console.log('Total rows found:', allRows.length);
+
+    function applyFilters() {
+        const search = searchInput.value.toLowerCase().trim();
+
+        currentFiltered = allRows.filter(row => {
+            const itemCode = row.getAttribute('data-item-code') || "";
+            const itemName = row.getAttribute('data-item-name') || "";
+            const specification = row.getAttribute('data-specification') || "";
+
+            return !search || [itemCode, itemName, specification]
+                .some(val => val.includes(search));
+        });
+
+        currentPage = 1;
+        renderPage();
     }
+
+    function renderPage() {
+        const total = currentFiltered.length;
+        const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+        const start = (currentPage - 1) * ROWS_PER_PAGE;
+        const end = Math.min(start + ROWS_PER_PAGE, total);
+        const pageRows = currentFiltered.slice(start, end);
+
+        // Hide all rows first
+        allRows.forEach(row => row.classList.add('hidden'));
+
+        // Show only the current page rows
+        pageRows.forEach(row => row.classList.remove('hidden'));
+
+        // Empty state
+        let emptyRow = tableBody.querySelector('.empty-state-row');
+        if (pageRows.length === 0) {
+            if (!emptyRow) {
+                emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-state-row';
+                emptyRow.innerHTML = `
+                    <td colspan="6" class="px-6 py-12 text-sm text-center text-gray-400">
+                        No items found matching your search.
+                    </td>
+                `;
+                tableBody.appendChild(emptyRow);
+            }
+        } else {
+            emptyRow?.remove();
+        }
+
+        showingStart.textContent = total === 0 ? 0 : start + 1;
+        showingEnd.textContent = end;
+        totalCount.textContent = total;
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) { currentPage--; renderPage(); }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(currentFiltered.length / ROWS_PER_PAGE);
+        if (currentPage < totalPages) { currentPage++; renderPage(); }
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    // Initial render
+    applyFilters();
 });

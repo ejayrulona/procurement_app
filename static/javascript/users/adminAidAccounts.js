@@ -1,20 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Might be used later if it's really decided to use data tables
-    // let table = $('#aid-accounts-table').DataTable({
-    //     responsive: true,
-    //     ordering: false,
-    //     language: {
-    //         info: "Showing _START_ to _END_ of _TOTAL_ results",
-    //         emptyTable: "No accounts found.",
-    //     }
-    // });
 
-    // Status Toggle Variables
-    // let pendingUserId = null;
-    // let pendingUserName = null;
-    // let pendingNewStatus = null;
-    // let pendingCheckbox = null;
-    
+    // ─── Status Toggle Modal ──────────────────────────────────────────────────
+
     const statusToggleForm = document.getElementById('status-toggle-form');
     const statusToggles = document.querySelectorAll('.status-toggle');
     const statusModal = document.getElementById('status-modal');
@@ -25,194 +12,180 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameText = document.getElementById('user-name-text');
     const cancelStatusBtn = document.getElementById('cancel-status-btn');
     const confirmStatusBtn = document.getElementById('confirm-status-button');
-    
+
     statusToggles.forEach(toggle => {
         toggle.addEventListener('change', () => {
-            
             const userId = toggle.dataset.userId;
             const userName = toggle.dataset.name;
             const isActive = toggle.checked;
-            const newStatus = isActive ? 'activate' : 'deactivate';
-            
+            const action = isActive ? 'activate' : 'deactivate';
+
+            // Revert toggle visually until confirmed
             toggle.checked = !isActive;
-            
-            if (newStatus === 'activate') {
+
+            if (action === 'activate') {
                 statusModalIcon.className = "flex items-center justify-center w-16 h-16 mx-auto mb-4 text-green-800 bg-green-100 rounded-full";
                 statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
                 statusModalTitle.textContent = 'Activate Account';
-                statusModalTitle.getElementsByClassNameName = 'text-2xl font-bold text-green-800 mb-3';
-                actionText.textContent = 'Activate';
-                userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 rounded-xl";
+                statusModalTitle.className = 'mb-3 text-2xl font-bold text-green-800';  // ✅ fixed
+                actionText.textContent = 'activate';
+                confirmStatusBtn.className = "w-full px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 rounded-xl";
             } else {
                 statusModalIcon.className = "flex items-center justify-center w-16 h-16 mx-auto mb-4 text-red-800 bg-red-100 rounded-full";
                 statusModalSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
                 statusModalTitle.textContent = 'Deactivate Account';
                 statusModalTitle.className = 'mb-3 text-2xl font-bold text-red-800';
-                actionText.textContent = 'Deactivate';
-                userNameText.textContent = userName;
-                confirmStatusBtn.className = "flex-1 px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl";
+                actionText.textContent = 'deactivate';
+                confirmStatusBtn.className = "w-full px-4 py-2 font-semibold text-white transition shadow-md bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 rounded-xl";
             }
 
+            userNameText.textContent = userName;
             statusToggleForm.action = `/users/admin-aid/${userId}/toggle-status/`;
-            
-            openStatusModal();
+            statusModal.classList.remove('hidden');
         });
     });
 
-    function openStatusModal() {
-        statusModal.classList.remove('hidden');
-    }
+    cancelStatusBtn.addEventListener('click', () => statusModal.classList.add('hidden'));
+    statusModal.addEventListener('click', e => { if (e.target === statusModal) statusModal.classList.add('hidden'); });
 
-    function closeStatusModal() {
-        statusModal.classList.add('hidden');
-    }
-    
-    cancelStatusBtn.addEventListener('click', closeStatusModal);
+    // ─── Resend Email Modal ───────────────────────────────────────────────────
 
-    statusModal.addEventListener('click', event => {
-        if (event.target === statusModal) {
-            closeStatusModal();
-        }
-    });
-    
-    
-    // confirmStatusBtn.addEventListener('click', () => {
-    //     if (pendingCheckbox) {
-    //         pendingCheckbox.checked = (pendingNewStatus === 'activate');
-            
-    //         const row = pendingCheckbox.closest('tr');
-    //         const statusBadge = row.querySelector('td:nth-child(4) span');
-            
-    //         if (pendingNewStatus === 'activate') {
-    //             statusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800";
-    //             statusBadge.textContent = "Active";
-    //             row.setAttribute('data-status', 'active');
-    //         } else {
-    //             statusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800";
-    //             statusBadge.textContent = "Inactive";
-    //             row.setAttribute('data-status', 'inactive');
-    //         }
-            
-    //         showCustomToast(`${pendingUserName} has been ${pendingNewStatus === 'activate' ? 'activated' : 'deactivated'} successfully!`);
-    //         updateStats();
-    //     }
-        
-    //     statusModal.classList.add('hidden');
-    //     pendingUserId = null;
-    //     pendingUserName = null;
-    //     pendingNewStatus = null;
-    //     pendingCheckbox = null;
-    // });
-    
-    // function updateStats() {
-    //     const rows = document.querySelectorAll('#accountsTableBody tr');
-    //     let activeCount = 0;
-    //     let inactiveCount = 0;
-    //     let pendingCount = 0;
-        
-    //     rows.forEach(row => {
-    //         const statusSpan = row.querySelector('td:nth-child(4) span');
-    //         if (statusSpan) {
-    //             const status = statusSpan.textContent.toLowerCase();
-    //             if (status === 'active') activeCount++;
-    //             else if (status === 'inactive') inactiveCount++;
-    //             else if (status === 'pending') pendingCount++;
-    //         }
-    //     });
-        
-    //     const statNumbers = document.querySelectorAll('.stats-grid .text-3xl');
-    //     if (statNumbers.length >= 4) {
-    //         statNumbers[0].textContent = activeCount + inactiveCount + pendingCount;
-    //         statNumbers[1].textContent = activeCount;
-    //         statNumbers[2].textContent = inactiveCount;
-    //         statNumbers[3].textContent = pendingCount;
-    //     }
-    // }
-    
-    // function showCustomToast(message) {
-    //     const toast = document.getElementById('successToast');
-    //     const toastMessage = document.getElementById('toastMessage');
-    //     toastMessage.textContent = message;
-    //     toast.classList.remove('hidden');
-    //     setTimeout(() => {
-    //         toast.classList.add('hidden');
-    //     }, 3000);
-    // }
-    
-
-    // Resend Email Modal
     const resendEmailForm = document.getElementById('resend-email-form');
     const resendModal = document.getElementById('resend-email-modal');
-    const resendModalContent = document.getElementById('resend-modal-content');
     const resendEmailName = document.getElementById('resend-email-name');
-    const cancelResendButton = document.getElementById('cancel-resend-btn');
-    // const successToast = document.getElementById('successToast');
-    
+    const cancelResendBtn = document.getElementById('cancel-resend-btn');
+
     document.querySelectorAll('.resend-email-btn').forEach(button => {
         button.addEventListener('click', () => {
-            const userId = button.dataset.userId;
-            const name = button.dataset.name;
-
-            resendEmailForm.action = `/users/admin-aid/resend-email/${userId}/`;
-            
-            resendEmailName.textContent = name;
-
-           openResendModal();
+            resendEmailForm.action = `/users/admin-aid/resend-email/${button.dataset.userId}/`;
+            resendEmailName.textContent = button.dataset.name;
+            resendModal.classList.remove('hidden');
         });
     });
-    
-    function openResendModal() {
-        resendModal.classList.remove('hidden');
-        // setTimeout(() => {
-        //     resendModalContent.classList.remove('scale-95', 'opacity-0');
-        //     resendModalContent.classList.add('scale-100', 'opacity-100');
-        // }, 10);
-    }
-    
-    function closeResendModal() {
-        resendModal.classList.add('hidden');
 
-        // resendModalContent.classList.remove('scale-100', 'opacity-100');
-        // resendModalContent.classList.add('scale-95', 'opacity-0');
-        // setTimeout(() => {
-        // }, 200);
+    cancelResendBtn.addEventListener('click', () => resendModal.classList.add('hidden'));
+    resendModal.addEventListener('click', e => { if (e.target === resendModal) resendModal.classList.add('hidden'); });
+
+    // ─── Search, Filter, Pagination ──────────────────────────────────────────
+
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const tableBody = document.getElementById('accountsTableBody');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const showingStart = document.getElementById('showingStart');
+    const showingEnd = document.getElementById('showingEnd');
+    const totalCount = document.getElementById('totalCount');
+
+    const ROWS_PER_PAGE = 10;
+    let currentPage = 1;
+    let currentFiltered = [];
+
+    // Snapshot all rows on load
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+    function getRowStatus(row) {
+        const badge = row.querySelector('span.inline-flex');
+        if (!badge) return '';
+        const text = badge.textContent.trim().toLowerCase();
+        if (text.includes('pending')) return 'pending';
+        if (text.includes('active')) return 'active';
+        return 'inactive';
     }
-    
-    // function showToast() {
-    //     successToast.classList.remove('hidden');
-    //     setTimeout(() => {
-    //         successToast.classList.add('hidden');
-    //     }, 3000);
-    // }
-    
-    // Resend email function
-    // window.resendEmail = function (name, email) {
-    //     openResendModal(name, email);
-    // };
-    
-    cancelResendButton.addEventListener('click', closeResendModal);
-    
-    // confirmResendBtn.addEventListener('click', () => {
-        // Here you would make an AJAX call to resend the email
-        // console.log(`Resending email to: ${currentResendName} (${currentResendEmail})`);
-    
-        // Close modal and show success message
-        // closeResendModal();
-        // showToast();
-    
-        // In production, you would send an AJAX request here
-        // fetch('/api/resend-email/', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ email: currentResendEmail, name: currentResendName })
-        // });
-    // });
-    
-    // Close modal when clicking outside
-    resendModal.addEventListener('click', event => {
-        if (event.target === resendModal) {
-            closeResendModal();
+
+    function getRowText(row) {
+        return row.textContent.toLowerCase();
+    }
+
+    function applyFilters() {
+        const search = searchInput.value.toLowerCase().trim();
+        const status = statusFilter.value.toLowerCase();
+
+        currentFiltered = allRows.filter(row => {
+            const matchesSearch = !search || getRowText(row).includes(search);
+            const rowStatus = getRowStatus(row);
+            const matchesStatus = status === 'all' || rowStatus === status;
+            return matchesSearch && matchesStatus;
+        });
+
+        currentPage = 1;
+        renderPage();
+    }
+
+    function renderPage() {
+        const total = currentFiltered.length;
+        const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+        const start = (currentPage - 1) * ROWS_PER_PAGE;
+        const end = Math.min(start + ROWS_PER_PAGE, total);
+        const pageRows = currentFiltered.slice(start, end);
+
+        // Hide all rows then show current page
+        allRows.forEach(row => row.classList.add('hidden'));
+        pageRows.forEach(row => {
+            row.classList.remove('hidden');
+            tableBody.appendChild(row);
+        });
+
+        // Empty state row
+        let emptyRow = tableBody.querySelector('.empty-state-row');
+        if (pageRows.length === 0) {
+            if (!emptyRow) {
+                emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-state-row';
+                emptyRow.innerHTML = `
+                    <td colspan="6" class="px-6 py-12 text-sm text-center text-gray-400">
+                        No accounts found matching your search.
+                    </td>
+                `;
+            }
+            tableBody.appendChild(emptyRow);
+        } else {
+            emptyRow?.remove();
+        }
+
+        // Update pagination info
+        showingStart.textContent = total === 0 ? 0 : start + 1;
+        showingEnd.textContent = end;
+        totalCount.textContent = total;
+
+        // Update button states
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+
+        prevBtn.className = prevBtn.disabled
+            ? "px-3 py-1 border border-gray-300 rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed text-sm"
+            : "px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 text-sm";
+
+        nextBtn.className = nextBtn.disabled
+            ? "px-3 py-1 border border-gray-300 rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed text-sm"
+            : "px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 text-sm";
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage();
         }
     });
+
+    nextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(currentFiltered.length / ROWS_PER_PAGE);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage();
+        }
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+
+    refreshBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        statusFilter.value = 'all';
+        applyFilters();
+    });
+
+    // Initial render
+    applyFilters();
 });

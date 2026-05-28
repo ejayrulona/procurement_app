@@ -29,13 +29,15 @@
         {% endif %}
     </div>
 
-    <!-- Static Search Bar (non‑functional placeholder) -->
+    <!-- Static Search Bar -->
     <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
         <div class="relative">
             <svg class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" placeholder="Search by Procurement Program/Project, division, or creator..." 
+            <input type="text"
+                id="ppmpSearch"
+                placeholder="Search by classification, status, or submission type..."
                 class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
         </div>
     </div>
@@ -55,9 +57,14 @@
                         <th class="px-6 py-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody id="ppmpTableBody" class="bg-white divide-y divide-gray-200">
                     {% for ppmp in ppmps %}
-                        <tr class="transition hover:bg-gray-50">
+                        <tr class="transition hover:bg-gray-50"
+                            data-year="{{ ppmp.fiscal_year }}"
+                            data-status="{{ ppmp.status }}"
+                            data-submission-type="{{ ppmp.submission_type }}"
+                            data-classification="{{ ppmp.get_classification_display|lower }}"
+                            data-office="{{ ppmp.office_profile.get_pap_category_display|lower }}">
                             <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ ppmp.fiscal_year }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-semibold {% if ppmp.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif ppmp.status == 'approved'%}bg-green-100 text-green-800{% elif ppmp.status == 'for_revision'%}bg-blue-100 text-blue-800{% else %}bg-orange-100 text-orange-800{% endif %} rounded-full">
@@ -108,20 +115,109 @@
 
         <!-- Static Pagination Placeholder -->
         <div class="px-6 py-4 bg-white border-t border-gray-200">
-            <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">3</span> results
-                </div>
-                <div class="flex gap-2">
-                    <button class="px-3 py-1 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed" disabled>
-                        Previous
-                    </button>
-                    <button class="px-3 py-1 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed" disabled>
-                        Next
-                    </button>
+            <div class="px-6 py-4 bg-white border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-700">
+                        Showing <span class="font-medium" id="ppmpShowingStart">1</span>
+                        to <span class="font-medium" id="ppmpShowingEnd">0</span>
+                        of <span class="font-medium" id="ppmpTotalCount">0</span> results
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="ppmpPrevPage"
+                            class="px-3 py-1 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            disabled>
+                            Previous
+                        </button>
+                        <button id="ppmpNextPage"
+                            class="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            disabled>
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput  = document.getElementById('ppmpSearch');
+        const tableBody    = document.getElementById('ppmpTableBody');
+        const prevBtn      = document.getElementById('ppmpPrevPage');
+        const nextBtn      = document.getElementById('ppmpNextPage');
+        const showingStart = document.getElementById('ppmpShowingStart');
+        const showingEnd   = document.getElementById('ppmpShowingEnd');
+        const totalCount   = document.getElementById('ppmpTotalCount');
+        const emptyState   = document.getElementById('emptyState');
+
+        if (!tableBody) return;
+
+        const ROWS_PER_PAGE = 10;
+        let currentPage     = 1;
+        let currentFiltered = [];
+
+        const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+        function applyFilters() {
+            const search = searchInput.value.toLowerCase().trim();
+
+            currentFiltered = allRows.filter(row => {
+                if (!search) return true;
+
+                return [
+                    row.dataset.year              || "",
+                    row.dataset.status            || "",
+                    row.dataset.submissionType    || "",
+                    row.dataset.classification    || "",
+                    row.dataset.office            || "",
+                ].some(val => val.toLowerCase().includes(search));
+            });
+
+            currentPage = 1;
+            renderPage();
+        }
+
+        function renderPage() {
+            const total      = currentFiltered.length;
+            const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+            const start      = (currentPage - 1) * ROWS_PER_PAGE;
+            const end        = Math.min(start + ROWS_PER_PAGE, total);
+            const pageRows   = currentFiltered.slice(start, end);
+
+            allRows.forEach(row => row.classList.add('hidden'));
+            pageRows.forEach(row => {
+                row.classList.remove('hidden');
+                tableBody.appendChild(row);
+            });
+
+            // Empty state
+            if (total === 0) {
+                emptyState?.classList.remove('hidden');
+            } else {
+                emptyState?.classList.add('hidden');
+            }
+
+            showingStart.textContent = total === 0 ? 0 : start + 1;
+            showingEnd.textContent   = end;
+            totalCount.textContent   = total;
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(currentFiltered.length / ROWS_PER_PAGE);
+            if (currentPage < totalPages) { currentPage++; renderPage(); }
+        });
+
+        searchInput.addEventListener('input', applyFilters);
+
+        applyFilters();
+    });
+</script>
 {% endblock %}
