@@ -452,7 +452,6 @@ def ppmp_decline(request, id):
         recipient=ppmp.submitted_by,
         notification_type=Notification.Type.PPMP_DECLINED,
         target_label=str(ppmp),
-        target_id=ppmp.id,
         remarks=remarks,
         actor_name=request.user.full_name
     )
