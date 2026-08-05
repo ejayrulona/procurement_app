@@ -389,7 +389,6 @@ def ppmp_approve(request, id):
                 recipient=ppmp.submitted_by,
                 notification_type=Notification.Type.PPMP_APPROVED,
                 target_label=str(ppmp),
-                target_id=ppmp.id,
                 actor_name=request.user.full_name
             )
 
